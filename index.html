@@ -1,30 +1,160 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Forex Signal Dashboard</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisa Forex PRO</title>
+<style>
+  body {
+    background: #121212;
+    color: #eee;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 20px;
+  }
+  h1 {
+    text-align: center;
+    color: #FFD700;
+  }
+  .box {
+    background: linear-gradient(145deg, #1b1b1b, #222);
+    border: 1px solid #333;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 10px auto;
+    width: 90%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255,215,0,0.3);
+    text-align: center;
+  }
+  .popup-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(3px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  .popup-overlay.active {
+    visibility: visible;
+    opacity: 1;
+  }
+  .popup {
+    background: linear-gradient(145deg, #1b1b1b, #222);
+    color: #eee;
+    width: 80%;
+    max-width: 600px;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(255,215,0,0.3);
+    animation: popIn 0.4s ease;
+    position: relative;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .popup-close {
+    position: absolute;
+    top: 10px; right: 15px;
+    background: transparent;
+    border: none;
+    color: #FFD700;
+    font-size: 22px;
+    cursor: pointer;
+  }
+  .popup-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #FFD700;
+    text-align: center;
+  }
+  .popup-section-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 15px 0 8px;
+    color: #00bfff;
+  }
+  .news-item {
+    background: #2c2c2c;
+    border-left: 5px solid #FFD700;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  .strength-bar {
+    height: 10px;
+    border-radius: 5px;
+    margin-top: 3px;
+    background: linear-gradient(90deg, #00ff00 0%, #ff0000 100%);
+  }
+</style>
 </head>
 <body>
-  <header>
-    <div class="title">Trader<span class="blue">Sharing</span><span class="red">Beta</span></div>
-    <div class="burger" onclick="toggleSidebar()">☰</div>
-  </header>
-  <div class="sidebar" id="sidebar">
-    <a href="#">Home</a>
-    <a href="#">Signal</a>
-    <a href="#">About</a>
-  </div>
-  <div class="grid" id="signals"></div>
-  <div class="popup" id="popup">
-    <div class="popup-content">
-      <span class="close" onclick="closePopup()">✖</span>
-      <h3 id="popupTitle">Signal Detail</h3>
-      <div id="popupBody"></div>
+
+<h1>Analisa Sinyal Forex Hari Ini</h1>
+
+<div class="box" onclick='openPopup({
+  pair: "GBPUSD",
+  date: "15 Juni 2025",
+  news: [
+    {country: "GBP", title: "GDP release", time: "14:30 WIB", color:"#FFD700"},
+    {country: "USD", title: "Tidak ada berita penting hari ini", time: "-", color:"#00ff00"}
+  ],
+  strength: {base: "GBP", baseVal: 68, quote: "USD", quoteVal: 32},
+  analysis: "GBPUSD menunjukkan kekuatan dominan GBP berdasarkan data retail dan outlook positif setelah GDP release.",
+  signal: "BUY"
+})'>Klik untuk Lihat Analisa GBPUSD</div>
+
+<!-- Popup HTML (akan dibuat lewat JS) -->
+
+<script>
+function openPopup(data) {
+  const overlay = document.createElement('div');
+  overlay.className = 'popup-overlay active';
+
+  const popup = document.createElement('div');
+  popup.className = 'popup';
+
+  popup.innerHTML = `
+    <button class="popup-close" onclick="this.parentElement.parentElement.remove()">×</button>
+    <div class="popup-title">Analisa Mendalam untuk Pair ${data.pair} - ${data.date}</div>
+
+    <div class="popup-section-title">📰 News Hari Ini</div>
+    ${data.news.map(n => `
+      <div class="news-item" style="border-color:${n.color};">
+        ${n.country}: ${n.title} (${n.time})
+      </div>
+    `).join('')}
+
+    <div class="popup-section-title">💪 Kekuatan Mata Uang</div>
+    <div>${data.strength.base}: ${data.strength.baseVal}% 
+      <div class="strength-bar" style="width:${data.strength.baseVal}%;"></div>
     </div>
-  </div>
-  <script src="app.js"></script>
+    <div>${data.strength.quote}: ${data.strength.quoteVal}% 
+      <div class="strength-bar" style="width:${data.strength.quoteVal}%;"></div>
+    </div>
+
+    <div class="popup-section-title">📈 Analisa Pair</div>
+    <div>${data.analysis}</div>
+
+    <div class="popup-section-title">🔍 Sinyal Harian</div>
+    <div style="font-weight:bold;font-size:18px;color:${data.signal==='BUY' ? '#00ff00' : data.signal==='SELL' ? '#ff4444' : '#ccc'}">
+      ${data.signal}
+    </div>
+  `;
+
+  overlay.appendChild(popup);
+  document.body.appendChild(overlay);
+}
+</script>
+
 </body>
 </html>
