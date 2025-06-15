@@ -22,3 +22,92 @@ header { background: #000044; color: #fff; padding: 15px; display: flex; align-i
 .popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; }
 .popup-content { background: #222; padding: 20px; border-radius: 10px; width: 80%; color: #fff; }
 .close { float: right; cursor: pointer; font-size: 18px; }
+/* Popup Overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(3px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.popup-overlay.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Popup Content */
+.popup {
+  background: linear-gradient(145deg, #1b1b1b, #222);
+  color: #eee;
+  width: 80%;
+  max-width: 600px;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(255,215,0,0.3);
+  font-family: 'Segoe UI', sans-serif;
+  animation: popIn 0.4s ease;
+  position: relative;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Close Button */
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  color: #FFD700;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* Popup Title */
+.popup-title {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #FFD700;
+  text-align: center;
+}
+
+/* Section Titles */
+.popup-section-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 15px 0 8px;
+  color: #00bfff;
+}
+
+/* News Box */
+.news-item {
+  background: #2c2c2c;
+  border-left: 5px solid #FFD700;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+/* Strength Bar */
+.strength-bar {
+  height: 10px;
+  border-radius: 5px;
+  margin-top: 3px;
+  background: linear-gradient(90deg, #00ff00 0%, #ff0000 100%);
+}
+
