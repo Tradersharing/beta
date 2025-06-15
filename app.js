@@ -45,3 +45,34 @@ function showPopup(name, buy, sell) {
 }
 loadSignals();
 setInterval(loadSignals, 60000);
+
+function openPopup(pair, data) {
+  const overlay = document.createElement('div');
+  overlay.className = 'popup-overlay active';
+
+  const popup = document.createElement('div');
+  popup.className = 'popup';
+  
+  popup.innerHTML = `
+    <button class="popup-close" onclick="this.parentElement.parentElement.remove()">×</button>
+    <div class="popup-title">Analisa Mendalam untuk Pair ${pair.name} - ${new Date().toLocaleDateString()}</div>
+
+    <div class="popup-section-title">📰 News Hari Ini</div>
+    ${data.news.map(n => `
+      <div class="news-item" style="border-color:${n.color};">${n.country}: ${n.title} (${n.time})</div>
+    `).join('')}
+
+    <div class="popup-section-title">💪 Kekuatan Mata Uang</div>
+    <div> ${data.strength.base}: ${data.strength.baseVal}% <div class="strength-bar" style="width:${data.strength.baseVal}%;"></div></div>
+    <div> ${data.strength.quote}: ${data.strength.quoteVal}% <div class="strength-bar" style="width:${data.strength.quoteVal}%;"></div></div>
+
+    <div class="popup-section-title">📈 Analisa Pair</div>
+    <div>${data.analysis}</div>
+
+    <div class="popup-section-title">🔍 Sinyal Harian</div>
+    <div style="font-weight:bold;font-size:18px;color:${data.signal==='BUY' ? '#00ff00' : data.signal==='SELL' ? '#ff4444' : '#ccc'}">${data.signal}</div>
+  `;
+
+  overlay.appendChild(popup);
+  document.body.appendChild(overlay);
+}
