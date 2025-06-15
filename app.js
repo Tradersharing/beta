@@ -1,4 +1,3 @@
-
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('active');
 }
@@ -8,15 +7,22 @@ function closePopup() {
 }
 
 function openPopup(pair) {
+  const buy = parseFloat(pair.longPercentage);
+  const sell = parseFloat(pair.shortPercentage);
   const detail = `
-    <h2>Analisa mendalam untuk pair ${pair.name}</h2>
-    <p><b>News untuk pair hari ini:</b></p>
-    <p>GBP : CPI dirilis 14:30 WIB (Impact: Tinggi)</p>
-    <p>USD : Tidak ada berita penting hari ini</p>
+    <h2>Analisa Pair ${pair.name}</h2>
+    <p><b>News Hari Ini:</b></p>
+    <p>🇬🇧 GBP: CPI dirilis 14:30 WIB (Impact: Tinggi)</p>
+    <p>🇺🇸 USD: Tidak ada berita penting hari ini</p>
+
     <p><b>Kekuatan Mata Uang:</b></p>
-    <p>GBP: 65% 🔵 | USD: 35% 🔴</p>
-    <p><b>Analisa Pair ${pair.name}:</b></p>
-    <p>Sinyal Harian: <b>BUY</b></p>
+    <div class="strength-bar">
+      <div class="strength-gbp" style="width:${buy}%"></div>
+      <div class="strength-usd" style="width:${sell}%"></div>
+    </div>
+    <p style="font-size:13px;">GBP: ${buy}% 🔵 &nbsp;&nbsp; USD: ${sell}% 🔴</p>
+
+    <p><b>Sinyal Harian:</b> <span style="color:${buy > sell ? '#00ff00' : '#ff4444'};"><b>${buy > sell ? 'BUY' : 'SELL'}</b></span></p>
   `;
   document.getElementById('popupDetails').innerHTML = detail;
   document.getElementById('popup').style.display = 'flex';
