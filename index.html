@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tradersharing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="tradersharing_icon.png" type="image/png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
+    header { background: #000044; color: #fff; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
+    .title { font-weight: bold; font-size: 22px; }
+    .title span.blue { color: #00bfff; }
+    .title span.red { color: #ff3030; }
+    .subtitle { font-size: 13px; color: #ccc; }
+    .burger { font-size: 24px; cursor: pointer; z-index: 11; user-select: none; }
+    .sidebar { position: fixed; top: 0; left: -100%; width: 60%; height: 100%; background: #111; padding: 20px; transition: left 0.3s ease; z-index: 10; }
+    .sidebar.active { left: 0; }
+    .sidebar a { display: block; color: #FFD700; text-decoration: none; margin-bottom: 15px; font-weight: bold; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 20px; }
+    .box { background: linear-gradient(145deg, #1c1c1c, #000); border-radius: 15px; padding: 20px 10px; box-shadow: 4px 4px 10px #111, -4px -4px 10px #222; text-align: center; transition: all 0.3s ease; }
+    .box:hover { box-shadow: 0 0 20px #FFD700; }
+    .pair { font-weight: bold; font-size: 16px; color: #FFD700; margin-bottom: 5px; }
+    .value { margin-top: 5px; font-size: 13px; color: #ccc; }
+    .signal { margin-top: 8px; font-weight: bold; font-size: 14px; }
+    .buy { color: #00ff00; }
+    .sell { color: #ff4444; }
+    .wait { color: #999; }
+    svg { width: 100%; height: 120px; margin-top: 5px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="title"><span class="blue">Trader</span><span class="red">Sharing</span></div>
+      <div class="subtitle">The Profesional Sinyal Forex</div>
+    </div>
+    <div class="burger" onclick="toggleSidebar()">☰</div>
+  </header>
+  <div class="sidebar" id="sidebar">
+    <a href="#">📡 View Signal Now</a>
+    <a href="#">📊 Dashboard</a>
+    <a href="#">📈 Chart Signal</a>
+    <a href="#">📁 Data History</a>
+  </div>
+  <div id="lastUpdate"></div>
+  <div class="grid" id="signals"></div>
+  <script>
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('active');
+    }
+    const url = "https://myfxbook-proxy.ayulistyanto.workers.dev/?endpoint=/api/get-community-outlook.json?session=9UtvFTG9S31Z4vO1aDW31671626";
+    function drawDualGauge(buy, sell) {
+      const radius = 80;
+      const cx = 100, cy = 100;
+      const ticks = [];
+      for (let i = 0; i <= 100; i += 5) {
+        const angle = (-90 + (i * 180 / 100)) * Math.PI / 180;
+        const x1 = cx + (radius - 6) * Math.cos(angle);
+        const y1 = cy + (radius - 6) * Math.sin(angle);
+        const x2 = cx + radius * Math.cos(angle);
+        const y2 = cy + radius * Math.sin(angle);
+        ticks.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#aaa" stroke-width="${i % 10 === 0 ? 1.5 : 0.5}" />`);
+      }
+      const toAngle = (val, reverse = false) => { const angle = (val / 100) * 90; return reverse ? 90 - angle : -90 + angle; };
+      const angleBuy = toAngle(buy);
+      const angleSell = toAngle(sell, true);
+      const bx = cx + radius * 0.85 * Math.cos(angleBuy * Math.PI / 180);
+      const by = cy + radius * 0.85 * Math.sin(angleBuy * Math.PI / 180);
+      const sx = cx + radius * 0.85 * Math.cos(angleSell * Math.PI / 180);
+      const sy = cy + radius * 0.85 * Math.sin(angleSell * Math.PI / 180);
+      return `<svg viewBox="0 0 200 120">
+          <path d="M20,100 A80,80 0 0,1 180,100" fill="none" stroke="#FFD700" stroke-width="4"/>
+          ${ticks.join("")}
+          <text x="20" y="115" font-size="10" fill="#fff">0</text>
+          <text x="100" y="115" font-size="10" fill="#fff" text-anchor="middle">50</text>
+          <text x="180" y="115" font-size="10" fill="#fff" text-anchor="end">100</text>
+          <text x="50" y="93" font-size="8" fill="#0f0">Buy</text>
+          <text x="150" y="93" font-size="8" fill="#f00" text-anchor="end">Sell</text>
+          <line x1="${cx}" y1="${cy}" x2="${bx}" y2="${by}" stroke="#FFD700" stroke-width="3"/>
+          <line x1="${cx}" y1="${cy}" x2="${sx}" y2="${sy}" stroke="#FFD700" stroke-width="3"/>
+          <circle cx="${cx}" cy="${cy}" r="3" fill="#FFD700" />
+        </svg>`;
+    }
+    async function loadSignals() {
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        const order = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD",
+                       "EURGBP", "EURJPY", "EURCHF", "EURCAD", "EURAUD", "EURNZD",
+                       "GBPJPY", "GBPCHF", "GBPCAD", "GBPAUD", "GBPNZD",
+                       "AUDJPY", "AUDCAD", "AUDNZD", "CADJPY", "CADCHF",
+                       "CHFJPY", "XAUUSD", "US30", "BTCUSD"];
+        const sorted = [...data.symbols].sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name));
+        document.getElementById("signals").innerHTML = sorted.map(pair => {
+          const buy = parseFloat(pair.longPercentage);
+          const sell = parseFloat(pair.shortPercentage);
+          const status = buy >= 70 ? 'BUY' : sell >= 70 ? 'SELL' : 'WAIT';
+          const cls = buy >= 70 ? 'buy' : sell >= 70 ? 'sell' : 'wait';
+          return `<div class="box">
+                    <div class="pair">${pair.name}</div>
+                    ${drawDualGauge(buy, sell)}
+                    <div class="value">Buy: ${buy}% | Sell: ${sell}%</div>
+                    <div class="signal ${cls}">${status}</div>
+                  </div>`;
+        }).join("");
+      } catch (e) {
+        document.getElementById("signals").innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
+      }
+    }
+    loadSignals();
+    setInterval(loadSignals, 60000);
+  </script>
+</body>
+</html>
