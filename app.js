@@ -6,6 +6,9 @@ function closePopup() {
   document.getElementById('popup').style.display = 'none';
 }
 
+
+
+
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
@@ -17,37 +20,26 @@ function openPopup(pair) {
   const strength1 = (long / total) * 100;
   const strength2 = (short / total) * 100;
 
+  // ✅ Gunakan tanggal UTC, agar cocok dengan data JSON
   const now = new Date();
   const yyyy = now.getUTCFullYear();
   const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
   const dd = String(now.getUTCDate()).padStart(2, '0');
   const today = `${mm}-${dd}-${yyyy}`;
 
-  // ✅ HEADER baru: Analisa Mendalam (PAIR) Tanggal MM-DD-YYYY
-  const header = `
-    <h2 style="
-      text-align:center;
-      font-size:20px;
-      color:white;
-      text-shadow: 1px 1px 2px black;
-      font-weight:bold;
-      margin-bottom:14px;
-    ">
-       Analisa ${pair.name}  ${today}
-    </h2>
-  `;
-
-  const detailTop = header + `
-    <p style="font-size:14px; color:#aaa; margin-bottom:10px; text-align:center;">
+  const detailTop = `
+    <p style="text-align:center; font-size:14px; color:#aaa; margin-bottom:10px;">
       ${today}
     </p>
 
     <p style="font-weight:bold; margin-bottom:6px;">📅 Berita Penting Hari Ini:</p>
-    <div id="newsBox" style="font-size:13.5px; line-height:1.6em; margin-bottom:16px;">
+    <div id="newsBox" style="font-size:13.5px; line-height:1.4em; margin-bottom:16px;">
       ⏳ Mengambil berita...
     </div>
 
     <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
+
+    <p style="font-size:16px; font-weight:bold; color:white; margin-bottom:6px;"> Analisa Mendalam  ${today}</p>
 
     <p style="font-weight:bold; margin-bottom:6px;">Kekuatan Mata Uang:</p>
     <div class="strength-bar">
@@ -87,42 +79,32 @@ function openPopup(pair) {
         const todayData = data?.[today] || {};
         const berita1 = todayData[currency1] || [];
         const berita2 = todayData[currency2] || [];
+        const newsList = [...berita1, ...berita2];
 
         const flag = {
           USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
           AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
         };
 
-        // ✅ Konversi jam GMT ke GMT+7
-        function toWIB(jamGMT) {
-          const [h, m] = jamGMT.split(':').map(Number);
-          const date = new Date();
-          date.setUTCHours(h, m, 0, 0);
-          date.setUTCHours(date.getUTCHours() + 7);
-          return String(date.getHours()).padStart(2, '0') + ":" + String(date.getMinutes()).padStart(2, '0');
+        if (newsList.length > 0) {
+          const html = [];
+
+          if (berita1.length > 0) {
+            html.push(`<li>${flag[currency1] || "🏳️"} • ${berita1.join(`</li><li>${flag[currency1]} • `)}</li>`);
+          } else {
+            html.push(`<li>${flag[currency1] || "🏳️"} • Tidak ada berita</li>`);
+          }
+
+          if (berita2.length > 0) {
+            html.push(`<li>${flag[currency2] || "🏳️"} • ${berita2.join(`</li><li>${flag[currency2]} • `)}</li>`);
+          } else {
+            html.push(`<li>${flag[currency2] || "🏳️"} • Tidak ada berita</li>`);
+          }
+
+          newsBox.innerHTML = `<ul style='padding-left:18px;'>${html.join("")}</ul>`;
+        } else {
+          newsBox.innerHTML = "Tidak ada berita penting hari ini.";
         }
-
-        const list = [];
-
-        if (berita1.length > 0) {
-          berita1.forEach(item => {
-            const [judul, jam] = item.split('|');
-            const jamWIB = toWIB(jam);
-            list.push(`• ${jamWIB} ${flag[currency1] || "🏳️"} ${currency1} : ${judul}`);
-          });
-        }
-
-        if (berita2.length > 0) {
-          berita2.forEach(item => {
-            const [judul, jam] = item.split('|');
-            const jamWIB = toWIB(jam);
-            list.push(`• ${jamWIB} ${flag[currency2] || "🏳️"} ${currency2} : ${judul}`);
-          });
-        }
-
-        newsBox.innerHTML = list.length > 0
-          ? `<div style="padding-left:10px;">${list.join('<br>')}</div>`
-          : "Tidak ada berita penting hari ini.";
       })
       .catch(() => {
         const box = document.getElementById("newsBox");
@@ -130,10 +112,6 @@ function openPopup(pair) {
       });
   }, 500);
 }
-
-
-
-
 
 
 function renderGauge(buy, sell) {
