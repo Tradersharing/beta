@@ -9,18 +9,18 @@ function closePopup() {
 function openPopup(pair) {
   const buy = parseFloat(pair.longPercentage);
   const sell = parseFloat(pair.shortPercentage);
-  const currency1 = pair.name.slice(0, 3).toUpperCase();
-  const currency2 = pair.name.slice(3, 6).toUpperCase();
+  const currency1 = pair.name.slice(0, 3);
+  const currency2 = pair.name.slice(3, 6);
   const now = new Date();
   const today = now.toLocaleDateString('en-US', { timeZone: 'UTC' }).replace(/\//g, '-');
 
   const detailTop = `
-    <p style="text-align:center; font-size:18px; color:#fff; font-weight:bold; margin-bottom:14px;">
-      📅 Analisa mendalam tanggal ${today}
+    <p style="text-align:center; font-size:14px; color:#aaa; margin-bottom:10px;">
+      ${today}
     </p>
 
-    <p style="font-weight:bold; margin-bottom:6px;">📅 Berita Penting Hari Ini (${currency1} | ${currency2}):</p>
-    <div id="newsBox" style="font-size:13.5px; line-height:1.6em; margin-bottom:16px;">
+    <p style="font-weight:bold; margin-bottom:6px;">📅 Berita Penting Hari Ini:</p>
+    <div id="newsBox" style="font-size:13.5px; line-height:1.4em; margin-bottom:16px;">
       ⏳ Mengambil berita...
     </div>
 
@@ -44,13 +44,22 @@ function openPopup(pair) {
 
     <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
 
-    <p style="font-weight:bold; margin-bottom:6px;">Sinyal Hari Ini (${currency1} | ${currency2}):</p>
+    <p style="font-weight:bold; margin-bottom:6px;">Sinyal Hari Ini (${pair.name}):</p>
     <div id="todaySignal" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
       (Sinyal akan ditampilkan di sini)
+    </div>
+
+    <hr style="margin: 15px 0; border: none; border-top: 1px solid #555;">
+    <div class="chat-box">
+      <p style="font-size:14px; color:#ccc;">❓Tanya seputar <b>${pair.name}</b> langsung ke AI Forex:</p>
+      <input type="text" id="userInput" placeholder="Tulis pertanyaan forex..." />
+      <button onclick="sendToAI('${pair.name}', ${buy}, ${sell})">Kirim</button>
+      <div id="aiResponse" class="ai-response"></div>
     </div>
   `;
 
   const scriptURL = "https://script.google.com/macros/s/AKfycbz6lDiYq6a9TtB8HVCJ5VBvV2oBwBwRpRTPyVzRhJfX63456sHoJ24hUMKRYR8yt_mTRA/exec";
+
   document.getElementById('popup').style.display = 'flex';
 
   setTimeout(() => {
@@ -60,49 +69,23 @@ function openPopup(pair) {
       .then(res => res.json())
       .then(data => {
         const newsBox = document.getElementById("newsBox");
+        const newsList = [];
 
         if (data && data[today]) {
           const todayData = data[today];
+          Object.keys(todayData).forEach(curr => {
+            if (pair.name.includes(curr)) {
+              newsList.push(...todayData[curr].map(title => `${curr}: ${title}`));
+            }
+          });
+        }
 
-          const berita1 = todayData[currency1] || [];
-          const berita2 = todayData[currency2] || [];
-
-          const flag = {
-            USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
-            AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭",
-            CNY: "🇨🇳"
-          };
-
-          const html1 = `
-            <p style="margin-top:10px; font-weight:bold;">
-              ${flag[currency1] || "🏳️"} ${currency1}:
-            </p>
-            <ul style="padding-left:18px; margin-top:4px;">
-              ${
-                berita1.length > 0
-                  ? berita1.map(title => `<li>${title}</li>`).join("")
-                  : "<li>Tidak ada berita.</li>"
-              }
-            </ul>
-          `;
-
-          const html2 = `
-            <p style="margin-top:10px; font-weight:bold;">
-              ${flag[currency2] || "🏳️"} ${currency2}:
-            </p>
-            <ul style="padding-left:18px; margin-top:4px;">
-              ${
-                berita2.length > 0
-                  ? berita2.map(title => `<li>${title}</li>`).join("")
-                  : "<li>Tidak ada berita.</li>"
-              }
-            </ul>
-          `;
-
-          newsBox.innerHTML = html1 + html2;
-
+        if (newsList.length > 0) {
+          newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
+            newsList.map(title => `<li>${title}</li>`).join("") +
+            "</ul>";
         } else {
-          newsBox.innerHTML = "Tidak ada data hari ini.";
+          newsBox.innerHTML = "Tidak ada berita penting hari ini.";
         }
       })
       .catch(err => {
@@ -110,14 +93,7 @@ function openPopup(pair) {
         if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
       });
   }, 500);
-}
-
-  
-
-
-
-
-
+} // ✅ AKHIR openPopup
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
