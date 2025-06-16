@@ -7,9 +7,6 @@ function closePopup() {
 }
 
 function openPopup(pair) {
-  // Aktifkan tombol X untuk tutup popup
-  document.querySelector(".close-btn").onclick = closePopup;
-
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
 
@@ -20,16 +17,27 @@ function openPopup(pair) {
   const strength1 = (long / total) * 100;
   const strength2 = (short / total) * 100;
 
-  const todayLocal = new Date().toLocaleDateString('en-GB', { timeZone: 'Asia/Jakarta' }).split('/').reverse().join('-');
+  // ✅ Format tanggal UTC agar cocok dengan key JSON: mm-dd-yyyy
+  const now = new Date();
+  const yyyy = now.getUTCFullYear();
+  const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(now.getUTCDate()).padStart(2, '0');
+  const today = `${mm}-${dd}-${yyyy}`;
+
   const detailTop = `
-    <h2 style="text-align:center; font-size:20px; font-weight:bold; color:white; margin-bottom:16px;">
-      📌 Analisa Mendalam Tanggal ${todayLocal}
-    </h2>
+    <p style="text-align:center; font-size:14px; color:#aaa; margin-bottom:10px;">
+      ${today}
+    </p>
+
     <p style="font-weight:bold; margin-bottom:6px;">📅 Berita Penting Hari Ini:</p>
     <div id="newsBox" style="font-size:13.5px; line-height:1.4em; margin-bottom:16px;">
       ⏳ Mengambil berita...
     </div>
+
     <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
+
+    <p style="font-size:16px; font-weight:bold; color:white; margin-bottom:6px;">📌 Analisa Mendalam Tanggal ${today}</p>
+
     <p style="font-weight:bold; margin-bottom:6px;">Kekuatan Mata Uang:</p>
     <div class="strength-bar">
       <div class="strength-gbp" style="width:${strength1}%"></div>
@@ -38,32 +46,34 @@ function openPopup(pair) {
     <p style="font-size:13px; margin-bottom:16px;">
       ${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp;&nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴
     </p>
+
     <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
+
     <p style="font-weight:bold; margin-bottom:6px;">Analisa:</p>
     <div id="forumAnalysis" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
       (Akan diisi otomatis dari forum)
     </div>
+
     <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
+
     <p style="font-weight:bold; margin-bottom:6px;">Sinyal Hari Ini (${pair.name}):</p>
     <div id="todaySignal" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
       (Sinyal akan ditampilkan di sini)
     </div>
   `;
 
-  const scriptURL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjTDAFavdow2y3e_yFwB8wZpUF2OosTNGQjsvswV2ZDrhT8YvVnlHawFGRsSkhr-wPMEU6t-xkGzorx9OCOsw7aKLEJAz8MmJPeaEMOpnsS_lpiOJDVc8rDCwvFWZOApBAj4FJGTnwOs-Ksm1bqK_CMtgvjLBSkb59pIWeKGPYLa6fKBIHndcQGuDEEKGvNEsAbRgvAAEwfsY0yWtIUJO5HOzYgpGCaO-X5KFTZ5Oz2vTqATgizs6f4GZMWHr5sYqoQ1iNFCcc_xfP2tQa3u7rcLDvpEN6o2kJlRtnU&lib=M4fGUhhgbQOPiFbFecerFPEltF_9kevrg";
+  const scriptURL = "https://script.google.com/macros/s/AKfycbz6lDiYq6a9TtB8HVCJ5VBvV2oBwBwRpRTPyVzRhJfX63456sHoJ24hUMKRYR8yt_mTRA/exec";
 
   document.getElementById('popup').style.display = 'flex';
 
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
-    const todayUTC = new Date().toISOString().slice(0, 10); // untuk fetch data
-
     fetch(scriptURL)
       .then(res => res.json())
       .then(data => {
         const newsBox = document.getElementById("newsBox");
-        const todayData = data?.[todayUTC] || {};
+        const todayData = data?.[today] || {};
         const berita1 = todayData[currency1] || [];
         const berita2 = todayData[currency2] || [];
 
@@ -72,18 +82,35 @@ function openPopup(pair) {
           AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
         };
 
+        function konversiJamGMTkeWIB(jamGMT) {
+          const [hh, mm] = jamGMT.split(':').map(Number);
+          const waktuGMT = new Date(Date.UTC(2000, 0, 1, hh, mm));
+          const waktuWIB = new Date(waktuGMT.getTime() + 7 * 60 * 60 * 1000);
+          return waktuWIB.toTimeString().slice(0, 5); // hh:mm
+        }
+
+        function formatBerita(beritaArray, flagEmoji) {
+          return beritaArray.map(item => {
+            const [judul, jam] = item.split('|');
+            const jamWIB = jam ? konversiJamGMTkeWIB(jam) : "";
+            return `${flagEmoji} • ${jamWIB} ${judul}`.trim();
+          });
+        }
+
         const html = [];
 
         if (berita1.length > 0) {
-          html.push(`<li>${flag[currency1] || "🏳️"} ${currency1} 💬 ${berita1.length} news • ${berita1.join(`</li><li>${flag[currency1]} ${currency1} • `)}</li>`);
+          const formatted1 = formatBerita(berita1, flag[currency1] || "🏳️");
+          html.push(`<li>${formatted1.join(`</li><li>`)}</li>`);
         } else {
-          html.push(`<li>${flag[currency1] || "🏳️"} ${currency1} • Tidak ada berita</li>`);
+          html.push(`<li>${flag[currency1] || "🏳️"} • Tidak ada berita</li>`);
         }
 
         if (berita2.length > 0) {
-          html.push(`<li>${flag[currency2] || "🏳️"} ${currency2} 💬 ${berita2.length} news • ${berita2.join(`</li><li>${flag[currency2]} ${currency2} • `)}</li>`);
+          const formatted2 = formatBerita(berita2, flag[currency2] || "🏳️");
+          html.push(`<li>${formatted2.join(`</li><li>`)}</li>`);
         } else {
-          html.push(`<li>${flag[currency2] || "🏳️"} ${currency2} • Tidak ada berita</li>`);
+          html.push(`<li>${flag[currency2] || "🏳️"} • Tidak ada berita</li>`);
         }
 
         newsBox.innerHTML = `<ul style='padding-left:18px;'>${html.join("")}</ul>`;
@@ -93,7 +120,8 @@ function openPopup(pair) {
         if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
       });
   }, 500);
-} // <--- ini penting, kurung kurawal penutup!
+}
+
 
 
 
