@@ -46,10 +46,9 @@ header {
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-  gap: 10px;
+  gap: 12px; /* ✅ tambah jarak antar kotak */
   padding: 15px;
 }
-
 .box {
   background: linear-gradient(145deg, #1c1c1c, #000);
   border-radius: 15px;
