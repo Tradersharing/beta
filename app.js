@@ -18,7 +18,7 @@ function openPopup(pair) {
   const strength2 = (short / total) * 100;
 
   const now = new Date();
-  const today = now.toISOString().split('T')[0]; // "YYYY-MM-DD" format
+  const today = now.toISOString().slice(0, 10); // Fix format YYYY-MM-DD
 
   const detailTop = `
     <p style="text-align:center; font-size:14px; color:#aaa; margin-bottom:10px;">
@@ -70,6 +70,8 @@ function openPopup(pair) {
       .then(data => {
         const newsBox = document.getElementById("newsBox");
         const todayData = data?.[today] || {};
+        console.log("🟨 Isi berita hari ini:", todayData); // <- Debug info
+
         const berita1 = todayData[currency1] || [];
         const berita2 = todayData[currency2] || [];
         const newsList = [...berita1, ...berita2];
