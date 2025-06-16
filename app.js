@@ -70,8 +70,9 @@ function openPopup(pair) {
         if (data && data[today]) {
           const todayData = data[today];
 
-          const berita1 = todayData[currency1] || [];
-          const berita2 = todayData[currency2] || [];
+          const currency1 = pair.name.slice(0, 3).toUpperCase();
+           const currency2 = pair.name.slice(3, 6).toUpperCase();
+
           const newsList = [...berita1, ...berita2];
 
           if (newsList.length > 0) {
