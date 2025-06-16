@@ -18,7 +18,10 @@ function openPopup(pair) {
   const strength2 = (short / total) * 100;
 
   const now = new Date();
-  const today = now.toISOString().slice(0, 10); // Fix format YYYY-MM-DD
+  const yyyy = now.getUTCFullYear();
+  const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(now.getUTCDate()).padStart(2, '0');
+  const today = `${mm}-${dd}-${yyyy}`;
 
   const detailTop = `
     <p style="text-align:center; font-size:14px; color:#aaa; margin-bottom:10px;">
@@ -58,7 +61,7 @@ function openPopup(pair) {
     </div>
   `;
 
-  const scriptURL = "https://script.google.com/macros/s/AKfycbz6lDiYq6a9TtB8HVCJ5VBvV2oBwBwRpRTPyVzRhJfX63456sHoJ24hUMKRYR8yt_mTRA/exec";
+  const scriptURL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjTDAFavdow2y3e_yFwB8wZpUF2OosTNGQjsvswV2ZDrhT8YvVnlHawFGRsSkhr-wPMEU6t-xkGzorx9OCOsw7aKLEJAz8MmJPeaEMOpnsS_lpiOJDVc8rDCwvFWZOApBAj4FJGTnwOs-Ksm1bqK_CMtgvjLBSkb59pIWeKGPYLa6fKBIHndcQGuDEEKGvNEsAbRgvAAEwfsY0yWtIUJO5HOzYgpGCaO-X5KFTZ5Oz2vTqATgizs6f4GZMWHr5sYqoQ1iNFCcc_xfP2tQa3u7rcLDvpEN6o2kJlRtnU&lib=M4fGUhhgbQOPiFbFecerFPEltF_9kevrg";
 
   document.getElementById('popup').style.display = 'flex';
 
@@ -70,8 +73,6 @@ function openPopup(pair) {
       .then(data => {
         const newsBox = document.getElementById("newsBox");
         const todayData = data?.[today] || {};
-        console.log("🟨 Isi berita hari ini:", todayData); // <- Debug info
-
         const berita1 = todayData[currency1] || [];
         const berita2 = todayData[currency2] || [];
         const newsList = [...berita1, ...berita2];
