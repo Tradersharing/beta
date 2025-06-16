@@ -36,43 +36,36 @@ function openPopup(pair) {
 
   const scriptURL = "https://script.google.com/macros/s/AKfycbxRbK6_gbuGtNQJ_uM_H-jul1Gq-PPsJKKm2W0-ZDmTKRLNt-WPeXfJOS-oWvQqgEKd/exec";
 
-document.getElementById('popup').style.display = 'flex';
+  document.getElementById('popup').style.display = 'flex';
 
-setTimeout(() => {
-  document.getElementById('popupDetails').innerHTML = detailTop;
+  setTimeout(() => {
+    document.getElementById('popupDetails').innerHTML = detailTop;
 
-  fetch(scriptURL)
-    .then(res => res.json())
-    .then(data => {
-      const newsBox = document.getElementById("newsBox");
-      const newsList = [];
+    fetch(scriptURL)
+      .then(res => res.json())
+      .then(data => {
+        const newsBox = document.getElementById("newsBox");
+        const newsList = [];
 
-      if (data[today]) {
-        if (data[today][currency1]) newsList.push(...data[today][currency1]);
-        if (data[today][currency2]) newsList.push(...data[today][currency2]);
-      }
+        if (data[today]) {
+          if (data[today][currency1]) newsList.push(...data[today][currency1]);
+          if (data[today][currency2]) newsList.push(...data[today][currency2]);
+        }
 
-      if (newsList.length > 0) {
-        newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
-          newsList.map(title => `<li>${title}</li>`).join("") +
-          "</ul>";
-      } else {
-        newsBox.innerHTML = "Tidak ada berita penting hari ini.";
-      }
-    })
-    .catch(err => {
-      const box = document.getElementById("newsBox");
-      if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
-    });
-
-}, 50); // Tutup setTimeout
-} // ✅ Tutup fungsi openPopup(pair) ← INI YANG KURANG
-
-function renderGauge(buy, sell) {
-  ...
+        if (newsList.length > 0) {
+          newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
+            newsList.map(title => `<li>${title}</li>`).join("") +
+            "</ul>";
+        } else {
+          newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+        }
+      })
+      .catch(err => {
+        const box = document.getElementById("newsBox");
+        if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+      });
+  }, 50);
 }
-
-
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
@@ -107,6 +100,31 @@ function renderGauge(buy, sell) {
 
   return canvas;
 }
+
+// ✅ BONUS: Loading icon saat page pertama dibuka
+document.addEventListener("DOMContentLoaded", () => {
+  const loader = document.createElement("div");
+  loader.id = "pageLoader";
+  loader.style = `
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #000; color: #fff;
+    display: flex; justify-content: center; align-items: center;
+    z-index: 9999; flex-direction: column;
+    font-family: 'Segoe UI', sans-serif;
+    animation: fadeIn 0.5s ease-in-out;
+  `;
+  loader.innerHTML = `
+    <div style="font-size: 28px;">🎁 Memuat data...</div>
+    <div style="margin-top: 10px;">⏳ Mohon tunggu sebentar</div>
+  `;
+  document.body.appendChild(loader);
+
+  // Hilangkan loader setelah sinyal berhasil diload
+  setTimeout(() => {
+    document.getElementById("pageLoader")?.remove();
+  }, 2000);
+});
 
 const url = "https://myfxbook-proxy.ayulistyanto.workers.dev/?endpoint=/api/get-community-outlook.json?session=9UtvFTG9S31Z4vO1aDW31671626";
 
@@ -151,5 +169,6 @@ async function loadSignals() {
     document.getElementById("signals").innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
   }
 }
+
 loadSignals();
 setInterval(loadSignals, 60000);
