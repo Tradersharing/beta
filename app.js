@@ -17,6 +17,7 @@ function openPopup(pair) {
   const strength1 = (long / total) * 100;
   const strength2 = (short / total) * 100;
 
+  // ✅ Gunakan tanggal UTC, agar cocok dengan data JSON
   const now = new Date();
   const yyyy = now.getUTCFullYear();
   const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
@@ -61,7 +62,7 @@ function openPopup(pair) {
     </div>
   `;
 
-  const scriptURL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjTDAFavdow2y3e_yFwB8wZpUF2OosTNGQjsvswV2ZDrhT8YvVnlHawFGRsSkhr-wPMEU6t-xkGzorx9OCOsw7aKLEJAz8MmJPeaEMOpnsS_lpiOJDVc8rDCwvFWZOApBAj4FJGTnwOs-Ksm1bqK_CMtgvjLBSkb59pIWeKGPYLa6fKBIHndcQGuDEEKGvNEsAbRgvAAEwfsY0yWtIUJO5HOzYgpGCaO-X5KFTZ5Oz2vTqATgizs6f4GZMWHr5sYqoQ1iNFCcc_xfP2tQa3u7rcLDvpEN6o2kJlRtnU&lib=M4fGUhhgbQOPiFbFecerFPEltF_9kevrg";
+  const scriptURL = "https://script.google.com/macros/s/AKfycbz6lDiYq6a9TtB8HVCJ5VBvV2oBwBwRpRTPyVzRhJfX63456sHoJ24hUMKRYR8yt_mTRA/exec";
 
   document.getElementById('popup').style.display = 'flex';
 
