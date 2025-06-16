@@ -105,14 +105,6 @@ setTimeout(() => {
     });
 }, 500);
 
-
-        newsBox.innerHTML = `<ul style='padding-left:18px;'>${html.join("")}</ul>`;
-      })
-      .catch(() => {
-        const box = document.getElementById("newsBox");
-        if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
-      });
-  }, 500);
 }
 
 
