@@ -188,4 +188,7 @@ header {
   margin: 8px 0;      /* ✅ beri jarak atas & bawah */
 }
 
-
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
