@@ -52,60 +52,90 @@ function openPopup(pair) {
       (Akan diisi otomatis dari forum)
     </div>
 
-    <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('active');
+}
 
-    <p style="font-weight:bold; margin-bottom:6px;">Sinyal Hari Ini (${pair.name}):</p>
-    <div id="todaySignal" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
+function closePopup() {
+  document.getElementById('popup').style.display = 'none';
+}
+
+function openPopup(pair) {
+  // Pasang event close button
+  document.querySelector(".close-btn").onclick = closePopup;
+
+  const [long, short] = [parseFloat(pair.longPercentage), parseFloat(pair.shortPercentage)];
+  const currency1 = pair.name.slice(0,3).toUpperCase();
+  const currency2 = pair.name.slice(3,6).toUpperCase();
+  const total = long + short;
+  const [strength1, strength2] = [(long/total)*100, (short/total)*100];
+
+  // Tanggal UTC: yyyy-mm-dd
+  const today = new Date().toISOString().slice(0,10);
+
+  const detailTop = `
+    <h2 style="text-align:center;color:white;margin-bottom:16px;">
+      📌 Analisa Mendalam Tanggal ${today}
+    </h2>
+    <p style="font-weight:bold;margin-bottom:6px;">📅 Berita Penting Hari Ini:</p>
+    <div id="newsBox" style="font-size:13.5px;line-height:1.4em;margin-bottom:16px;">
+      ⏳ Mengambil berita...
+    </div>
+    <hr style="border:none;border-top:1px solid #ccc;margin:16px 0">
+    <p style="font-weight:bold;margin-bottom:6px;">Kekuatan Mata Uang:</p>
+    <div class="strength-bar">
+      <div class="strength-gbp" style="width:${strength1}%"></div>
+      <div class="strength-usd" style="width:${strength2}%"></div>
+    </div>
+    <p style="font-size:13px;margin-bottom:16px;">
+      ${currency1}: ${strength1.toFixed(1)}% 🔵 · ${currency2}: ${strength2.toFixed(1)}% 🔴
+    </p>
+    <hr style="border:none;border-top:1px solid #ccc;margin:16px 0">
+    <p style="font-weight:bold;margin-bottom:6px;">Analisa:</p>
+    <div id="forumAnalysis" style="color:#ccc;font-size:13.5px;line-height:1.4em;">
+      (Akan diisi otomatis dari forum)
+    </div>
+    <hr style="border:none;border-top:1px solid #ccc;margin:16px 0">
+    <p style="font-weight:bold;margin-bottom:6px;">Sinyal Hari Ini (${pair.name}):</p>
+    <div id="todaySignal" style="color:#ccc;font-size:13.5px;line-height:1.4em;">
       (Sinyal akan ditampilkan di sini)
     </div>
   `;
 
   const scriptURL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjTDAFavdow2y3e_yFwB8wZpUF2OosTNGQjsvswV2ZDrhT8YvVnlHawFGRsSkhr-wPMEU6t-xkGzorx9OCOsw7aKLEJAz8MmJPeaEMOpnsS_lpiOJDVc8rDCwvFWZOApBAj4FJGTnwOs-Ksm1bqK_CMtgvjLBSkb59pIWeKGPYLa6fKBIHndcQGuDEEKGvNEsAbRgvAAEwfsY0yWtIUJO5HOzYgpGCaO-X5KFTZ5Oz2vTqATgizs6f4GZMWHr5sYqoQ1iNFCcc_xfP2tQa3u7rcLDvpEN6o2kJlRtnU&lib=M4fGUhhgbQOPiFbFecerFPEltF_9kevrg";
 
-document.getElementById('popup').style.display = 'flex';
-
-setTimeout(() => {
+  document.getElementById('popup').style.display = 'flex';
   document.getElementById('popupDetails').innerHTML = detailTop;
-
-  // ✅ Gunakan UTC tanggal supaya cocok dengan key data dari Apps Script
-  const today = new Date().toISOString().slice(0, 10); // "yyyy-mm-dd"
 
   fetch(scriptURL)
     .then(res => res.json())
     .then(data => {
       const newsBox = document.getElementById("newsBox");
-      const todayData = data?.[today] || {};
+      const todayData = data[today] || {};
       const berita1 = todayData[currency1] || [];
       const berita2 = todayData[currency2] || [];
 
-      const flag = {
-        USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
-        AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
-      };
+      const flag = { USD:"🇺🇸", EUR:"🇪🇺", GBP:"🇬🇧",
+                     JPY:"🇯🇵", AUD:"🇦🇺", NZD:"🇳🇿",
+                     CAD:"🇨🇦", CHF:"🇨🇭", CNY:"🇨🇳" };
 
-      const html = [];
-
-      if (berita1.length > 0) {
-        html.push(`<li>${flag[currency1] || "🏳️"} ${currency1} 💬 ${berita1.length} news • ${berita1.join(`</li><li>${flag[currency1]} ${currency1} • `)}</li>`);
-      } else {
-        html.push(`<li>${flag[currency1] || "🏳️"} ${currency1} • Tidak ada berita</li>`);
+      let html = [];
+      for (let [cur, events] of [[currency1, berita1], [currency2, berita2]]) {
+        if (events.length) {
+          html.push(`<li>${flag[cur] || "🏳️"} ${cur} 💬 ${events.length} news<ul>${events.map(e=>`<li>${e}</li>`).join("")}</ul></li>`);
+        } else {
+          html.push(`<li>${flag[cur] || "🏳️"} ${cur} • Tidak ada berita</li>`);
+        }
       }
 
-      if (berita2.length > 0) {
-        html.push(`<li>${flag[currency2] || "🏳️"} ${currency2} 💬 ${berita2.length} news • ${berita2.join(`</li><li>${flag[currency2]} ${currency2} • `)}</li>`);
-      } else {
-        html.push(`<li>${flag[currency2] || "🏳️"} ${currency2} • Tidak ada berita</li>`);
-      }
-
-      newsBox.innerHTML = `<ul style='padding-left:18px;'>${html.join("")}</ul>`;
+      newsBox.innerHTML = `<ul style="padding-left:18px;margin-top:4px;">${html.join("")}</ul>`;
     })
-    .catch(() => {
-      const box = document.getElementById("newsBox");
-      if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+    .catch(err => {
+      document.getElementById("newsBox").innerHTML = "⚠️ Gagal memuat berita.";
+      console.error(err);
     });
-}, 500);
-
 }
+
 
 
 
