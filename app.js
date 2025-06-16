@@ -118,6 +118,7 @@ function openPopup(pair) {
 
 
 
+
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
   canvas.width = 150;
