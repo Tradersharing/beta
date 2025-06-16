@@ -34,11 +34,12 @@ function openPopup(pair) {
     </div>
   `;
 
-  document.getElementById('popupDetails').innerHTML = detailTop;
-  document.getElementById('popup').style.display = 'flex';
-
-  // ✅ Fetch berita harian dari Google Script kamu
   const scriptURL = "https://script.google.com/macros/s/AKfycbxRbK6_gbuGtNQJ_uM_H-jul1Gq-PPsJKKm2W0-ZDmTKRLNt-WPeXfJOS-oWvQqgEKd/exec";
+
+document.getElementById('popup').style.display = 'flex';
+
+setTimeout(() => {
+  document.getElementById('popupDetails').innerHTML = detailTop;
 
   fetch(scriptURL)
     .then(res => res.json())
@@ -52,15 +53,19 @@ function openPopup(pair) {
       }
 
       if (newsList.length > 0) {
-        newsBox.innerHTML = "<ul style='padding-left:18px;'>" + newsList.map(title => `<li>${title}</li>`).join("") + "</ul>";
+        newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
+          newsList.map(title => `<li>${title}</li>`).join("") +
+          "</ul>";
       } else {
         newsBox.innerHTML = "Tidak ada berita penting hari ini.";
       }
     })
     .catch(err => {
-      document.getElementById("newsBox").innerHTML = "⚠️ Gagal memuat berita.";
+      const box = document.getElementById("newsBox");
+      if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
     });
-}
+
+}, 50);
 
 
 function renderGauge(buy, sell) {
