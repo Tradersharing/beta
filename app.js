@@ -7,12 +7,18 @@ function closePopup() {
 }
 
 function openPopup(pair) {
-  const buy = parseFloat(pair.longPercentage);
-  const sell = parseFloat(pair.shortPercentage);
+  const long = parseFloat(pair.longPercentage);
+  const short = parseFloat(pair.shortPercentage);
+
   const currency1 = pair.name.slice(0, 3).toUpperCase();
   const currency2 = pair.name.slice(3, 6).toUpperCase();
+
+  const total = long + short;
+  const strength1 = (long / total) * 100;
+  const strength2 = (short / total) * 100;
+
   const now = new Date();
-  const today = now.toLocaleDateString('en-US', { timeZone: 'UTC' }).replace(/\//g, '-');
+  const today = now.toISOString().split('T')[0]; // "YYYY-MM-DD" format
 
   const detailTop = `
     <p style="text-align:center; font-size:14px; color:#aaa; margin-bottom:10px;">
@@ -30,11 +36,11 @@ function openPopup(pair) {
 
     <p style="font-weight:bold; margin-bottom:6px;">Kekuatan Mata Uang:</p>
     <div class="strength-bar">
-      <div class="strength-gbp" style="width:${buy}%"></div>
-      <div class="strength-usd" style="width:${sell}%"></div>
+      <div class="strength-gbp" style="width:${strength1}%"></div>
+      <div class="strength-usd" style="width:${strength2}%"></div>
     </div>
     <p style="font-size:13px; margin-bottom:16px;">
-      ${currency1}: ${buy}% 🔵 &nbsp;&nbsp; ${currency2}: ${sell}% 🔴
+      ${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp;&nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴
     </p>
 
     <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
@@ -99,6 +105,7 @@ function openPopup(pair) {
       });
   }, 500);
 }
+
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
