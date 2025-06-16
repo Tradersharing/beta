@@ -17,21 +17,33 @@ function openPopup(pair) {
   const strength1 = (long / total) * 100;
   const strength2 = (short / total) * 100;
 
-  // Tanggal MM-DD-YYYY sesuai zona Asia/Jakarta (GMT+7)
   const now = new Date();
-  const localDate = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
-  const yyyy = localDate.getFullYear();
-  const mm = String(localDate.getMonth() + 1).padStart(2, '0');
-  const dd = String(localDate.getDate()).padStart(2, '0');
+  const yyyy = now.getUTCFullYear();
+  const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(now.getUTCDate()).padStart(2, '0');
   const today = `${mm}-${dd}-${yyyy}`;
 
-  const detailTop = `
-    <div style="width:100%; background:#333; padding:15px; color:white; text-align:center; font-size:16px; font-weight:bold; border-radius:8px;">
-       Analisa ${pair.name} ${today}
-    </div>
+  // ✅ HEADER baru: Analisa Mendalam (PAIR) Tanggal MM-DD-YYYY
+  const header = `
+    <h2 style="
+      text-align:center;
+      font-size:20px;
+      color:white;
+      text-shadow: 1px 1px 2px black;
+      font-weight:bold;
+      margin-bottom:14px;
+    ">
+       Analisa ${pair.name}  ${today}
+    </h2>
+  `;
 
-    <p style="font-weight:bold; margin:10px 0 6px;">📅 Berita Penting Hari Ini:</p>
-    <div id="newsBox" style="font-size:13.5px; line-height:1.5em; margin-bottom:16px;">
+  const detailTop = header + `
+    <p style="font-size:14px; color:#aaa; margin-bottom:10px; text-align:center;">
+      ${today}
+    </p>
+
+    <p style="font-weight:bold; margin-bottom:6px;">📅 Berita Penting Hari Ini:</p>
+    <div id="newsBox" style="font-size:13.5px; line-height:1.6em; margin-bottom:16px;">
       ⏳ Mengambil berita...
     </div>
 
@@ -72,8 +84,7 @@ function openPopup(pair) {
       .then(res => res.json())
       .then(data => {
         const newsBox = document.getElementById("newsBox");
-        const key = `${mm}-${dd}-${yyyy}`; // Cocokkan format dengan data JSON
-        const todayData = data?.[key] || {};
+        const todayData = data?.[today] || {};
         const berita1 = todayData[currency1] || [];
         const berita2 = todayData[currency2] || [];
 
@@ -82,30 +93,36 @@ function openPopup(pair) {
           AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
         };
 
-        function convertToWIB(timeStr) {
-          const [hour, minute] = timeStr.split(":").map(Number);
-          const date = new Date(Date.UTC(1970, 0, 1, hour, minute));
-          const wib = new Date(date.getTime() + 7 * 60 * 60 * 1000);
-          return wib.toTimeString().slice(0, 5); // "HH:MM"
+        // ✅ Konversi jam GMT ke GMT+7
+        function toWIB(jamGMT) {
+          const [h, m] = jamGMT.split(':').map(Number);
+          const date = new Date();
+          date.setUTCHours(h, m, 0, 0);
+          date.setUTCHours(date.getUTCHours() + 7);
+          return String(date.getHours()).padStart(2, '0') + ":" + String(date.getMinutes()).padStart(2, '0');
         }
 
-        function formatNews(arr, cur) {
-          return arr.length > 0
-            ? arr.map(item => {
-                const [judul, jam] = item.split("|");
-                const jamWIB = convertToWIB(jam);
-                return `<li>${flag[cur] || "🏳️"} ${cur} • ${jamWIB} WIB • ${judul}</li>`;
-              }).join("")
-            : `<li>${flag[cur] || "🏳️"} ${cur} • Tidak ada berita</li>`;
+        const list = [];
+
+        if (berita1.length > 0) {
+          berita1.forEach(item => {
+            const [judul, jam] = item.split('|');
+            const jamWIB = toWIB(jam);
+            list.push(`• ${jamWIB} ${flag[currency1] || "🏳️"} ${currency1} : ${judul}`);
+          });
         }
 
-        const html = `
-          <ul style="padding-left:18px; margin:0;">
-            ${formatNews(berita1, currency1)}
-            ${formatNews(berita2, currency2)}
-          </ul>
-        `;
-        newsBox.innerHTML = html;
+        if (berita2.length > 0) {
+          berita2.forEach(item => {
+            const [judul, jam] = item.split('|');
+            const jamWIB = toWIB(jam);
+            list.push(`• ${jamWIB} ${flag[currency2] || "🏳️"} ${currency2} : ${judul}`);
+          });
+        }
+
+        newsBox.innerHTML = list.length > 0
+          ? `<div style="padding-left:10px;">${list.join('<br>')}</div>`
+          : "Tidak ada berita penting hari ini.";
       })
       .catch(() => {
         const box = document.getElementById("newsBox");
