@@ -193,9 +193,25 @@ async function loadSignals() {
   try {
     const res = await fetch(url);
     const data = await res.json();
-    const order = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD"];
-    const sorted = [...data.symbols].sort((a, b) => order.indexOf(a.name) - order.indexOf(b.name));
-    document.getElementById("signals").innerHTML = "";
+
+    // 🔁 Pisahkan mayor & non-mayor
+    const majorPairs = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD"];
+    const majors = [];
+    const others = [];
+
+    data.symbols.forEach(pair => {
+      if (majorPairs.includes(pair.name)) {
+        majors.push(pair);
+      } else {
+        others.push(pair);
+      }
+    });
+
+    const sorted = [...majors, ...others]; // Mayor dulu, lalu sisanya
+
+    const container = document.getElementById("signals");
+    container.innerHTML = "";
+
     sorted.forEach(pair => {
       const buy = parseFloat(pair.longPercentage);
       const sell = parseFloat(pair.shortPercentage);
@@ -204,6 +220,7 @@ async function loadSignals() {
 
       const box = document.createElement("div");
       box.className = "box";
+      box.dataset.pair = pair.name.toLowerCase(); // Untuk pencarian
       box.onclick = () => openPopup(pair);
 
       const name = document.createElement("div");
@@ -224,12 +241,26 @@ async function loadSignals() {
       box.appendChild(gauge);
       box.appendChild(val);
       box.appendChild(signal);
-      document.getElementById("signals").appendChild(box);
+      container.appendChild(box);
     });
+
+    // 🔍 Filter pair saat user mengetik
+    const search = document.getElementById("pairSearch");
+    if (search) {
+      search.addEventListener("input", () => {
+        const term = search.value.toLowerCase();
+        document.querySelectorAll("#signals .box").forEach(box => {
+          const match = box.dataset.pair.includes(term);
+          box.style.display = match ? "" : "none";
+        });
+      });
+    }
+
   } catch (e) {
     document.getElementById("signals").innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
   }
 }
+
 
 loadSignals();
 setInterval(loadSignals, 60000);
