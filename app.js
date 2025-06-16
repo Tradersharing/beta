@@ -11,10 +11,19 @@ function openPopup(pair) {
   const sell = parseFloat(pair.shortPercentage);
   const currency1 = pair.name.slice(0, 3);
   const currency2 = pair.name.slice(3, 6);
-  const today = new Date().toISOString().slice(0, 10); // format: YYYY-MM-DD
+
+  // ✅ Format MM-DD-YYYY sesuai data dari Google Script
+  const now = new Date();
+  const today = now.toLocaleDateString('en-US', { timeZone: 'UTC' }).replace(/\//g, '-');
 
   const detailTop = `
-    <h2>Analisa Pair ${pair.name} - ${today}</h2>
+    <h2 style="text-align:center; font-size:22px; margin-bottom:5px;">
+      Analisa Pair ${pair.name}
+    </h2>
+    <p style="text-align:center; font-size:14px; color:#aaa; margin-top:0; margin-bottom:15px;">
+      ${today}
+    </p>
+
     <p><b>Kekuatan Mata Uang:</b></p>
     <div class="strength-bar">
       <div class="strength-gbp" style="width:${buy}%"></div>
@@ -22,8 +31,10 @@ function openPopup(pair) {
     </div>
     <p style="font-size:13px;">${currency1}: ${buy}% 🔵 &nbsp;&nbsp; ${currency2}: ${sell}% 🔴</p>
 
-    <p><b>📅 Berita Penting Hari Ini:</b></p>
-    <div id="newsBox">⏳ Mengambil berita...</div>
+    <p style="margin-top:18px;"><b>📅 Berita Penting Hari Ini:</b></p>
+    <div id="newsBox" style="font-size:13.5px; line-height:1.4em; margin-bottom:10px; padding-left:4px;">
+      ⏳ Mengambil berita...
+    </div>
 
     <hr style="margin: 15px 0; border: none; border-top: 1px solid #555;">
     <div class="chat-box">
@@ -34,7 +45,7 @@ function openPopup(pair) {
     </div>
   `;
 
-  const scriptURL = "https://script.google.com/macros/s/AKfycbxRbK6_gbuGtNQJ_uM_H-jul1Gq-PPsJKKm2W0-ZDmTKRLNt-WPeXfJOS-oWvQqgEKd/exec";
+  const scriptURL = "https://script.google.com/macros/s/AKfycbz6lDiYq6a9TtB8HVCJ5VBvV2oBwBwRpRTPyVzRhJfX63456sHoJ24hUMKRYR8yt_mTRA/exec";
 
   document.getElementById('popup').style.display = 'flex';
 
@@ -66,6 +77,7 @@ function openPopup(pair) {
       });
   }, 50);
 }
+
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
