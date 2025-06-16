@@ -79,14 +79,27 @@ function openPopup(pair) {
             }
           });
         }
+        const berita1 = todayData[currency1] || [];
+const berita2 = todayData[currency2] || [];
+const newsList = [...berita1, ...berita2];
 
-        if (newsList.length > 0) {
-          newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
-            newsList.map(title => `<li>${title}</li>`).join("") +
-            "</ul>";
-        } else {
-          newsBox.innerHTML = "Tidak ada berita penting hari ini.";
-        }
+if (newsList.length > 0) {
+  newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
+    newsList.map((title, i) => {
+      const curr = i < berita1.length ? currency1 : currency2;
+      const flag = {
+        USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
+        AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭",
+        CNY: "🇨🇳"
+      }[curr] || "🏳️";
+      return `<li>${flag} • ${title}</li>`;
+    }).join("") +
+    "</ul>";
+} else {
+  newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+}
+
+        
       })
       .catch(err => {
         const box = document.getElementById("newsBox");
