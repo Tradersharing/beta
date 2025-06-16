@@ -10,12 +10,12 @@ body {
 header {
   background: #000044;
   color: #fff;
-  padding: 15px;
+  padding: 15px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.title { font-weight: bold; font-size: 22px; }
+.title { font-weight: bold; font-size: 22px; display: flex; flex-direction: row; }
 .title span.blue { color: #00bfff; }
 .title span.red { color: #ff3030; }
 .subtitle { font-size: 13px; color: #ccc; }
@@ -41,29 +41,34 @@ header {
   margin-bottom: 15px;
   font-weight: bold;
 }
+
+/* ✅ RESPONSIVE GRID LAYOUT */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 15px;
   padding: 20px;
 }
+
 .box {
   background: linear-gradient(145deg, #1c1c1c, #000);
   border-radius: 15px;
-  padding: 20px 10px;
+  padding: 15px 10px;
+  height: 160px;  /* ✅ Lebih panjang ke bawah */
   box-shadow: 4px 4px 10px #111, -4px -4px 10px #222;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 .box:hover { box-shadow: 0 0 20px #FFD700; }
-.pair { font-weight: bold; font-size: 16px; color: #FFD700; }
-.value { margin-top: 5px; font-size: 13px; color: #ccc; }
-.signal { margin-top: 8px; font-weight: bold; font-size: 14px; }
+.pair { font-weight: bold; font-size: 15px; color: #FFD700; }
+.value { margin-top: 8px; font-size: 13px; color: #ccc; }
+.signal { margin-top: 10px; font-weight: bold; font-size: 14px; }
 .buy { color: #00ff00; }
 .sell { color: #ff4444; }
 .wait { color: #999; }
 
+/* ✅ POPUP DILEBARKAN */
 .popup {
   display: none;
   position: fixed;
@@ -77,8 +82,8 @@ header {
 .popup-content {
   background: linear-gradient(to bottom right, #111, #1e1e1e);
   padding: 30px;
-  width: 80%;
-  max-width: 700px;
+  width: 90%;
+  max-width: 750px;  /* ✅ Lebih lebar */
   color: #eee;
   font-family: 'Roboto Condensed', sans-serif;
   border-radius: 16px;
@@ -128,7 +133,53 @@ header {
 .strength-usd {
   background: #ff3030;
 }
+
+/* ✅ CHAT STYLE */
+.chat-box {
+  margin-top: 10px;
+}
+.chat-box input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  border: none;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 14px;
+}
+.chat-box button {
+  background: #FFD700;
+  border: none;
+  padding: 10px 16px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Roboto Condensed', sans-serif;
+}
+.chat-box button:hover {
+  background: #ffaa00;
+}
+.ai-response {
+  margin-top: 10px;
+  font-size: 14px;
+  background: #222;
+  padding: 10px;
+  border-radius: 6px;
+  color: #ccc;
+  white-space: pre-wrap;
+}
+
+/* ✅ ANIMASI */
 @keyframes fadeIn {
   from { opacity: 0; transform: scale(0.9); }
   to { opacity: 1; transform: scale(1); }
+}
+
+/* ✅ FIX HEADER TETAP KIRI SAAT ZOOM OUT */
+@media screen and (max-width: 768px) {
+  header {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
 }
