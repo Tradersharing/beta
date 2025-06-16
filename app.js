@@ -6,55 +6,7 @@ function closePopup() {
   document.getElementById('popup').style.display = 'none';
 }
 
-function openPopup(pair) {
-  const long = parseFloat(pair.longPercentage);
-  const short = parseFloat(pair.shortPercentage);
 
-  const currency1 = pair.name.slice(0, 3).toUpperCase();
-  const currency2 = pair.name.slice(3, 6).toUpperCase();
-
-  const total = long + short;
-  const strength1 = (long / total) * 100;
-  const strength2 = (short / total) * 100;
-
-  const now = new Date();
-  const today = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Jakarta' }).split('/').reverse().join('-'); // yyyy-mm-dd
-
-  const detailTop = `
-    <h2 style="text-align:center; font-size:20px; font-weight:bold; color:white; margin-bottom:16px;">
-      📌 Analisa Mendalam Tanggal ${today}
-    </h2>
-
-    <p style="font-weight:bold; margin-bottom:6px;">📅 Berita Penting Hari Ini:</p>
-    <div id="newsBox" style="font-size:13.5px; line-height:1.4em; margin-bottom:16px;">
-      ⏳ Mengambil berita...
-    </div>
-
-    <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
-
-    <p style="font-weight:bold; margin-bottom:6px;">Kekuatan Mata Uang:</p>
-    <div class="strength-bar">
-      <div class="strength-gbp" style="width:${strength1}%"></div>
-      <div class="strength-usd" style="width:${strength2}%"></div>
-    </div>
-    <p style="font-size:13px; margin-bottom:16px;">
-      ${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp;&nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴
-    </p>
-
-    <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
-
-    <p style="font-weight:bold; margin-bottom:6px;">Analisa:</p>
-    <div id="forumAnalysis" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
-      (Akan diisi otomatis dari forum)
-    </div>
-
-    <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
-
-    <p style="font-weight:bold; margin-bottom:6px;">Sinyal Hari Ini (${pair.name}):</p>
-    <div id="todaySignal" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
-      (Sinyal akan ditampilkan di sini)
-    </div>
-  `;
 function openPopup(pair) {
   // Aktifkan tombol X untuk tutup popup
   document.querySelector(".close-btn").onclick = closePopup;
