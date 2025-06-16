@@ -62,37 +62,49 @@ function openPopup(pair) {
 
   const scriptURL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjTDAFavdow2y3e_yFwB8wZpUF2OosTNGQjsvswV2ZDrhT8YvVnlHawFGRsSkhr-wPMEU6t-xkGzorx9OCOsw7aKLEJAz8MmJPeaEMOpnsS_lpiOJDVc8rDCwvFWZOApBAj4FJGTnwOs-Ksm1bqK_CMtgvjLBSkb59pIWeKGPYLa6fKBIHndcQGuDEEKGvNEsAbRgvAAEwfsY0yWtIUJO5HOzYgpGCaO-X5KFTZ5Oz2vTqATgizs6f4GZMWHr5sYqoQ1iNFCcc_xfP2tQa3u7rcLDvpEN6o2kJlRtnU&lib=M4fGUhhgbQOPiFbFecerFPEltF_9kevrg";
 
-  document.getElementById('popup').style.display = 'flex';
+document.getElementById('popup').style.display = 'flex';
 
-  setTimeout(() => {
-    document.getElementById('popupDetails').innerHTML = detailTop;
+setTimeout(() => {
+  document.getElementById('popupDetails').innerHTML = detailTop;
 
-    fetch(scriptURL)
-      .then(res => res.json())
-      .then(data => {
-        const newsBox = document.getElementById("newsBox");
-        const todayData = data?.[today] || {};
-        const berita1 = todayData[currency1] || [];
-        const berita2 = todayData[currency2] || [];
+  // ✅ Gunakan UTC tanggal supaya cocok dengan key data dari Apps Script
+  const today = new Date().toISOString().slice(0, 10); // "yyyy-mm-dd"
 
-        const flag = {
-          USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
-          AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
-        };
+  fetch(scriptURL)
+    .then(res => res.json())
+    .then(data => {
+      const newsBox = document.getElementById("newsBox");
+      const todayData = data?.[today] || {};
+      const berita1 = todayData[currency1] || [];
+      const berita2 = todayData[currency2] || [];
 
-        const html = [];
+      const flag = {
+        USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
+        AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
+      };
 
-        if (berita1.length > 0) {
-          html.push(`<li>${flag[currency1] || "🏳️"} ${currency1} 💬 ${berita1.length} news • ${berita1.join(`</li><li>${flag[currency1]} ${currency1} • `)}</li>`);
-        } else {
-          html.push(`<li>${flag[currency1] || "🏳️"} ${currency1} • Tidak ada berita</li>`);
-        }
+      const html = [];
 
-        if (berita2.length > 0) {
-          html.push(`<li>${flag[currency2] || "🏳️"} ${currency2} 💬 ${berita2.length} news • ${berita2.join(`</li><li>${flag[currency2]} ${currency2} • `)}</li>`);
-        } else {
-          html.push(`<li>${flag[currency2] || "🏳️"} ${currency2} • Tidak ada berita</li>`);
-        }
+      if (berita1.length > 0) {
+        html.push(`<li>${flag[currency1] || "🏳️"} ${currency1} 💬 ${berita1.length} news • ${berita1.join(`</li><li>${flag[currency1]} ${currency1} • `)}</li>`);
+      } else {
+        html.push(`<li>${flag[currency1] || "🏳️"} ${currency1} • Tidak ada berita</li>`);
+      }
+
+      if (berita2.length > 0) {
+        html.push(`<li>${flag[currency2] || "🏳️"} ${currency2} 💬 ${berita2.length} news • ${berita2.join(`</li><li>${flag[currency2]} ${currency2} • `)}</li>`);
+      } else {
+        html.push(`<li>${flag[currency2] || "🏳️"} ${currency2} • Tidak ada berita</li>`);
+      }
+
+      newsBox.innerHTML = `<ul style='padding-left:18px;'>${html.join("")}</ul>`;
+    })
+    .catch(() => {
+      const box = document.getElementById("newsBox");
+      if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+    });
+}, 500);
+
 
         newsBox.innerHTML = `<ul style='padding-left:18px;'>${html.join("")}</ul>`;
       })
