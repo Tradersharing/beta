@@ -11,7 +11,6 @@ function openPopup(pair) {
   const sell = parseFloat(pair.shortPercentage);
   const currency1 = pair.name.slice(0, 3).toUpperCase();
   const currency2 = pair.name.slice(3, 6).toUpperCase();
-
   const now = new Date();
   const today = now.toLocaleDateString('en-US', { timeZone: 'UTC' }).replace(/\//g, '-');
 
@@ -28,6 +27,7 @@ function openPopup(pair) {
     <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
 
     <p style="font-size:16px; font-weight:bold; color:white; margin-bottom:6px;">📌 Analisa Mendalam Tanggal ${today}</p>
+
     <p style="font-weight:bold; margin-bottom:6px;">Kekuatan Mata Uang:</p>
     <div class="strength-bar">
       <div class="strength-gbp" style="width:${buy}%"></div>
@@ -53,6 +53,7 @@ function openPopup(pair) {
   `;
 
   const scriptURL = "https://script.google.com/macros/s/AKfycbz6lDiYq6a9TtB8HVCJ5VBvV2oBwBwRpRTPyVzRhJfX63456sHoJ24hUMKRYR8yt_mTRA/exec";
+
   document.getElementById('popup').style.display = 'flex';
 
   setTimeout(() => {
@@ -62,25 +63,27 @@ function openPopup(pair) {
       .then(res => res.json())
       .then(data => {
         const newsBox = document.getElementById("newsBox");
-        const berita1 = data[today]?.[currency1] || [];
-        const berita2 = data[today]?.[currency2] || [];
-
+        const todayData = data?.[today] || {};
+        const berita1 = todayData[currency1] || [];
+        const berita2 = todayData[currency2] || [];
         const newsList = [...berita1, ...berita2];
+
+        const flag = {
+          USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
+          AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
+        };
+
         if (newsList.length > 0) {
           const html = [];
-          const flag = {
-            USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
-            AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
-          };
 
           if (berita1.length > 0) {
-            html.push(`<li>${flag[currency1] || "🏳️"} • ${berita1.join('</li><li>' + flag[currency1] + ' • ')}</li>`);
+            html.push(`<li>${flag[currency1] || "🏳️"} • ${berita1.join(`</li><li>${flag[currency1]} • `)}</li>`);
           } else {
             html.push(`<li>${flag[currency1] || "🏳️"} • Tidak ada berita</li>`);
           }
 
           if (berita2.length > 0) {
-            html.push(`<li>${flag[currency2] || "🏳️"} • ${berita2.join('</li><li>' + flag[currency2] + ' • ')}</li>`);
+            html.push(`<li>${flag[currency2] || "🏳️"} • ${berita2.join(`</li><li>${flag[currency2]} • `)}</li>`);
           } else {
             html.push(`<li>${flag[currency2] || "🏳️"} • Tidak ada berita</li>`);
           }
@@ -94,7 +97,7 @@ function openPopup(pair) {
         const box = document.getElementById("newsBox");
         if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
       });
-  }, 400);
+  }, 500);
 }
 
 function renderGauge(buy, sell) {
