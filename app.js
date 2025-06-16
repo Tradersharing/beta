@@ -73,6 +73,15 @@ function openPopup(pair) {
     if (data && data[today]) {
       const todayData = data[today];
 
+      
+      fetch(scriptURL)
+  .then(res => res.json())
+  .then(data => {
+    const newsBox = document.getElementById("newsBox");
+
+    if (data && data[today]) {
+      const todayData = data[today];
+
       const berita1 = todayData[currency1] || [];
       const berita2 = todayData[currency2] || [];
       const newsList = [...berita1, ...berita2];
@@ -91,7 +100,6 @@ function openPopup(pair) {
       } else {
         newsBox.innerHTML = "Tidak ada berita penting hari ini.";
       }
-
     } else {
       newsBox.innerHTML = "Tidak ada data hari ini.";
     }
@@ -100,6 +108,7 @@ function openPopup(pair) {
     const box = document.getElementById("newsBox");
     if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
   });
+
 
 
 function renderGauge(buy, sell) {
