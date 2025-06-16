@@ -102,31 +102,32 @@ const detailTop = `
     document.getElementById('popupDetails').innerHTML = detailTop;
 
     fetch(scriptURL)
-      .then(res => res.json())
-      .then(data => {
-        const newsBox = document.getElementById("newsBox");
-        const newsList = [];
+  .then(res => res.json())
+  .then(data => {
+    const newsBox = document.getElementById("newsBox");
+    const newsList = [];
 
-        if (data[today]) {
-          if (data[today][currency1]) newsList.push(...data[today][currency1]);
-          if (data[today][currency2]) newsList.push(...data[today][currency2]);
+    if (data && data[today]) {
+      const todayData = data[today];
+      Object.keys(todayData).forEach(curr => {
+        if (pair.name.includes(curr)) {
+          newsList.push(...todayData[curr].map(title => `${curr}: ${title}`));
         }
-
-        if (newsList.length > 0) {
-          newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
-            newsList.map(title => `<li>${title}</li>`).join("") +
-            "</ul>";
-        } else {
-          newsBox.innerHTML = "Tidak ada berita penting hari ini.";
-        }
-      })
-      .catch(err => {
-        const box = document.getElementById("newsBox");
-        if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
       });
-  }, 50);
-}
+    }
 
+    if (newsList.length > 0) {
+      newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
+        newsList.map(title => `<li>${title}</li>`).join("") +
+        "</ul>";
+    } else {
+      newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+    }
+  })
+  .catch(err => {
+    const box = document.getElementById("newsBox");
+    if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+  });
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
