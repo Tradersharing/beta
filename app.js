@@ -65,7 +65,13 @@ setTimeout(() => {
       if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
     });
 
-}, 50);
+}, 50); // Tutup setTimeout
+} // ✅ Tutup fungsi openPopup(pair) ← INI YANG KURANG
+
+function renderGauge(buy, sell) {
+  ...
+}
+
 
 
 function renderGauge(buy, sell) {
