@@ -109,26 +109,29 @@ const detailTop = `
 
     if (data && data[today]) {
       const todayData = data[today];
-      Object.keys(todayData).forEach(curr => {
-        if (pair.name.includes(curr)) {
-          newsList.push(...todayData[curr].map(title => `${curr}: ${title}`));
-        }
-      });
-    }
 
-    if (newsList.length > 0) {
-      newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
-        newsList.map(title => `<li>${title}</li>`).join("") +
-        "</ul>";
+      // ✅ Tambahan: gabungkan currency1 dan currency2
+      const berita1 = todayData[currency1] || [];
+      const berita2 = todayData[currency2] || [];
+      const allNews = [...berita1, ...berita2];
+
+      if (allNews.length > 0) {
+        newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
+          allNews.map(title => `<li>${title}</li>`).join("") +
+          "</ul>";
+      } else {
+        newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+      }
+
     } else {
-      newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+      newsBox.innerHTML = "Tidak ada data hari ini.";
     }
   })
   .catch(err => {
     const box = document.getElementById("newsBox");
     if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
-  });
-
+  })
+    
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
   canvas.width = 150;
