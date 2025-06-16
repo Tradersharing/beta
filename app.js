@@ -16,13 +16,62 @@ function openPopup(pair) {
   const now = new Date();
   const today = now.toLocaleDateString('en-US', { timeZone: 'UTC' }).replace(/\//g, '-');
 
-  const detailTop = `
-    <h2 style="text-align:center; font-size:22px; margin-bottom:5px;">
-      Analisa Pair ${pair.name}
-    </h2>
-    <p style="text-align:center; font-size:14px; color:#aaa; margin-top:0; margin-bottom:15px;">
-      ${today}
-    </p>
+const detailTop = `
+  <p style="text-align:center; font-size:14px; color:#aaa; margin-bottom:10px;">
+    ${today}
+  </p>
+
+  <p style="font-weight:bold; margin-bottom:6px;">📅 Berita Penting Hari Ini:</p>
+  <div id="newsBox" style="font-size:13.5px; line-height:1.4em; margin-bottom:16px;">
+    ⏳ Mengambil berita...
+  </div>
+
+  <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
+
+  <p style="font-weight:bold; margin-bottom:6px;">Kekuatan Mata Uang:</p>
+  <div class="strength-bar">
+    <div class="strength-gbp" style="width:${buy}%"></div>
+    <div class="strength-usd" style="width:${sell}%"></div>
+  </div>
+  <p style="font-size:13px; margin-bottom:16px;">
+    ${currency1}: ${buy}% 🔵 &nbsp;&nbsp; ${currency2}: ${sell}% 🔴
+  </p>
+
+  <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
+
+  <p style="font-weight:bold; margin-bottom:6px;">Analisa:</p>
+  <div id="forumAnalysis" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
+    (Akan diisi otomatis dari forum)
+  </div>
+
+  <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
+
+  <p style="font-weight:bold; margin-bottom:6px;">Sinyal Hari Ini (${pair.name}):</p>
+  <div id="todaySignal" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
+    (Sinyal akan ditampilkan di sini)
+  </div>
+
+  <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
+`;
+
+
+  <p style="font-weight:bold; margin-bottom:6px;">Analisa:</p>
+  <div id="forumAnalysis" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
+    (Akan diisi otomatis dari forum)
+  </div>
+
+  <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
+
+  <p style="font-weight:bold; margin-bottom:6px;">Sinyal Hari Ini (${pair.name}):</p>
+  <div id="todaySignal" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
+    (Sinyal akan ditampilkan di sini)
+  </div>
+
+  <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
+`;
+
+
+    
 
     <p><b>Kekuatan Mata Uang:</b></p>
     <div class="strength-bar">
