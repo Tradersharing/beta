@@ -45,16 +45,16 @@ header {
 /* ✅ RESPONSIVE GRID LAYOUT */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-  gap: 15px;
-  padding: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 10px;
+  padding: 15px;
 }
 
 .box {
   background: linear-gradient(145deg, #1c1c1c, #000);
   border-radius: 15px;
-  padding: 15px 10px;
-  height: 160px;  /* ✅ Lebih panjang ke bawah */
+  padding: 12px 8px;
+  height: 200px;  /* ✅ Lebih panjang ke bawah */
   box-shadow: 4px 4px 10px #111, -4px -4px 10px #222;
   text-align: center;
   cursor: pointer;
