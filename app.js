@@ -26,8 +26,8 @@ function openPopup(pair) {
   const today = `${mm}-${dd}-${yyyy}`;
 
   const detailTop = `
-    <div style="width:100%; background:#333; padding:10px; color:white; text-align:center; font-size:16px; font-weight:bold; border-radius:8px;">
-      📌 Analisa Mendalam (${pair.name}) Tanggal ${today}
+    <div style="width:100%; background:#333; padding:15px; color:white; text-align:center; font-size:16px; font-weight:bold; border-radius:8px;">
+       Analisa ${pair.name} ${today}
     </div>
 
     <p style="font-weight:bold; margin:10px 0 6px;">📅 Berita Penting Hari Ini:</p>
