@@ -9,24 +9,59 @@ function closePopup() {
 function openPopup(pair) {
   const buy = parseFloat(pair.longPercentage);
   const sell = parseFloat(pair.shortPercentage);
-  const detail = `
-    <h2>Analisa Pair ${pair.name}</h2>
-    <p><b>News Hari Ini:</b></p>
-    <p>🇬🇧 GBP: CPI dirilis 14:30 WIB (Impact: Tinggi)</p>
-    <p>🇺🇸 USD: Tidak ada berita penting hari ini</p>
+  const currency1 = pair.name.slice(0, 3);
+  const currency2 = pair.name.slice(3, 6);
+  const today = new Date().toISOString().slice(0, 10); // format: YYYY-MM-DD
 
+  const detailTop = `
+    <h2>Analisa Pair ${pair.name} - ${today}</h2>
     <p><b>Kekuatan Mata Uang:</b></p>
     <div class="strength-bar">
       <div class="strength-gbp" style="width:${buy}%"></div>
       <div class="strength-usd" style="width:${sell}%"></div>
     </div>
-    <p style="font-size:13px;">GBP: ${buy}% 🔵 &nbsp;&nbsp; USD: ${sell}% 🔴</p>
+    <p style="font-size:13px;">${currency1}: ${buy}% 🔵 &nbsp;&nbsp; ${currency2}: ${sell}% 🔴</p>
 
-    <p><b>Sinyal Harian:</b> <span style="color:${buy > sell ? '#00ff00' : '#ff4444'};"><b>${buy > sell ? 'BUY' : 'SELL'}</b></span></p>
+    <p><b>📅 Berita Penting Hari Ini:</b></p>
+    <div id="newsBox">⏳ Mengambil berita...</div>
+
+    <hr style="margin: 15px 0; border: none; border-top: 1px solid #555;">
+    <div class="chat-box">
+      <p style="font-size:14px; color:#ccc;">❓Tanya seputar <b>${pair.name}</b> langsung ke AI Forex:</p>
+      <input type="text" id="userInput" placeholder="Tulis pertanyaan forex..." />
+      <button onclick="sendToAI('${pair.name}', ${buy}, ${sell})">Kirim</button>
+      <div id="aiResponse" class="ai-response"></div>
+    </div>
   `;
-  document.getElementById('popupDetails').innerHTML = detail;
+
+  document.getElementById('popupDetails').innerHTML = detailTop;
   document.getElementById('popup').style.display = 'flex';
+
+  // ✅ Fetch berita harian dari Google Script kamu
+  const scriptURL = "https://script.google.com/macros/s/AKfycbxRbK6_gbuGtNQJ_uM_H-jul1Gq-PPsJKKm2W0-ZDmTKRLNt-WPeXfJOS-oWvQqgEKd/exec";
+
+  fetch(scriptURL)
+    .then(res => res.json())
+    .then(data => {
+      const newsBox = document.getElementById("newsBox");
+      const newsList = [];
+
+      if (data[today]) {
+        if (data[today][currency1]) newsList.push(...data[today][currency1]);
+        if (data[today][currency2]) newsList.push(...data[today][currency2]);
+      }
+
+      if (newsList.length > 0) {
+        newsBox.innerHTML = "<ul style='padding-left:18px;'>" + newsList.map(title => `<li>${title}</li>`).join("") + "</ul>";
+      } else {
+        newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+      }
+    })
+    .catch(err => {
+      document.getElementById("newsBox").innerHTML = "⚠️ Gagal memuat berita.";
+    });
 }
+
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
