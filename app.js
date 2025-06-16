@@ -9,8 +9,8 @@ function closePopup() {
 function openPopup(pair) {
   const buy = parseFloat(pair.longPercentage);
   const sell = parseFloat(pair.shortPercentage);
-  const currency1 = pair.name.slice(0, 3);
-  const currency2 = pair.name.slice(3, 6);
+  const currency1 = pair.name.slice(0, 3).toUpperCase();
+  const currency2 = pair.name.slice(3, 6).toUpperCase();
   const now = new Date();
   const today = now.toLocaleDateString('en-US', { timeZone: 'UTC' }).replace(/\//g, '-');
 
@@ -63,40 +63,44 @@ function openPopup(pair) {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
     fetch(scriptURL)
-  .then(res => res.json())
-  .then(data => {
-    const newsBox = document.getElementById("newsBox");
+      .then(res => res.json())
+      .then(data => {
+        const newsBox = document.getElementById("newsBox");
 
-    if (data && data[today]) {
-      const todayData = data[today];
+        if (data && data[today]) {
+          const todayData = data[today];
 
-      const berita1 = todayData[currency1] || [];
-      const berita2 = todayData[currency2] || [];
-      const newsList = [...berita1, ...berita2];
+          const berita1 = todayData[currency1] || [];
+          const berita2 = todayData[currency2] || [];
+          const newsList = [...berita1, ...berita2];
 
-      if (newsList.length > 0) {
-        newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
-          newsList.map((title, i) => {
-            const curr = i < berita1.length ? currency1 : currency2;
-            const flag = {
-              USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
-              AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭",
-              CNY: "🇨🇳"
-            }[curr] || "🏳️";
-            return `<li>${flag} • ${title}</li>`;
-          }).join("") +
-          "</ul>";
-      } else {
-        newsBox.innerHTML = "Tidak ada berita penting hari ini.";
-      }
-    } else {
-      newsBox.innerHTML = "Tidak ada data hari ini.";
-    }
-  })
-  .catch(err => {
-    const box = document.getElementById("newsBox");
-    if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
-  });
+          if (newsList.length > 0) {
+            newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
+              newsList.map((title, i) => {
+                const curr = i < berita1.length ? currency1 : currency2;
+                const flag = {
+                  USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
+                  AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭",
+                  CNY: "🇨🇳"
+                }[curr] || "🏳️";
+                return `<li>${flag} • ${title}</li>`;
+              }).join("") +
+              "</ul>";
+          } else {
+            newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+          }
+
+        } else {
+          newsBox.innerHTML = "Tidak ada data hari ini.";
+        }
+      })
+      .catch(err => {
+        const box = document.getElementById("newsBox");
+        if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+      });
+  }, 500);
+}
+
 
 
 
