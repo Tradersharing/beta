@@ -63,42 +63,59 @@ function openPopup(pair) {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
     fetch(scriptURL)
-      .then(res => res.json())
-      .then(data => {
-        const newsBox = document.getElementById("newsBox");
+  .then(res => res.json())
+  .then(data => {
+    const newsBox = document.getElementById("newsBox");
 
-        if (data && data[today]) {
-          const todayData = data[today];
+    if (data && data[today]) {
+      const todayData = data[today];
 
-          const berita1 = todayData[currency1] || [];
-          const berita2 = todayData[currency2] || [];
-          const newsList = [...berita1, ...berita2];
+      const berita1 = todayData[currency1] || [];
+      const berita2 = todayData[currency2] || [];
 
-          if (newsList.length > 0) {
-            newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
-              newsList.map((title, i) => {
-                const curr = i < berita1.length ? currency1 : currency2;
-                const flag = {
-                  USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
-                  AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭",
-                  CNY: "🇨🇳"
-                }[curr] || "🏳️";
-                return `<li>${flag} • ${title}</li>`;
-              }).join("") +
-              "</ul>";
-          } else {
-            newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+      const flag = {
+        USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
+        AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭",
+        CNY: "🇨🇳"
+      };
+
+      const html1 = `
+        <p style="margin-top:10px; font-weight:bold;">
+          ${flag[currency1] || "🏳️"} ${currency1}:
+        </p>
+        <ul style="padding-left:18px; margin-top:4px;">
+          ${
+            berita1.length > 0
+              ? berita1.map(title => `<li>${title}</li>`).join("")
+              : "<li>Tidak ada berita.</li>"
           }
+        </ul>
+      `;
 
-        } else {
-          newsBox.innerHTML = "Tidak ada data hari ini.";
-        }
-      })
-      .catch(err => {
-        const box = document.getElementById("newsBox");
-        if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
-      });
-  }, 500);
+      const html2 = `
+        <p style="margin-top:10px; font-weight:bold;">
+          ${flag[currency2] || "🏳️"} ${currency2}:
+        </p>
+        <ul style="padding-left:18px; margin-top:4px;">
+          ${
+            berita2.length > 0
+              ? berita2.map(title => `<li>${title}</li>`).join("")
+              : "<li>Tidak ada berita.</li>"
+          }
+        </ul>
+      `;
+
+      newsBox.innerHTML = html1 + html2;
+
+    } else {
+      newsBox.innerHTML = "Tidak ada data hari ini.";
+    }
+  })
+  .catch(err => {
+    const box = document.getElementById("newsBox");
+    if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+  });
+
 }
 
 
