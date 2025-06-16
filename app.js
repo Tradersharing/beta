@@ -115,7 +115,7 @@ function openPopup(pair) {
     const box = document.getElementById("newsBox");
     if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
   });
-
+  }
 }
 
 
