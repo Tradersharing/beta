@@ -1,11 +1,3 @@
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('active');
-}
-
-function closePopup() {
-  document.getElementById('popup').style.display = 'none';
-}
-
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
@@ -17,17 +9,13 @@ function openPopup(pair) {
   const strength1 = (long / total) * 100;
   const strength2 = (short / total) * 100;
 
-  // ✅ Gunakan tanggal UTC, agar cocok dengan data JSON
   const now = new Date();
-  const yyyy = now.getUTCFullYear();
-  const mm = String(now.getUTCMonth() + 1).padStart(2, '0');
-  const dd = String(now.getUTCDate()).padStart(2, '0');
-  const today = `${mm}-${dd}-${yyyy}`;
+  const today = now.toLocaleDateString('en-GB', { timeZone: 'Asia/Jakarta' }).split('/').reverse().join('-'); // yyyy-mm-dd
 
   const detailTop = `
-    <p style="text-align:center; font-size:14px; color:#aaa; margin-bottom:10px;">
-      ${today}
-    </p>
+    <h2 style="text-align:center; font-size:20px; font-weight:bold; color:white; margin-bottom:16px;">
+      📌 Analisa Mendalam Tanggal ${today}
+    </h2>
 
     <p style="font-weight:bold; margin-bottom:6px;">📅 Berita Penting Hari Ini:</p>
     <div id="newsBox" style="font-size:13.5px; line-height:1.4em; margin-bottom:16px;">
@@ -35,8 +23,6 @@ function openPopup(pair) {
     </div>
 
     <hr style="border: none; border-top: 1px solid #ccc; margin: 16px 0;">
-
-    <p style="font-size:16px; font-weight:bold; color:white; margin-bottom:6px;">📌 Analisa Mendalam Tanggal ${today}</p>
 
     <p style="font-weight:bold; margin-bottom:6px;">Kekuatan Mata Uang:</p>
     <div class="strength-bar">
@@ -62,7 +48,7 @@ function openPopup(pair) {
     </div>
   `;
 
-  const scriptURL = "https://script.google.com/macros/s/AKfycbz6lDiYq6a9TtB8HVCJ5VBvV2oBwBwRpRTPyVzRhJfX63456sHoJ24hUMKRYR8yt_mTRA/exec";
+  const scriptURL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjTDAFavdow2y3e_yFwB8wZpUF2OosTNGQjsvswV2ZDrhT8YvVnlHawFGRsSkhr-wPMEU6t-xkGzorx9OCOsw7aKLEJAz8MmJPeaEMOpnsS_lpiOJDVc8rDCwvFWZOApBAj4FJGTnwOs-Ksm1bqK_CMtgvjLBSkb59pIWeKGPYLa6fKBIHndcQGuDEEKGvNEsAbRgvAAEwfsY0yWtIUJO5HOzYgpGCaO-X5KFTZ5Oz2vTqATgizs6f4GZMWHr5sYqoQ1iNFCcc_xfP2tQa3u7rcLDvpEN6o2kJlRtnU&lib=M4fGUhhgbQOPiFbFecerFPEltF_9kevrg";
 
   document.getElementById('popup').style.display = 'flex';
 
@@ -76,32 +62,30 @@ function openPopup(pair) {
         const todayData = data?.[today] || {};
         const berita1 = todayData[currency1] || [];
         const berita2 = todayData[currency2] || [];
-        const newsList = [...berita1, ...berita2];
 
         const flag = {
           USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
           AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
         };
 
-        if (newsList.length > 0) {
-          const html = [];
+        const html = [];
 
-          if (berita1.length > 0) {
-            html.push(`<li>${flag[currency1] || "🏳️"} • ${berita1.join(`</li><li>${flag[currency1]} • `)}</li>`);
-          } else {
-            html.push(`<li>${flag[currency1] || "🏳️"} • Tidak ada berita</li>`);
-          }
+        const count1 = berita1.length;
+        const count2 = berita2.length;
 
-          if (berita2.length > 0) {
-            html.push(`<li>${flag[currency2] || "🏳️"} • ${berita2.join(`</li><li>${flag[currency2]} • `)}</li>`);
-          } else {
-            html.push(`<li>${flag[currency2] || "🏳️"} • Tidak ada berita</li>`);
-          }
-
-          newsBox.innerHTML = `<ul style='padding-left:18px;'>${html.join("")}</ul>`;
+        if (count1 > 0) {
+          html.push(`<li>${flag[currency1] || "🏳️"} ${currency1} 💬 ${count1} news • ${berita1.join(`</li><li>${flag[currency1]} ${currency1} • `)}</li>`);
         } else {
-          newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+          html.push(`<li>${flag[currency1] || "🏳️"} ${currency1} • Tidak ada berita</li>`);
         }
+
+        if (count2 > 0) {
+          html.push(`<li>${flag[currency2] || "🏳️"} ${currency2} 💬 ${count2} news • ${berita2.join(`</li><li>${flag[currency2]} ${currency2} • `)}</li>`);
+        } else {
+          html.push(`<li>${flag[currency2] || "🏳️"} ${currency2} • Tidak ada berita</li>`);
+        }
+
+        newsBox.innerHTML = `<ul style='padding-left:18px;'>${html.join("")}</ul>`;
       })
       .catch(() => {
         const box = document.getElementById("newsBox");
