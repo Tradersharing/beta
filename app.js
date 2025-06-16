@@ -66,34 +66,41 @@ function openPopup(pair) {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
     fetch(scriptURL)
-      .then(res => res.json())
-      .then(data => {
-        const newsBox = document.getElementById("newsBox");
-        const newsList = [];
+  .then(res => res.json())
+  .then(data => {
+    const newsBox = document.getElementById("newsBox");
 
-        if (data && data[today]) {
-          const todayData = data[today];
-          Object.keys(todayData).forEach(curr => {
-            if (pair.name.includes(curr)) {
-              newsList.push(...todayData[curr].map(title => `${curr}: ${title}`));
-            }
-          });
-        }
+    if (data && data[today]) {
+      const todayData = data[today];
 
-        if (newsList.length > 0) {
-          newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
-            newsList.map(title => `<li>${title}</li>`).join("") +
-            "</ul>";
-        } else {
-          newsBox.innerHTML = "Tidak ada berita penting hari ini.";
-        }
-      })
-      .catch(err => {
-        const box = document.getElementById("newsBox");
-        if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
-      });
-  }, 500);
-} // ✅ AKHIR openPopup
+      const berita1 = todayData[currency1] || [];
+      const berita2 = todayData[currency2] || [];
+      const newsList = [...berita1, ...berita2];
+
+      if (newsList.length > 0) {
+        newsBox.innerHTML = "<ul style='padding-left:18px;'>" +
+          newsList.map((title, i) => {
+            const curr = i < berita1.length ? currency1 : currency2;
+            const flag = {
+              USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
+              AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭"
+            }[curr] || "🏳️";
+            return `<li>${flag} • ${title}</li>`;
+          }).join("") +
+          "</ul>";
+      } else {
+        newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+      }
+
+    } else {
+      newsBox.innerHTML = "Tidak ada data hari ini.";
+    }
+  })
+  .catch(err => {
+    const box = document.getElementById("newsBox");
+    if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+  });
+
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
