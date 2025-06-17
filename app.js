@@ -123,34 +123,136 @@ setTimeout(() => {
         const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
         const jamWIB = convertGMTtoWIB(jam);
         return `<li style="color:${color}; margin-bottom:2px;">${judul} (${jamWIB})</li>`;
-      }).join("")}
-    </ul>
-  </div>`;
-}
+function openPopup(pair) {
+  const long = parseFloat(pair.longPercentage);
+  const short = parseFloat(pair.shortPercentage);
+  const currency1 = pair.name.slice(0, 3).toUpperCase();
+  const currency2 = pair.name.slice(3, 6).toUpperCase();
+  const total = long + short;
+  const strength1 = (long / total) * 100;
+  const strength2 = (short / total) * 100;
 
-// Prioritaskan USD tampil di kiri
-const priority = [];
-if (currency1 === "USD" || currency2 === "USD") {
-  if (currency1 === "USD") {
-    priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-  } else {
-    priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-  }
-} else {
-  priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-}
+  const now = new Date();
+  const today = now.toLocaleDateString('en-US', {
+    timeZone: 'Asia/Jakarta',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).replace(/\//g, '-');
 
-// Isi box-nya dengan 2 kolom sejajar
-box.innerHTML = `
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-    ${priority.map(html => `
-      <div style="background:#111; padding:10px; border-radius:8px;">
-        ${html}
+  const detailTop = `
+    <div style="
+      background: linear-gradient(to right, #2c3e50, #4ca1af);
+      color: white;
+      padding: 12px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 16px;">
+      💻 Analisa ${pair.name} 📊 ${today}
+    </div>
+
+    <p style="font-weight:bold; margin-bottom:6px;">📝 Berita Penting Hari Ini:</p>
+    <div id="newsBox" style="font-size:13.5px; line-height:1.4em; margin-bottom:16px;">
+      ⏳ Mengambil berita...
+    </div>
+
+    <hr style="border:none; border-top:1px solid #ccc; margin:16px 0;">
+
+    <p style="font-weight:bold; margin-bottom:6px;">Kekuatan Mata Uang:</p>
+    <div class="strength-bar">
+      <div class="strength-gbp" style="width:${strength1}%"></div>
+      <div class="strength-usd" style="width:${strength2}%"></div>
+    </div>
+    <p style="font-size:13px; margin-bottom:16px;">
+      ${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp;&nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴
+    </p>
+
+    <hr style="border:none; border-top:1px solid #ccc; margin:16px 0;">
+
+    <p style="font-weight:bold; margin-bottom:6px;">Analisa:</p>
+    <div id="forumAnalysis" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
+      <div id="techAnalysisSection">
+        <p style="font-weight:bold; margin-top:10px;">🔍 Analisa Teknikal:</p>
+
+        <select id="indicatorSelect" class="dropdown3d" onchange="updateTechnicalAnalysis()">
+          <option value="">Pilih Indikator</option>
+          <option value="ma">Moving Average</option>
+          <option value="rsi">RSI</option>
+          <option value="bb">Bollinger Bands</option>
+        </select>
+
+        <select id="tfSelect" class="dropdown3d" onchange="updateTechnicalAnalysis()">
+          <option value="30m">30 Menit</option>
+          <option value="1h">1 Jam</option>
+          <option value="4h">4 Jam</option>
+          <option value="1d" selected>Daily</option>
+        </select>
+
+        <div id="analysisResult">(Pilih indikator dan timeframe)</div>
       </div>
-    `).join("")}
-  </div>
-`;
+    </div>
 
+    <hr style="border:none; border-top:1px solid #ccc; margin:16px 0;">
+
+    <p style="font-weight:bold; margin-bottom:6px;">Sinyal Hari Ini (${pair.name}):</p>
+    <div id="todaySignal" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
+      (Sinyal akan ditampilkan di sini)
+    </div>
+  `;
+
+  document.getElementById('popup').style.display = 'flex';
+  setTimeout(() => {
+    document.getElementById('popupDetails').innerHTML = detailTop;
+
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+
+    fetch(scriptURL)
+      .then(res => res.json())
+      .then(data => {
+        const box = document.getElementById("newsBox");
+        if (!box) return;
+
+        const news = data?.[today] || {};
+        const b1 = news?.[currency1] || [];
+        const b2 = news?.[currency2] || [];
+
+        function renderNews(currency, arr) {
+          if (!arr.length) return "";
+          return `<div>
+            <div style="font-weight:bold; margin-bottom:4px;">${getFlagEmoji(currency)} ${currency}</div>
+            <ul style="padding-left:18px; margin:0;">
+              ${arr.map(str => {
+                const [judul, jam, impact] = str.split("|");
+                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+                const jamWIB = convertGMTtoWIB(jam);
+                return `<li style="color:${color}; margin-bottom:2px;">${judul} (${jamWIB})</li>`;
+              }).join("")}
+            </ul>
+          </div>`;
+        }
+
+        const priority = [];
+        if (currency1 === "USD" || currency2 === "USD") {
+          if (currency1 === "USD") {
+            priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+          } else {
+            priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+          }
+        } else {
+          priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+        }
+
+        box.innerHTML = `
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            ${priority.map(html => `
+              <div style="background:#111; padding:10px; border-radius:8px;">
+                ${html}
+              </div>
+            `).join("")}
+          </div>
+        `;
       })
       .catch(() => {
         const box = document.getElementById("newsBox");
@@ -162,25 +264,24 @@ box.innerHTML = `
     signalBox.innerHTML = signals?.[pair.name] || "(Belum ada sinyal hari ini)";
   }, 100);
 
+  function convertGMTtoWIB(gmtTime) {
+    if (!gmtTime) return "Invalid";
+    const [h, m] = gmtTime.split(":").map(Number);
+    if (isNaN(h) || isNaN(m)) return "Invalid";
+    const date = new Date(Date.UTC(2000, 0, 1, h, m));
+    date.setUTCHours(date.getUTCHours() + 7);
+    return date.toTimeString().slice(0, 5);
+  }
 
-// Tambahan fungsi pendukung
-function convertGMTtoWIB(gmtTime) {
-  if (!gmtTime) return "Invalid";
-  const [h, m] = gmtTime.split(":").map(Number);
-  if (isNaN(h) || isNaN(m)) return "Invalid";
-  const date = new Date(Date.UTC(2000, 0, 1, h, m));
-  date.setUTCHours(date.getUTCHours() + 7);
-  return date.toTimeString().slice(0, 5);
+  function getFlagEmoji(code) {
+    const flags = {
+      USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
+      AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
+    };
+    return flags[code] || "🏳️";
+  }
 }
 
-function getFlagEmoji(code) {
-  const flags = {
-    USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
-    AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
-  };
-  return flags[code] || "🏳️";
-}
-}
 
 
 function renderGauge(buy, sell) {
