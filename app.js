@@ -6,15 +6,7 @@ function closePopup() {
   document.getElementById('popup').style.display = 'none';
 }
 
-function openPopup(pair) {
-  const long = parseFloat(pair.longPercentage);
-  const short = parseFloat(pair.shortPercentage);
 
-  const currency1 = pair.name.slice(0, 3).toUpperCase();
-  const currency2 = pair.name.slice(3, 6).toUpperCase();
-
-  const total = long + short;
-  const strength1 = (long / total) * 100;
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
