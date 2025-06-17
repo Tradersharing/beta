@@ -87,8 +87,9 @@ function openPopup(pair) {
     }
 
     const rawList = Array.isArray(day[""]) ? day[""] : [];
-    const currency1 = pair.currency1;
-    const currency2 = pair.currency2;
+const currency1 = pair.name.substring(0, 3);
+const currency2 = pair.name.substring(3, 6);
+
 
     const flag = {
       USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
