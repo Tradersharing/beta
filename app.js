@@ -211,33 +211,43 @@ function openPopup(pair) {
         const b2 = news?.[currency2] || [];
 
         function renderNews(currency, arr) {
-          if (!arr.length) return "";
-          return `<li><b>${getFlagEmoji(currency)} ${currency}</b><ul style="margin-top:4px;">` +
-            arr.map(str => {
-              const [judul, jam, impact] = str.split("|");
-              const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-              const jamWIB = convertGMTtoWIB(jam);
-              return `<li style="color:${color}; margin-bottom:2px;">${judul} (${jamWIB})</li>`;
-            }).join("") +
-            "</ul></li>";
-        }
+  if (!arr.length) return "";
+  return `<div>
+    <div style="font-weight:bold; margin-bottom:4px;">${getFlagEmoji(currency)} ${currency}</div>
+    <ul style="padding-left:18px; margin:0;">
+      ${arr.map(str => {
+        const [judul, jam, impact] = str.split("|");
+        const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+        const jamWIB = convertGMTtoWIB(jam);
+        return `<li style="color:${color}; margin-bottom:2px;">${judul} (${jamWIB})</li>`;
+      }).join("")}
+    </ul>
+  </div>`;
+}
 
-        // USD selalu ditampilkan lebih dulu jika ada
-        const priority = [];
-        if (currency1 === "USD" || currency2 === "USD") {
-          if (currency1 === "USD") {
-            priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-          } else {
-            priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-          }
-        } else {
-          priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-        }
+// Prioritaskan USD tampil di kiri
+const priority = [];
+if (currency1 === "USD" || currency2 === "USD") {
+  if (currency1 === "USD") {
+    priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+  } else {
+    priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+  }
+} else {
+  priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+}
 
-        box.innerHTML = `
-          <ul style="padding-left:18px; margin:0;">
-            ${priority.join("")}
-          </ul>`;
+// Isi box-nya dengan 2 kolom sejajar
+box.innerHTML = `
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    ${priority.map(html => `
+      <div style="background:#111; padding:10px; border-radius:8px;">
+        ${html}
+      </div>
+    `).join("")}
+  </div>
+`;
+
       })
       .catch(() => {
         const box = document.getElementById("newsBox");
