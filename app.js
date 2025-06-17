@@ -263,6 +263,7 @@ function openPopup(pair) {
     const signals = window.signals || {};
     signalBox.innerHTML = signals?.[pair.name] || "(Belum ada sinyal hari ini)";
   }, 100);
+      }
 
   function convertGMTtoWIB(gmtTime) {
     if (!gmtTime) return "Invalid";
@@ -280,7 +281,7 @@ function openPopup(pair) {
     };
     return flags[code] || "🏳️";
   }
-}
+
 
 
 
