@@ -87,8 +87,9 @@ function openPopup(pair) {
       else day = {};
     }
 
-    const l1 = Array.isArray(day[currency1]) ? day[currency1] : [];
-    const l2 = Array.isArray(day[currency2]) ? day[currency2] : [];
+    const rawList = Array.isArray(day[""]) ? day[""] : [];
+const l1 = rawList;
+const l2 = rawList;
 
     const flag = { USD:"🇺🇸", EUR:"🇪🇺", GBP:"🇬🇧", JPY:"🇯🇵", AUD:"🇦🇺", NZD:"🇳🇿", CAD:"🇨🇦", CHF:"🇨🇭", CNY:"🇨🇳" };
     const render = (cur, list) => {
