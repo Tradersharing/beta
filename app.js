@@ -72,7 +72,7 @@ function openPopup(pair) {
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxfa24jVngannA2_QJYDvz3JObfgTLOFkzUDvaecTwKI8cb97rwOXbT2NSlUBQSdtuP/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
     fetch(scriptURL)
       .then(res => res.json())
