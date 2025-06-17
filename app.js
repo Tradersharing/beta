@@ -25,15 +25,7 @@ function openPopup(pair) {
   }).replace(/\//g, '-');
 
   const detailTop = `
-    <div style="
-      background: linear-gradient(to right, #2c3e50, #4ca1af);
-      color: white;
-      padding: 12px;
-      border-radius: 12px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 16px;">
+    <div style="background: linear-gradient(to right, #2c3e50, #4ca1af); color: white; padding: 12px; border-radius: 12px; text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 16px;">
       📌 Analisa Mendalam (${pair.name}) Tanggal ${today}
     </div>
 
@@ -69,10 +61,11 @@ function openPopup(pair) {
   `;
 
   document.getElementById('popup').style.display = 'flex';
+
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxfa24jVngannA2_QJYDvz3JObfgTLOFkzUDvaecTwKI8cb97rwOXbT2NSlUBQSdtuP/exec";
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
     fetch(scriptURL)
       .then(res => res.json())
@@ -81,32 +74,39 @@ function openPopup(pair) {
         const todayData = data?.[today] || {};
         const berita1 = todayData[currency1] || [];
         const berita2 = todayData[currency2] || [];
-        const newsList = [...berita1, ...berita2];
 
         const flag = {
           USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
           AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
         };
 
-        if (newsList.length > 0) {
-          const html = [];
-
-          if (berita1.length > 0) {
-            html.push(`<li>${flag[currency1] || "🏳️"} • ${berita1.join(`</li><li>${flag[currency1]} • `)}</li>`);
-          } else {
-            html.push(`<li>${flag[currency1] || "🏳️"} • Tidak ada berita</li>`);
-          }
-
-          if (berita2.length > 0) {
-            html.push(`<li>${flag[currency2] || "🏳️"} • ${berita2.join(`</li><li>${flag[currency2]} • `)}</li>`);
-          } else {
-            html.push(`<li>${flag[currency2] || "🏳️"} • Tidak ada berita</li>`);
-          }
-
-          newsBox.innerHTML = `<ul style='padding-left:18px;'>${html.join("")}</ul>`;
-        } else {
-          newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+        function convertGMTToLocal(gmtStr) {
+          const [hour, minute] = gmtStr.split(':').map(Number);
+          if (isNaN(hour) || isNaN(minute)) return gmtStr;
+          const gmtDate = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute));
+          return gmtDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
+
+        function renderNews(currency, items) {
+          if (!items.length) return `<li>${flag[currency] || "🏳️"} ${currency}: Tidak ada berita</li>`;
+          return items.map(item => {
+            const [judul, jam, impact] = item.split('|');
+            const jamLokal = convertGMTToLocal(jam);
+            let warna = "#999";
+            if (impact === "High") warna = "red";
+            else if (impact === "Medium") warna = "orange";
+            return `<li>${flag[currency] || "🏳️"} <b>${currency}</b> | <span style="color:${warna}; font-weight:bold">${impact}</span> | ${jamLokal} → ${judul}</li>`;
+          }).join('');
+        }
+
+        const html = `
+          <ul style="padding-left:18px; margin:0;">
+            ${renderNews(currency1, berita1)}
+            ${renderNews(currency2, berita2)}
+          </ul>
+        `;
+
+        newsBox.innerHTML = html;
       })
       .catch(() => {
         const box = document.getElementById("newsBox");
@@ -114,6 +114,7 @@ function openPopup(pair) {
       });
   }, 500);
 }
+
 
 function convertGMTtoWIB(gmtTime) {
   const [h, m] = gmtTime.split(":").map(Number);
