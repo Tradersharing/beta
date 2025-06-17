@@ -209,6 +209,16 @@ function openPopup(pair) {
         const news = data?.[today] || {};
         const b1 = news?.[currency1] || [];
         const b2 = news?.[currency2] || [];
+setTimeout(() => {
+    const box = document.getElementById("newsBox");
+    const signalBox = document.getElementById("todaySignal");
+
+    const currency1 = pair.symbol.substring(0, 3);
+    const currency2 = pair.symbol.substring(3);
+    const dataToday = data[today] || {};
+    const b1 = dataToday[currency1] || [];
+    const b2 = dataToday[currency2] || [];
+
 
         function renderNews(currency, arr) {
   if (!arr.length) return "";
