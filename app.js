@@ -93,15 +93,21 @@ const l2 = rawList;
 
     const flag = { USD:"🇺🇸", EUR:"🇪🇺", GBP:"🇬🇧", JPY:"🇯🇵", AUD:"🇦🇺", NZD:"🇳🇿", CAD:"🇨🇦", CHF:"🇨🇭", CNY:"🇨🇳" };
     const render = (cur, list) => {
-      if (!list.length) return `<li>${flag[cur]||"🏳️"} ${cur} • Tidak ada berita</li>`;
-      return list.map(item => {
-        const [title, gmt] = item.split("|");
-        let [h, m] = gmt.split(":").map(Number);
-        h = (h + 7) % 24;
-        const wib = String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
-        return `<li>${flag[cur]||"🏳️"} ${cur} • ${wib} WIB – ${title}</li>`;
-      }).join("");
-    };
+  if (!list.length) return `<li>${flag[cur]||"🏳️"} ${cur} • Tidak ada berita</li>`;
+
+  return list.map(item => {
+    const [title, gmt, impact] = item.split("|");
+    if (!title || !gmt) return ""; // skip jika format error
+    let [h, m] = gmt.split(":").map(Number);
+    if (isNaN(h) || isNaN(m)) return ""; // skip jika gagal parsing
+
+    h = (h + 7) % 24;
+    const wib = String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+
+    return `<li>${flag[cur]||"🏳️"} ${cur} • ${wib} WIB – ${title}</li>`;
+  }).join("");
+};
+
 
     newsBox.innerHTML = `
       <ul style="padding-left:18px; margin:0;">
