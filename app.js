@@ -34,10 +34,10 @@ function openPopup(pair) {
       font-weight: bold;
       font-size: 16px;
       margin-bottom: 16px;">
-      📌 Analisa Mendalam (${pair.name}) Tanggal ${today}
+      💻 Analisa ${pair.name} 📊 ${today}
     </div>
 
-    <p style="font-weight:bold; margin-bottom:6px;">📅 Berita Penting Hari Ini:</p>
+    <p style="font-weight:bold; margin-bottom:6px;">📝 Berita Penting Hari Ini:</p>
     <div id="newsBox" style="font-size:13.5px; line-height:1.4em; margin-bottom:16px;">
       ⏳ Mengambil berita...
     </div>
