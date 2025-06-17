@@ -75,35 +75,46 @@ function openPopup(pair) {
     const scriptURL = "https://script.google.com/macros/s/AKfycbxfa24jVngannA2_QJYDvz3JObfgTLOFkzUDvaecTwKI8cb97rwOXbT2NSlUBQSdtuP/exec";
 
     fetch(scriptURL)
-      .then(r => r.json())
-      .then(data => {
-        const newsBox = document.getElementById("newsBox");
-        const day = data[today] || {};
-        const l1 = Array.isArray(day[currency1]) ? day[currency1] : [];
-        const l2 = Array.isArray(day[currency2]) ? day[currency2] : [];
+  .then(r => r.json())
+  .then(data => {
+    const newsBox = document.getElementById("newsBox");
 
-        const flag = { USD:"🇺🇸", EUR:"🇪🇺", GBP:"🇬🇧", JPY:"🇯🇵", AUD:"🇦🇺", NZD:"🇳🇿", CAD:"🇨🇦", CHF:"🇨🇭", CNY:"🇨🇳" };
-        const render = (cur, list) => {
-          if (!list.length) return `<li>${flag[cur]||"🏳️"} ${cur} • Tidak ada berita</li>`;
-          return list.map(item => {
-            const [title, gmt] = item.split("|");
-            let [h, m] = gmt.split(":").map(Number);
-            h = (h + 7) % 24;
-            const wib = String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
-            return `<li>${flag[cur]||"🏳️"} ${cur} • ${wib} WIB – ${title}</li>`;
-          }).join("");
-        };
+    let day = data[today];
+    if (!day || Object.keys(day).length === 0) {
+      // fallback jika tanggal kosong
+      const keys = Object.keys(data).filter(k => k !== "signals");
+      if (keys.length > 0) day = data[keys[0]];
+      else day = {};
+    }
 
-        newsBox.innerHTML = `
-          <ul style="padding-left:18px; margin:0;">
-            ${render(currency1, l1)}
-            ${render(currency2, l2)}
-          </ul>`;
-        
-        const signalBox = document.getElementById("todaySignal");
-        signalBox.innerHTML = (data.signals?.[pair.name] || "(Belum ada sinyal hari ini)");
+    const l1 = Array.isArray(day[currency1]) ? day[currency1] : [];
+    const l2 = Array.isArray(day[currency2]) ? day[currency2] : [];
 
-      })
+    const flag = { USD:"🇺🇸", EUR:"🇪🇺", GBP:"🇬🇧", JPY:"🇯🇵", AUD:"🇦🇺", NZD:"🇳🇿", CAD:"🇨🇦", CHF:"🇨🇭", CNY:"🇨🇳" };
+    const render = (cur, list) => {
+      if (!list.length) return `<li>${flag[cur]||"🏳️"} ${cur} • Tidak ada berita</li>`;
+      return list.map(item => {
+        const [title, gmt] = item.split("|");
+        let [h, m] = gmt.split(":").map(Number);
+        h = (h + 7) % 24;
+        const wib = String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
+        return `<li>${flag[cur]||"🏳️"} ${cur} • ${wib} WIB – ${title}</li>`;
+      }).join("");
+    };
+
+    newsBox.innerHTML = `
+      <ul style="padding-left:18px; margin:0;">
+        ${render(currency1, l1)}
+        ${render(currency2, l2)}
+      </ul>`;
+
+    const signalBox = document.getElementById("todaySignal");
+    signalBox.innerHTML = (data.signals?.[pair.name] || "(Belum ada sinyal hari ini)");
+  })
+
+
+
+      
       .catch(e => {
         console.error(e);
         document.getElementById("newsBox").innerHTML = "⚠️ Gagal memuat berita.";
