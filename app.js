@@ -61,9 +61,8 @@ function openPopup(pair) {
       (Sinyal akan ditampilkan di sini)
     </div>
   `;
-
-  const scriptURL = "https://script.google.com/macros/s/AKfycbxfa24jVngannA2_QJYDvz3JObfgTLOFkzUDvaecTwKI8cb97rwOXbT2NSlUBQSdtuP/exec";
-
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzZ4uDyKQQhWBWaulYznKffM7vmDutHeOWIelOAb0g5kaUqLWz0Wgr2Xev-FJEBt4Rw/exec";
+  
   document.getElementById('popup').style.display = 'flex';
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
