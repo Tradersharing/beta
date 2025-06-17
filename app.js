@@ -180,7 +180,7 @@ function getFlagEmoji(code) {
   };
   return flags[code] || "🏳️";
 }
-
+}
 
 
 function renderGauge(buy, sell) {
