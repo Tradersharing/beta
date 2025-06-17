@@ -39,7 +39,7 @@ function openPopup(pair) {
 
   const detailTop = `
     <div style="${titleStyle}">
-      📌 Analisa Mendalam (${pair.name}) Tanggal ${today}
+      📌 Analisa pair ${pair.name} ${today}
     </div>
 
     <p style="font-weight:bold; margin:0 0 6px;">📅 Berita Penting Hari Ini:</p>
