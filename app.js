@@ -75,65 +75,43 @@ function openPopup(pair) {
     const scriptURL = "https://script.google.com/macros/s/AKfycbxfa24jVngannA2_QJYDvz3JObfgTLOFkzUDvaecTwKI8cb97rwOXbT2NSlUBQSdtuP/exec";
 
     fetch(scriptURL)
-  .then(r => r.json())
-  .then(data => {
-    const newsBox = document.getElementById("newsBox");
+      .then(res => res.json())
+      .then(data => {
+        const newsBox = document.getElementById("newsBox");
+        const todayData = data?.[today] || {};
+        const berita1 = todayData[currency1] || [];
+        const berita2 = todayData[currency2] || [];
+        const newsList = [...berita1, ...berita2];
 
-    let day = data[today];
-    if (!day || Object.keys(day).length === 0) {
-      const keys = Object.keys(data).filter(k => k !== "signals");
-      if (keys.length > 0) day = data[keys[0]];
-      else day = {};
-    }
+        const flag = {
+          USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
+          AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
+        };
 
-    const rawList = Array.isArray(day[""]) ? day[""] : [];
-const currency1 = pair.name.substring(0, 3);
-const currency2 = pair.name.substring(3, 6);
+        if (newsList.length > 0) {
+          const html = [];
 
+          if (berita1.length > 0) {
+            html.push(`<li>${flag[currency1] || "🏳️"} • ${berita1.join(`</li><li>${flag[currency1]} • `)}</li>`);
+          } else {
+            html.push(`<li>${flag[currency1] || "🏳️"} • Tidak ada berita</li>`);
+          }
 
-    const flag = {
-      USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
-      AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
-    };
+          if (berita2.length > 0) {
+            html.push(`<li>${flag[currency2] || "🏳️"} • ${berita2.join(`</li><li>${flag[currency2]} • `)}</li>`);
+          } else {
+            html.push(`<li>${flag[currency2] || "🏳️"} • Tidak ada berita</li>`);
+          }
 
-    const render = (cur) => {
-      const filtered = rawList.filter(item => item.includes(cur));
-      if (!filtered.length) return `<li>${flag[cur] || "🏳️"} ${cur} • Tidak ada berita</li>`;
-
-      return filtered.map(item => {
-        const [title, gmt, impact] = item.split("|");
-        if (!title || !gmt) return "";
-
-        let [h, m] = gmt.split(":").map(Number);
-        if (isNaN(h) || isNaN(m)) return "";
-
-        h = (h + 7) % 24;
-        const wib = String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
-
-        let impactColor = "⚪";
-        if (impact === "High") impactColor = "🔴";
-        else if (impact === "Medium") impactColor = "🟡";
-        else if (impact === "Low") impactColor = "🟢";
-
-        return `<li>${flag[cur] || "🏳️"} ${cur} • ${wib} WIB – ${impactColor} ${title}</li>`;
-      }).join("");
-    };
-
-    newsBox.innerHTML = `
-      <ul style="padding-left:18px; margin:0;">
-        ${render(currency1)}
-        ${render(currency2)}
-      </ul>`;
-
-    const signalBox = document.getElementById("todaySignal");
-    signalBox.innerHTML = (data.signals?.[pair.name] || "(Belum ada sinyal hari ini)");
-  })
-  .catch(e => {
-    console.error(e);
-    document.getElementById("newsBox").innerHTML = "⚠️ Gagal memuat berita.";
-  });
-
-
+          newsBox.innerHTML = `<ul style='padding-left:18px;'>${html.join("")}</ul>`;
+        } else {
+          newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+        }
+      })
+      .catch(() => {
+        const box = document.getElementById("newsBox");
+        if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+      });
   }, 500);
 }
 
