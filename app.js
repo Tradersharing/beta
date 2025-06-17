@@ -161,7 +161,7 @@ box.innerHTML = `
     const signals = window.signals || {};
     signalBox.innerHTML = signals?.[pair.name] || "(Belum ada sinyal hari ini)";
   }, 100);
-}
+
 
 // Tambahan fungsi pendukung
 function convertGMTtoWIB(gmtTime) {
