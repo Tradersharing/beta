@@ -81,51 +81,57 @@ function openPopup(pair) {
 
     let day = data[today];
     if (!day || Object.keys(day).length === 0) {
-      // fallback jika tanggal kosong
       const keys = Object.keys(data).filter(k => k !== "signals");
       if (keys.length > 0) day = data[keys[0]];
       else day = {};
     }
 
     const rawList = Array.isArray(day[""]) ? day[""] : [];
-const l1 = rawList;
-const l2 = rawList;
+    const currency1 = pair.currency1;
+    const currency2 = pair.currency2;
 
-    const flag = { USD:"🇺🇸", EUR:"🇪🇺", GBP:"🇬🇧", JPY:"🇯🇵", AUD:"🇦🇺", NZD:"🇳🇿", CAD:"🇨🇦", CHF:"🇨🇭", CNY:"🇨🇳" };
-    const render = (cur, list) => {
-  if (!list.length) return `<li>${flag[cur]||"🏳️"} ${cur} • Tidak ada berita</li>`;
+    const flag = {
+      USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
+      AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
+    };
 
-  return list.map(item => {
-    const [title, gmt, impact] = item.split("|");
-    if (!title || !gmt) return ""; // skip jika format error
-    let [h, m] = gmt.split(":").map(Number);
-    if (isNaN(h) || isNaN(m)) return ""; // skip jika gagal parsing
+    const render = (cur) => {
+      const filtered = rawList.filter(item => item.includes(cur));
+      if (!filtered.length) return `<li>${flag[cur] || "🏳️"} ${cur} • Tidak ada berita</li>`;
 
-    h = (h + 7) % 24;
-    const wib = String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+      return filtered.map(item => {
+        const [title, gmt, impact] = item.split("|");
+        if (!title || !gmt) return "";
 
-    return `<li>${flag[cur]||"🏳️"} ${cur} • ${wib} WIB – ${title}</li>`;
-  }).join("");
-};
+        let [h, m] = gmt.split(":").map(Number);
+        if (isNaN(h) || isNaN(m)) return "";
 
+        h = (h + 7) % 24;
+        const wib = String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+
+        let impactColor = "⚪";
+        if (impact === "High") impactColor = "🔴";
+        else if (impact === "Medium") impactColor = "🟡";
+        else if (impact === "Low") impactColor = "🟢";
+
+        return `<li>${flag[cur] || "🏳️"} ${cur} • ${wib} WIB – ${impactColor} ${title}</li>`;
+      }).join("");
+    };
 
     newsBox.innerHTML = `
       <ul style="padding-left:18px; margin:0;">
-        ${render(currency1, l1)}
-        ${render(currency2, l2)}
+        ${render(currency1)}
+        ${render(currency2)}
       </ul>`;
 
     const signalBox = document.getElementById("todaySignal");
     signalBox.innerHTML = (data.signals?.[pair.name] || "(Belum ada sinyal hari ini)");
   })
+  .catch(e => {
+    console.error(e);
+    document.getElementById("newsBox").innerHTML = "⚠️ Gagal memuat berita.";
+  });
 
-
-
-      
-      .catch(e => {
-        console.error(e);
-        document.getElementById("newsBox").innerHTML = "⚠️ Gagal memuat berita.";
-      });
 
   }, 500);
 }
