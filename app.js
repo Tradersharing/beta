@@ -118,11 +118,12 @@ function openPopup(pair) {
       newsBox.innerHTML = "Tidak ada berita penting hari ini.";
     }
   })
-  .catch(() => {
-    const box = document.getElementById("newsBox");
-    if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
-  });
-
+      .catch(() => {
+        const box = document.getElementById("newsBox");
+        if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+      });
+  }, 500);
+}
 
 function convertGMTtoWIB(gmtTime) {
   const [h, m] = gmtTime.split(":").map(Number);
