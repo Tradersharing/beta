@@ -90,6 +90,7 @@ function openPopup(pair) {
     const b1 = Array.isArray(newsData[currency1]) ? newsData[currency1] : [];
     const b2 = Array.isArray(newsData[currency2]) ? newsData[currency2] : [];
 
+    
     const flag = {
       USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
       AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
@@ -110,11 +111,17 @@ function openPopup(pair) {
       }).join("");
     }
 
+
     newsBox.innerHTML = `
       <ul style="padding-left:18px; margin:0;">
         ${renderNews(currency1, b1)}
         ${renderNews(currency2, b2)}
       </ul>`;
+    // ✅ Tambahan bagian sinyal
+const signalBox = document.getElementById("todaySignal");
+const signals = data.signals || {};
+signalBox.innerHTML = signals?.[pair.name] || "(Belum ada sinyal hari ini)";
+
   })
   .catch((err) => {
     console.error("Gagal ambil data:", err);
