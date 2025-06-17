@@ -57,86 +57,25 @@ function openPopup(pair) {
 
     <p style="font-weight:bold; margin-bottom:6px;">Analisa:</p>
     <div id="forumAnalysis" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
-      <style>
-  .dropdown3d {
-    background: linear-gradient(145deg, #2c2c2c, #1a1a1a);
-    border: 1px solid #444;
-    border-radius: 12px;
-    padding: 6px 10px;
-    color: #fff;
-    font-size: 14px;
-    box-shadow: inset 2px 2px 4px #111, inset -2px -2px 4px #333;
-    margin-bottom: 8px;
-    transition: all 0.3s ease;
-  }
+      <div id="techAnalysisSection">
+        <p style="font-weight:bold; margin-top:10px;">🔍 Analisa Teknikal:</p>
 
-  .dropdown3d:focus {
-    outline: none;
-    box-shadow: 0 0 6px #007bff;
-  }
+        <select id="indicatorSelect" class="dropdown3d" onchange="updateTechnicalAnalysis()">
+          <option value="">Pilih Indikator</option>
+          <option value="ma">Moving Average</option>
+          <option value="rsi">RSI</option>
+          <option value="bb">Bollinger Bands</option>
+        </select>
 
-  #analysisResult {
-    margin-top: 10px;
-    font-size: 13.5px;
-    color: #ccc;
-    background: #1e1e1e;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: inset 1px 1px 3px #111, inset -1px -1px 3px #333;
-  }
-</style>
+        <select id="tfSelect" class="dropdown3d" onchange="updateTechnicalAnalysis()">
+          <option value="30m">30 Menit</option>
+          <option value="1h">1 Jam</option>
+          <option value="4h">4 Jam</option>
+          <option value="1d" selected>Daily</option>
+        </select>
 
-<div id="techAnalysisSection">
-  <p style="font-weight:bold; margin-top:10px;">🔍 Analisa Teknikal:</p>
-
-  <select id="indicatorSelect" class="dropdown3d" onchange="updateTechnicalAnalysis()">
-    <option value="">Pilih Indikator</option>
-    <option value="ma">Moving Average</option>
-    <option value="rsi">RSI</option>
-    <option value="bb">Bollinger Bands</option>
-  </select>
-
-  <select id="tfSelect" class="dropdown3d" onchange="updateTechnicalAnalysis()">
-    <option value="30m">30 Menit</option>
-    <option value="1h">1 Jam</option>
-    <option value="4h">4 Jam</option>
-    <option value="1d" selected>Daily</option>
-  </select>
-
-  <div id="analysisResult">(Pilih indikator dan timeframe)</div>
-</div>
-
-<script>
-function updateTechnicalAnalysis() {
-  const indicator = document.getElementById("indicatorSelect")?.value;
-  const tf = document.getElementById("tfSelect")?.value;
-  const output = document.getElementById("analysisResult");
-
-  if (!indicator || !tf) {
-    output.innerHTML = "(Pilih indikator dan timeframe)";
-    return;
-  }
-
-  const tfLabel = {
-    "30m": "30 Menit",
-    "1h": "1 Jam",
-    "4h": "4 Jam",
-    "1d": "Daily"
-  };
-
-  let result = "";
-  if (indicator === "ma") {
-    result = `MA (${tfLabel[tf]}): Harga berada di atas MA - potensi tren naik.`;
-  } else if (indicator === "rsi") {
-    result = `RSI (${tfLabel[tf]}): RSI tinggi → overbought / rendah → oversold.`;
-  } else if (indicator === "bb") {
-    result = `BB (${tfLabel[tf]}): Harga menyentuh band atas/bawah → sinyal volatilitas.`;
-  }
-
-  output.innerHTML = result;
-}
-</script>
-
+        <div id="analysisResult">(Pilih indikator dan timeframe)</div>
+      </div>
     </div>
 
     <hr style="border:none; border-top:1px solid #ccc; margin:16px 0;">
@@ -151,43 +90,48 @@ function updateTechnicalAnalysis() {
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
+    // Panggil berita dari Google Script
     const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
     fetch(scriptURL)
       .then(res => res.json())
       .then(data => {
-        const newsBox = document.getElementById("newsBox");
-        const todayData = data?.[today] || {};
-        const berita1 = todayData[currency1] || [];
-        const berita2 = todayData[currency2] || [];
+        const box = document.getElementById("newsBox");
+        if (!box) return;
+        const news = data?.[today];
+        const b1 = news?.[currency1] || [];
+        const b2 = news?.[currency2] || [];
 
-        const flag = {
-          USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
-          AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
-        };
-
-        const renderNews = (list, currency) => {
-          return list.map(item => {
-            const [judul, jamGMT, impact] = item.split("|");
-            const jamWIB = convertGMTtoWIB(jamGMT);
-            const impactColor = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-            const flagIcon = flag[currency] || "🏳️";
-            return `<li>${flagIcon} ${currency} • <span style="color:${impactColor}">(${impact})</span> ${jamWIB} - ${judul}</li>`;
-          }).join("");
-        };
-
-        if (berita1.length + berita2.length > 0) {
-          newsBox.innerHTML = `<ul style='padding-left:18px;'>${renderNews(berita1, currency1)}${renderNews(berita2, currency2)}</ul>`;
-        } else {
-          newsBox.innerHTML = "Tidak ada berita penting hari ini.";
+        function renderNews(currency, arr) {
+          if (!arr.length) return "";
+          return `<li><b>🇺🇸 ${currency}</b><ul style="margin-top:4px;">` +
+            arr.map(str => {
+              const [judul, jam, impact] = str.split("|");
+              const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+              return `<li style="color:${color}; margin-bottom:2px;">${judul} (${jam})</li>`;
+            }).join("") +
+            "</ul></li>";
         }
+
+        box.innerHTML = `
+          <ul style="padding-left:18px; margin:0;">
+            ${renderNews(currency1, b1)}
+            ${renderNews(currency2, b2)}
+          </ul>`;
       })
       .catch(() => {
         const box = document.getElementById("newsBox");
         if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
       });
-  }, 500);
+
+    // Sinyal
+    const signalBox = document.getElementById("todaySignal");
+    const signals = window.signals || {}; // ambil global var
+    signalBox.innerHTML = signals?.[pair.name] || "(Belum ada sinyal hari ini)";
+  }, 100);
 }
+
+
 
 function convertGMTtoWIB(gmtTime) {
   if (!gmtTime) return "Invalid Time";
