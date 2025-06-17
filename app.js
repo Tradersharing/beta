@@ -80,40 +80,47 @@ function openPopup(pair) {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
     fetch(scriptURL)
-      .then(res => res.json())
-      .then(data => {
-        const newsBox = document.getElementById("newsBox");
-        const newsData = data?.[today] || {};
-        const b1 = Array.isArray(newsData[currency1]) ? newsData[currency1] : [];
-        const b2 = Array.isArray(newsData[currency2]) ? newsData[currency2] : [];
-        
-        const flag = {
-          USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
-          AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
-        };
+  .then(res => {
+    if (!res.ok) throw new Error("Gagal fetch");
+    return res.json();
+  })
+  .then(data => {
+    const newsBox = document.getElementById("newsBox");
+    const newsData = data?.[today] || {};
+    const b1 = Array.isArray(newsData[currency1]) ? newsData[currency1] : [];
+    const b2 = Array.isArray(newsData[currency2]) ? newsData[currency2] : [];
 
-        function renderNews(cur, list) {
-          if (list.length === 0) {
-            return `<li>${flag[cur] || "🏳️"} ${cur} • Tidak ada berita</li>`;
-          }
-          return list.map(item => {
-            const [judul, timeGMT] = item.split("|");
-            let [hh, mi] = timeGMT.split(":").map(Number);
-            hh = (hh + 7) % 24;
-            const jamWIB = `${String(hh).padStart(2,'0')}:${String(mi).padStart(2,'0')}`;
-            return `<li>${flag[cur] || "🏳️"} ${cur} • ${judul} (${jamWIB} WIB)</li>`;
-          }).join("");
-        }
+    const flag = {
+      USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
+      AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
+    };
 
-        newsBox.innerHTML = `
-          <ul style="padding-left:18px; margin:0;">
-            ${renderNews(currency1, b1)}
-            ${renderNews(currency2, b2)}
-          </ul>`;
-      })
-      .catch(() => {
-        document.getElementById("newsBox").innerHTML = "⚠️ Gagal memuat berita.";
-      });
+    function renderNews(cur, list) {
+      if (list.length === 0) {
+        return `<li>${flag[cur] || "🏳️"} ${cur} • Tidak ada berita</li>`;
+      }
+      return list.map(item => {
+        if (!item.includes("|")) return "";
+        const [judul, timeGMT] = item.split("|");
+        if (!judul || !timeGMT) return "";
+        let [hh, mi] = timeGMT.split(":").map(Number);
+        hh = (hh + 7) % 24;
+        const jamWIB = `${String(hh).padStart(2, '0')}:${String(mi).padStart(2, '0')}`;
+        return `<li>${flag[cur] || "🏳️"} ${cur} • ${judul} (${jamWIB} WIB)</li>`;
+      }).join("");
+    }
+
+    newsBox.innerHTML = `
+      <ul style="padding-left:18px; margin:0;">
+        ${renderNews(currency1, b1)}
+        ${renderNews(currency2, b2)}
+      </ul>`;
+  })
+  .catch((err) => {
+    console.error("Gagal ambil data:", err);
+    document.getElementById("newsBox").innerHTML = "⚠️ Gagal memuat berita.";
+  });
+
   }, 500);
 }
 
