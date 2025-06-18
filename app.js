@@ -8,7 +8,6 @@ function closePopup() {
 
 
 
-// Final Revised openPopup function sampai sebelum convertGMTtoWIB
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
@@ -17,6 +16,7 @@ function openPopup(pair) {
   const total = long + short;
   const strength1 = (long / total) * 100;
   const strength2 = (short / total) * 100;
+
   const now = new Date();
   const today = now.toLocaleDateString('en-US', {
     timeZone: 'Asia/Jakarta',
@@ -26,14 +26,16 @@ function openPopup(pair) {
   }).replace(/\//g, '-');
 
   const detailTop = `
-    <div class="popup-header">💻 Analisa ${pair.name} 📊 ${today}</div>
+    <div style="background: linear-gradient(to right, #2c3e50, #4ca1af); color: white; padding: 12px; border-radius: 12px; text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 16px;">
+      💻 Analisa ${pair.name} 📊 ${today}
+    </div>
 
-    <p class="popup-title">📝 Berita Penting Hari Ini:</p>
-    <div id="newsBox">⏳ Mengambil berita...</div>
+    <p style="font-weight:bold; margin-bottom:6px;">📝 Berita Penting Hari Ini:</p>
+    <div id="newsBox" style="font-size:13.5px; line-height:1.4em; margin-bottom:16px;">⏳ Mengambil berita...</div>
 
-    <hr class="popup-separator">
+    <hr style="border:none; border-top:1px solid #ccc; margin:16px 0;">
 
-    <p class="popup-title">Kekuatan Mata Uang:</p>
+    <p style="font-weight:bold; margin-bottom:6px;">Kekuatan Mata Uang:</p>
     <div class="strength-bar">
       <div class="strength-gbp" style="width:${strength1}%"></div>
       <div class="strength-usd" style="width:${strength2}%"></div>
@@ -42,44 +44,80 @@ function openPopup(pair) {
       ${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp;&nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴
     </p>
 
-    <hr class="popup-separator">
+    <hr style="border:none; border-top:1px solid #ccc; margin:16px 0;">
 
-    <p class="popup-title">Analisa:</p>
+    <p style="font-weight:bold; margin-bottom:6px;">Analisa:</p>
     <div>
       <button onclick="buatAnalisaSekarang()" class="popup-button">
         🔍 Buat Analisa ${pair.name} Sekarang
       </button>
-      <div id="autoAnalysis" class="popup-analysis">(Hasil analisa akan muncul di sini)</div>
+      <div id="autoAnalysis" class="popup-analysis"></div>
     </div>
   `;
 
   document.getElementById('popup').style.display = 'flex';
-
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
-    const scriptURL = "https://script.google.com/macros/s/.../exec"; // real URL here
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
     fetch(scriptURL)
       .then(res => res.json())
       .then(data => {
         const box = document.getElementById("newsBox");
+        if (!box) return;
+
         const news = data?.[today] || {};
         const b1 = news?.[currency1] || [];
         const b2 = news?.[currency2] || [];
 
-        box.innerHTML = generateNewsBox(currency1, b1, currency2, b2);
+        function renderNews(currency, arr) {
+          if (!arr.length) return "";
+          return `<div>
+            <div style="font-weight:bold; margin-bottom:4px;">${getFlagEmoji(currency)} ${currency}</div>
+            <ul style="padding-left:18px; margin:0;">
+              ${arr.map(str => {
+                const parts = str.split("|");
+                const judul = parts[0] || "-";
+                const jam = parts[1] || "";
+                const impact = parts[2] || "Low";
+                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+                const jamWIB = convertGMTtoWIB(jam);
+                return `<li style="color:${color}; margin-bottom:2px;">${judul} (${jamWIB})</li>`;
+              }).join("")}
+            </ul>
+          </div>`;
+        }
 
-        window.currentPair = pair;
-        window.currentNewsB1 = b1;
-        window.currentNewsB2 = b2;
+        const priority = [];
+        if (currency1 === "USD" || currency2 === "USD") {
+          if (currency1 === "USD") {
+            priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+          } else {
+            priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+          }
+        } else {
+          priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+        }
+
+        box.innerHTML = `
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            ${priority.map(html => `
+              <div style="background:#111; padding:10px; border-radius:8px;">
+                ${html}
+              </div>
+            `).join("")}
+          </div>
+        `;
       })
       .catch(() => {
         const box = document.getElementById("newsBox");
         if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
       });
+
   }, 100);
 }
+
 
 
 function convertGMTtoWIB(gmtTime) {
