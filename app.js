@@ -179,7 +179,7 @@ function getFlagEmoji(code) {
   };
   return flags[code] || "🏳️";
 }
-}
+
 
 
 
