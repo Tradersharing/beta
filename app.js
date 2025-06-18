@@ -91,25 +91,47 @@ function openPopup(pair) {
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
-  const currency1 = pair.name.slice(0,3);
-  const currency2 = pair.name.slice(3,6);
+  const currency1 = pair.name.slice(0, 3);
+  const currency2 = pair.name.slice(3, 6);
 
-  const priceURL = `https://api.exchangerate.host/latest?base=${currency1}&symbols=${currency2}`;
-  const priceData = await fetch(priceURL).then(r => r.json());
-  const price = priceData.rates?.[currency2] || 0;
+  // === Ambil Harga Sekarang ===
+  let price = 0;
+  try {
+    const priceURL = `https://api.exchangerate.host/latest?base=${currency1}&symbols=${currency2}`;
+    const priceData = await fetch(priceURL).then(r => r.json());
+    price = priceData.rates?.[currency2] || 0;
+  } catch (e) {
+    console.error("Gagal ambil harga:", e);
+  }
 
-  const rsiURL = `https://api.taapi.io/rsi?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
-  const macdURL = `https://api.taapi.io/macd?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
+  // === Ambil RSI & MACD dari TAAPI.io ===
+  let rsi = 0, macd = 0;
+  try {
+    const rsiURL = `https://api.taapi.io/rsi?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
+    const macdURL = `https://api.taapi.io/macd?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
 
-  const rsiData = await fetch(rsiURL).then(r => r.json());
-  const macdData = await fetch(macdURL).then(r => r.json());
-  const rsi = rsiData.value || 0;
-  const macd = macdData.valueMACD || 0;
+    const [rsiData, macdData] = await Promise.all([
+      fetch(rsiURL).then(r => r.json()),
+      fetch(macdURL).then(r => r.json())
+    ]);
 
-  const fxURL = "https://script.google.com/macros/s/YOUR_FXSTREET_SCRIPT_URL/exec";
-  const fxData = await fetch(fxURL).then(r => r.json());
-  const extraAnalysis = fxData[pair.name] || "Tidak ada analisa fundamental.";
+    rsi = rsiData.value || 0;
+    macd = macdData.valueMACD || 0;
+  } catch (e) {
+    console.error("Gagal ambil RSI/MACD:", e);
+  }
 
+  // === Ambil Analisa Tambahan dari Google Script ===
+  let extraAnalysis = "Tidak ada analisa fundamental.";
+  try {
+    const fxURL = "https://script.google.com/macros/s/YOUR_FXSTREET_SCRIPT_URL/exec";
+    const fxData = await fetch(fxURL).then(r => r.json());
+    extraAnalysis = fxData?.[pair.name] || extraAnalysis;
+  } catch (e) {
+    console.error("Gagal ambil data FX:", e);
+  }
+
+  // === Tampilkan Popup Terminal Analisa ===
   const analysisPopup = document.getElementById('analysisPopup');
   analysisPopup.innerHTML = `
     <div style="background:#222; color:#0f0; padding:12px; border-radius:8px; width:90%; max-width:400px; margin:20px auto; font-family:'Courier New', monospace;">
@@ -122,9 +144,11 @@ async function buatAnalisaSekarang() {
   `;
   analysisPopup.style.display = 'flex';
 
+  // === Proses Analisa + Ketik Terminal ===
   const result = generateAutoAnalysis(pair, rsi, macd, price, tf, extraAnalysis);
   typeText("typeWriter", result);
 }
+
 
 function generateAutoAnalysis(pair, rsi, macd, price, tf, extraAnalysis) {
   let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
