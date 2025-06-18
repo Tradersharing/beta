@@ -24,38 +24,31 @@ function openPopup(pair) {
   }).replace(/\//g, '-');
 
   const detailTop = `
-    <div style="background: linear-gradient(to right, #2c3e50, #4ca1af); color: white; padding: 12px; border-radius: 12px; text-align: center; font-weight: bold; font-size: 16px; margin-bottom: 16px;">
+    <div style="background: linear-gradient(to right, #2c3e50, #4ca1af); color: white; padding: 12px; border-radius: 12px; text-align: center;">
       💻 Analisa ${pair.name} 📊 ${today}
     </div>
-
-    <p style="font-weight:bold;">📝 Berita Penting Hari Ini:</p>
-    <div id="newsBox" style="font-size:13px;">⏳ Mengambil berita...</div>
-
+    <p><b>📝 Berita Penting Hari Ini:</b></p>
+    <div id="newsBox">⏳ Mengambil berita...</div>
     <hr>
-
-    <p style="font-weight:bold;">Kekuatan Mata Uang:</p>
+    <p><b>Kekuatan Mata Uang:</b></p>
     <div class="strength-bar">
       <div class="strength-gbp" style="width:${strength1}%"></div>
       <div class="strength-usd" style="width:${strength2}%"></div>
     </div>
-    <p>${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp;&nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴</p>
-
+    <p>${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴</p>
     <hr>
-
-    <p style="font-weight:bold;">Analisa:</p>
-    <select id="tfSelect" class="popup-dropdown">
-      <option value="1h" selected>H1 (Default)</option>
+    <p><b>Analisa:</b></p>
+    <select id="tfSelect">
+      <option value="1h" selected>H1 (default)</option>
       <option value="4h">H4</option>
-      <option value="1d">Daily (D1)</option>
+      <option value="1d">D1</option>
     </select>
-
-    <button onclick="buatAnalisaSekarang()" class="popup-button">
-      🔍 Buat Analisa ${pair.name} Sekarang
-    </button>
+    <button onclick="buatAnalisaSekarang()" class="popup-button">📊 Mulai Proses Analisa ${pair.name}</button>
     <div id="autoAnalysis" style="font-size:13px; margin-top:10px;"></div>
   `;
 
   document.getElementById('popup').style.display = 'flex';
+
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
@@ -65,27 +58,47 @@ function openPopup(pair) {
       .then(res => res.json())
       .then(data => {
         const box = document.getElementById("newsBox");
+        if (!box) return;
+
         const news = data?.[today] || {};
         const b1 = news?.[currency1] || [];
         const b2 = news?.[currency2] || [];
 
-        box.innerHTML = generateNewsBox(currency1, b1, currency2, b2);
+        function renderNews(currency, arr) {
+          if (!arr.length) return "";
+          return `<div>
+            <div style="font-weight:bold;">${getFlagEmoji(currency)} ${currency}</div>
+            <ul>
+              ${arr.map(str => {
+                const parts = str.split("|");
+                const judul = parts[0] || "-";
+                const jam = parts[1] || "";
+                const impact = parts[2] || "Low";
+                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+                const jamWIB = convertGMTtoWIB(jam);
+                return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
+              }).join("")}
+            </ul>
+          </div>`;
+        }
 
-        window.currentPair = pair;
-        window.currentNewsB1 = b1;
-        window.currentNewsB2 = b2;
+        const priority = [];
+        if (currency1 === "USD" || currency2 === "USD") {
+          if (currency1 === "USD") priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+          else priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+        } else priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+
+        box.innerHTML = `<div>${priority.join("")}</div>`;
       })
       .catch(() => {
         const box = document.getElementById("newsBox");
         if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
       });
 
-    const signalBox = document.getElementById("todaySignal");
-    const signals = window.signals || {};
-    signalBox.innerHTML = signals?.[pair.name] || "(Belum ada sinyal hari ini)";
   }, 100);
 }
-      
+
+// === POPUP ANALISA TERMUX EXE (Popup Kedua) ===
 
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
@@ -93,46 +106,65 @@ async function buatAnalisaSekarang() {
   const currency1 = pair.name.slice(0,3);
   const currency2 = pair.name.slice(3,6);
 
-  // Ambil Harga Real-time
+  // Fetch Harga Real-time
   const priceURL = `https://api.exchangerate.host/latest?base=${currency1}&symbols=${currency2}`;
   const priceData = await fetch(priceURL).then(r => r.json());
   const price = priceData.rates?.[currency2] || 0;
 
-  // Ambil Indikator Real
+  // Fetch Indikator Real
   const rsiURL = `https://api.taapi.io/rsi?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
   const macdURL = `https://api.taapi.io/macd?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
 
   const rsiData = await fetch(rsiURL).then(r => r.json());
   const macdData = await fetch(macdURL).then(r => r.json());
-
   const rsi = rsiData.value || 0;
   const macd = macdData.valueMACD || 0;
 
-  const result = generateAutoAnalysis(pair, rsi, macd, price, tf);
-  typeText("autoAnalysis", result);
+  // FXStreet Scrape
+  const fxURL = "https://script.google.com/macros/s/YOUR_FXSTREET_SCRIPT_URL/exec";
+  const fxData = await fetch(fxURL).then(r => r.json());
+  const extraAnalysis = fxData[pair.name] || "Tidak ada analisa fundamental.";
+
+  // Munculkan Popup Analisa Kedua
+  const analysisPopup = document.getElementById('analysisPopup');
+  analysisPopup.innerHTML = `
+    <div style="background:#222; color:#0f0; padding:12px; border-radius:8px; width:90%; max-width:400px; margin:20px auto; font-family:'Courier New', monospace;">
+      <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
+      <pre id="typeWriter" style="margin-top:10px; white-space:pre-wrap;"></pre>
+      <div style="text-align:center; margin-top:10px;">
+        <button onclick="closeAnalysis()" style="background:#444; color:#fff; padding:5px 10px; border:none;">Tutup</button>
+      </div>
+    </div>
+  `;
+  analysisPopup.style.display = 'flex';
+
+  const result = generateAutoAnalysis(pair, rsi, macd, price, tf, extraAnalysis);
+  typeText("typeWriter", result);
 }
 
-function generateAutoAnalysis(pair, rsi, macd, price, tf) {
+function generateAutoAnalysis(pair, rsi, macd, price, tf, extraAnalysis) {
   let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
+  result += `💡 Fundamental: ${extraAnalysis}\n\n`;
 
   if (rsi < 30) result += `• RSI di bawah 30 (Oversold)\n`;
   else if (rsi > 70) result += `• RSI di atas 70 (Overbought)\n`;
   else result += `• RSI Netral (${rsi})\n`;
 
-  if (macd < 0) result += `• MACD Negatif (Bearish)\n`;
-  else result += `• MACD Positif (Bullish)\n`;
+  result += macd < 0 ? `• MACD Negatif (Bearish)\n` : `• MACD Positif (Bullish)\n`;
 
   const entry = parseFloat(price);
   const tp1 = (entry * 1.0020).toFixed(5);
   const tp2 = (entry * 1.0050).toFixed(5);
   const sl = (entry * 0.9980).toFixed(5);
 
-  result += `\n🎯 Rekomendasi: ${rsi < 30 && macd > 0 ? 'BUY' : rsi > 70 && macd < 0 ? 'SELL' : 'WAIT'}\n`;
+  result += `\n🎯 Rekomendasi: ${(rsi < 30 && macd > 0) ? 'BUY' : (rsi > 70 && macd < 0) ? 'SELL' : 'WAIT'}\n`;
   result += `• Entry: ${entry}\n• TP1: ${tp1}\n• TP2: ${tp2}\n• SL: ${sl}\n\n`;
-
-  result += `⚠️ Peringatan Risiko:\nPerdagangan forex mengandung risiko tinggi.\nAnda dapat kehilangan sebagian atau seluruh dana Anda.\nPastikan menggunakan manajemen risiko yang tepat.\n`;
-
+  result += `⚠️ Peringatan Risiko:\nPerdagangan forex berisiko tinggi. Gunakan manajemen risiko.\n`;
   return result;
+}
+
+function closeAnalysis() {
+  document.getElementById('analysisPopup').style.display = 'none';
 }
 
 function typeText(elementId, text, speed = 20) {
@@ -148,71 +180,18 @@ function typeText(elementId, text, speed = 20) {
 
 function convertGMTtoWIB(gmtTime) {
   if (!gmtTime) return "Invalid";
-
   const match = gmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
   if (!match) return "Invalid";
-
   let hour = parseInt(match[1], 10);
   const minute = parseInt(match[2], 10);
   const period = match[3].toLowerCase();
-
   if (period === "pm" && hour !== 12) hour += 12;
   if (period === "am" && hour === 12) hour = 0;
-
   const date = new Date(Date.UTC(2000, 0, 1, hour, minute));
   date.setUTCHours(date.getUTCHours() + 7);
-
   return date.toTimeString().slice(0, 5);
 }
 
-function getFlagEmoji(code) {
-  const flags = {
-    USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
-    AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
-  };
-  return flags[code] || "🏳️";
-}
-
-function generateNewsBox(currency1, b1, currency2, b2) {
-  function renderNews(currency, arr) {
-    if (!arr.length) return "";
-    return `<div>
-      <div style="font-weight:bold;">${getFlagEmoji(currency)} ${currency}</div>
-      <ul style="padding-left:18px;">
-        ${arr.map(str => {
-          const parts = str.split("|");
-          const judul = parts[0] || "-";
-          const jam = parts[1] || "";
-          const impact = parts[2] || "Low";
-          const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-          const jamWIB = convertGMTtoWIB(jam);
-          return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
-        }).join("")}
-      </ul>
-    </div>`;
-  }
-
-  const priority = [];
-  if (currency1 === "USD" || currency2 === "USD") {
-    if (currency1 === "USD") {
-      priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-    } else {
-      priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-    }
-  } else {
-    priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-  }
-
-  return `
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-      ${priority.map(html => `
-        <div style="background:#111; padding:10px; border-radius:8px;">
-          ${html}
-        </div>
-      `).join("")}
-    </div>
-  `;
-}
 
 
 function renderGauge(buy, sell) {
