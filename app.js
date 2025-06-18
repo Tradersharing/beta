@@ -55,35 +55,83 @@ function openPopup(pair) {
   `;
 
   document.getElementById('popup').style.display = 'flex';
-
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
-    const scriptURL = "https://script.google.com/macros/s/..."; // ganti URL aslimu
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
     fetch(scriptURL)
       .then(res => res.json())
       .then(data => {
         const box = document.getElementById("newsBox");
+        if (!box) return;
+
         const news = data?.[today] || {};
         const b1 = news?.[currency1] || [];
         const b2 = news?.[currency2] || [];
+setTimeout(() => {
+    const box = document.getElementById("newsBox");
+    const signalBox = document.getElementById("todaySignal");
 
-        box.innerHTML = generateNewsBox(currency1, b1, currency2, b2);
+    const currency1 = pair.symbol.substring(0, 3);
+    const currency2 = pair.symbol.substring(3);
+    const dataToday = data[today] || {};
+    const b1 = dataToday[currency1] || [];
+    const b2 = dataToday[currency2] || [];
 
-        window.currentPair = pair;
-        window.currentNewsB1 = b1;
-        window.currentNewsB2 = b2;
+
+        function renderNews(currency, arr) {
+  if (!arr.length) return "";
+  return `<div>
+    <div style="font-weight:bold; margin-bottom:4px;">${getFlagEmoji(currency)} ${currency}</div>
+    <ul style="padding-left:18px; margin:0;">
+      ${arr.map(str => {
+        const [judul, jam, impact] = str.split("|");
+        const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+        const jamWIB = convertGMTtoWIB(jam);
+        return `<li style="color:${color}; margin-bottom:2px;">${judul} (${jamWIB})</li>`;
+      }).join("")}
+    </ul>
+  </div>`;
+}
+
+// Prioritaskan USD tampil di kiri
+const priority = [];
+if (currency1 === "USD" || currency2 === "USD") {
+  if (currency1 === "USD") {
+    priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+  } else {
+    priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+  }
+} else {
+  priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+}
+
+// Isi box-nya dengan 2 kolom sejajar
+box.innerHTML = `
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+    ${priority.map(html => `
+      <div style="background:#111; padding:10px; border-radius:8px;">
+        ${html}
+      </div>
+    `).join("")}
+  </div>
+`;
+
       })
       .catch(() => {
         const box = document.getElementById("newsBox");
         if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
       });
 
+    const signalBox = document.getElementById("todaySignal");
+    const signals = window.signals || {};
+    signalBox.innerHTML = signals?.[pair.name] || "(Belum ada sinyal hari ini)";
   }, 100);
-}
+  
 
-
+  }
+             }
 
 
 function convertGMTtoWIB(gmtTime) {
