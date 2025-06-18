@@ -7,7 +7,6 @@ function closePopup() {
 }
 
 
-
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
@@ -51,64 +50,30 @@ function openPopup(pair) {
       <button onclick="buatAnalisaSekarang()" class="popup-button">
         🔍 Buat Analisa ${pair.name} Sekarang
       </button>
-      <div id="autoAnalysis" class="popup-analysis"></div>
+      <div id="autoAnalysis"></div>
     </div>
   `;
 
   document.getElementById('popup').style.display = 'flex';
+
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+    const scriptURL = "https://script.google.com/macros/s/..."; // ganti URL aslimu
 
     fetch(scriptURL)
       .then(res => res.json())
       .then(data => {
         const box = document.getElementById("newsBox");
-        if (!box) return;
-
         const news = data?.[today] || {};
         const b1 = news?.[currency1] || [];
         const b2 = news?.[currency2] || [];
 
-        function renderNews(currency, arr) {
-          if (!arr.length) return "";
-          return `<div>
-            <div style="font-weight:bold; margin-bottom:4px;">${getFlagEmoji(currency)} ${currency}</div>
-            <ul style="padding-left:18px; margin:0;">
-              ${arr.map(str => {
-                const parts = str.split("|");
-                const judul = parts[0] || "-";
-                const jam = parts[1] || "";
-                const impact = parts[2] || "Low";
-                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-                const jamWIB = convertGMTtoWIB(jam);
-                return `<li style="color:${color}; margin-bottom:2px;">${judul} (${jamWIB})</li>`;
-              }).join("")}
-            </ul>
-          </div>`;
-        }
+        box.innerHTML = generateNewsBox(currency1, b1, currency2, b2);
 
-        const priority = [];
-        if (currency1 === "USD" || currency2 === "USD") {
-          if (currency1 === "USD") {
-            priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-          } else {
-            priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-          }
-        } else {
-          priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-        }
-
-        box.innerHTML = `
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            ${priority.map(html => `
-              <div style="background:#111; padding:10px; border-radius:8px;">
-                ${html}
-              </div>
-            `).join("")}
-          </div>
-        `;
+        window.currentPair = pair;
+        window.currentNewsB1 = b1;
+        window.currentNewsB2 = b2;
       })
       .catch(() => {
         const box = document.getElementById("newsBox");
@@ -117,6 +82,7 @@ function openPopup(pair) {
 
   }, 100);
 }
+
 
 
 
