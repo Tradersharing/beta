@@ -6,7 +6,6 @@ function closePopup() {
   document.getElementById('popup').style.display = 'none';
 }
 
-
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
@@ -17,12 +16,7 @@ function openPopup(pair) {
   const strength2 = (short / total) * 100;
 
   const now = new Date();
-  const today = now.toLocaleDateString('en-US', {
-    timeZone: 'Asia/Jakarta',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  }).replace(/\//g, '-');
+  const today = now.toLocaleDateString('en-US', {timeZone: 'Asia/Jakarta',year: 'numeric',month: '2-digit',day: '2-digit'}).replace(/\//g, '-');
 
   const detailTop = `
     <div style="background: linear-gradient(to right, #2c3e50, #4ca1af); color: white; padding: 12px; border-radius: 12px; text-align: center;">
@@ -39,20 +33,19 @@ function openPopup(pair) {
     <p>${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴</p>
     <hr>
     <p><b>Analisa:</b></p>
-    <select id="tfSelect">
+    <select id="tfSelect" class="popup-dropdown">
       <option value="1h" selected>H1 (default)</option>
       <option value="4h">H4</option>
       <option value="1d">D1</option>
     </select>
     <button onclick="buatAnalisaSekarang()" class="popup-button">📊 Mulai Proses Analisa ${pair.name}</button>
-    <div id="autoAnalysis" style="font-size:13px; margin-top:10px;"></div>
+    <div id="autoAnalysis"></div>
   `;
 
   document.getElementById('popup').style.display = 'flex';
 
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
-
     const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
     fetch(scriptURL)
@@ -60,7 +53,6 @@ function openPopup(pair) {
       .then(data => {
         const box = document.getElementById("newsBox");
         if (!box) return;
-
         const news = data?.[today] || {};
         const b1 = news?.[currency1] || [];
         const b2 = news?.[currency2] || [];
@@ -71,10 +63,7 @@ function openPopup(pair) {
             <div style="font-weight:bold;">${getFlagEmoji(currency)} ${currency}</div>
             <ul>
               ${arr.map(str => {
-                const parts = str.split("|");
-                const judul = parts[0] || "-";
-                const jam = parts[1] || "";
-                const impact = parts[2] || "Low";
+                const [judul, jam, impact] = str.split("|");
                 const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
                 const jamWIB = convertGMTtoWIB(jam);
                 return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
@@ -95,24 +84,20 @@ function openPopup(pair) {
         const box = document.getElementById("newsBox");
         if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
       });
-
   }, 100);
 }
 
-// === POPUP ANALISA TERMUX EXE (Popup Kedua) ===
-
+// === POPUP KEDUA: Analisa AI / Termux-Style ===
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
   const currency1 = pair.name.slice(0,3);
   const currency2 = pair.name.slice(3,6);
 
-  // Fetch Harga Real-time
   const priceURL = `https://api.exchangerate.host/latest?base=${currency1}&symbols=${currency2}`;
   const priceData = await fetch(priceURL).then(r => r.json());
   const price = priceData.rates?.[currency2] || 0;
 
-  // Fetch Indikator Real
   const rsiURL = `https://api.taapi.io/rsi?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
   const macdURL = `https://api.taapi.io/macd?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
 
@@ -121,17 +106,15 @@ async function buatAnalisaSekarang() {
   const rsi = rsiData.value || 0;
   const macd = macdData.valueMACD || 0;
 
-  // FXStreet Scrape
   const fxURL = "https://script.google.com/macros/s/YOUR_FXSTREET_SCRIPT_URL/exec";
   const fxData = await fetch(fxURL).then(r => r.json());
   const extraAnalysis = fxData[pair.name] || "Tidak ada analisa fundamental.";
 
-  // Munculkan Popup Analisa Kedua
   const analysisPopup = document.getElementById('analysisPopup');
   analysisPopup.innerHTML = `
     <div style="background:#222; color:#0f0; padding:12px; border-radius:8px; width:90%; max-width:400px; margin:20px auto; font-family:'Courier New', monospace;">
       <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
-      <pre id="typeWriter" style="margin-top:10px; white-space:pre-wrap;"></pre>
+      <pre id="typeWriter"></pre>
       <div style="text-align:center; margin-top:10px;">
         <button onclick="closeAnalysis()" style="background:#444; color:#fff; padding:5px 10px; border:none;">Tutup</button>
       </div>
@@ -146,11 +129,7 @@ async function buatAnalisaSekarang() {
 function generateAutoAnalysis(pair, rsi, macd, price, tf, extraAnalysis) {
   let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
   result += `💡 Fundamental: ${extraAnalysis}\n\n`;
-
-  if (rsi < 30) result += `• RSI di bawah 30 (Oversold)\n`;
-  else if (rsi > 70) result += `• RSI di atas 70 (Overbought)\n`;
-  else result += `• RSI Netral (${rsi})\n`;
-
+  result += rsi < 30 ? `• RSI di bawah 30 (Oversold)\n` : rsi > 70 ? `• RSI di atas 70 (Overbought)\n` : `• RSI Netral (${rsi})\n`;
   result += macd < 0 ? `• MACD Negatif (Bearish)\n` : `• MACD Positif (Bullish)\n`;
 
   const entry = parseFloat(price);
@@ -160,7 +139,7 @@ function generateAutoAnalysis(pair, rsi, macd, price, tf, extraAnalysis) {
 
   result += `\n🎯 Rekomendasi: ${(rsi < 30 && macd > 0) ? 'BUY' : (rsi > 70 && macd < 0) ? 'SELL' : 'WAIT'}\n`;
   result += `• Entry: ${entry}\n• TP1: ${tp1}\n• TP2: ${tp2}\n• SL: ${sl}\n\n`;
-  result += `⚠️ Peringatan Risiko:\nPerdagangan forex berisiko tinggi. Gunakan manajemen risiko.\n`;
+  result += `⚠️ Risiko tinggi. Gunakan money management.\n`;
   return result;
 }
 
@@ -192,6 +171,33 @@ function convertGMTtoWIB(gmtTime) {
   date.setUTCHours(date.getUTCHours() + 7);
   return date.toTimeString().slice(0, 5);
 }
+
+function getFlagEmoji(code) {
+  const flags = {
+    USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
+    AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
+  };
+  return flags[code] || "🏳️";
+}
+}
+
+
+
+function convertGMTtoWIB(gmtTime) {
+  if (!gmtTime) return "Invalid";
+  const match = gmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
+  if (!match) return "Invalid";
+  let hour = parseInt(match[1], 10);
+  const minute = parseInt(match[2], 10);
+  const period = match[3].toLowerCase();
+  if (period === "pm" && hour !== 12) hour += 12;
+  if (period === "am" && hour === 12) hour = 0;
+  const date = new Date(Date.UTC(2000, 0, 1, hour, minute));
+  date.setUTCHours(date.getUTCHours() + 7);
+  return date.toTimeString().slice(0, 5);
+}
+
+
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
