@@ -6,6 +6,7 @@ function closePopup() {
   document.getElementById('popup').style.display = 'none';
 }
 
+
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
@@ -191,8 +192,6 @@ function convertGMTtoWIB(gmtTime) {
   date.setUTCHours(date.getUTCHours() + 7);
   return date.toTimeString().slice(0, 5);
 }
-
-
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
