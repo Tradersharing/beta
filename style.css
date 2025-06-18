@@ -307,3 +307,47 @@ header {
   font-weight: bold;
   box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
 }
+/* === Tampilan Fullscreen Terminal ala Windows 10 === */
+#analysisPopup {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom, #004a7c, #007acc, #cce6ff);
+  z-index: 9999;
+  display: none;
+  overflow-y: auto;
+  font-family: 'Courier New', monospace;
+  box-shadow: inset 0 0 80px #003b63;
+}
+
+/* === Style isi popup terminal AI === */
+.analysis-terminal {
+  background-color: #1b1b1b;
+  color: #00ff00;
+  padding: 20px;
+  border-radius: 14px;
+  max-width: 600px;
+  margin: 60px auto;
+  font-family: 'Courier New', monospace;
+  box-shadow: 0 0 10px #000 inset;
+  white-space: pre-wrap;
+  font-size: 15px;
+}
+
+/* === Tombol tutup di bawah popup AI === */
+.analysis-terminal button {
+  background: #333;
+  color: #fff;
+  padding: 6px 14px;
+  border: none;
+  margin-top: 15px;
+  font-family: 'Segoe UI', sans-serif;
+  cursor: pointer;
+}
+
+.analysis-terminal button:hover {
+  background: #555;
+}
+
+  
