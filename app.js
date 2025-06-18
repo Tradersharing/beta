@@ -162,22 +162,34 @@ async function buatAnalisaSekarang() {
 
 
 
-function generateAutoAnalysis(pair, rsi, macd, price, tf, extraAnalysis) {
+function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
   let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
   result += `💡 Fundamental: ${extraAnalysis}\n\n`;
-  result += rsi < 30 ? `• RSI di bawah 30 (Oversold)\n` : rsi > 70 ? `• RSI di atas 70 (Overbought)\n` : `• RSI Netral (${rsi})\n`;
+
+  result += rsi < 30 ? `• RSI di bawah 30 (Oversold)\n` :
+           rsi > 70 ? `• RSI di atas 70 (Overbought)\n` :
+                      `• RSI Netral (${rsi})\n`;
+
   result += macd < 0 ? `• MACD Negatif (Bearish)\n` : `• MACD Positif (Bullish)\n`;
+  result += `• EMA 14 (harga rata-rata): ${ema.toFixed(5)}\n`;
+  result += `• Supertrend Sinyal: ${supertrend.toUpperCase()}\n`;
 
   const entry = parseFloat(price);
   const tp1 = (entry * 1.0020).toFixed(5);
   const tp2 = (entry * 1.0050).toFixed(5);
   const sl = (entry * 0.9980).toFixed(5);
 
-  result += `\n🎯 Rekomendasi: ${(rsi < 30 && macd > 0) ? 'BUY' : (rsi > 70 && macd < 0) ? 'SELL' : 'WAIT'}\n`;
+  const rekom = (rsi < 30 && macd > 0 && supertrend.toUpperCase() === "BUY") ? 'BUY' :
+                (rsi > 70 && macd < 0 && supertrend.toUpperCase() === "SELL") ? 'SELL' :
+                'WAIT';
+
+  result += `\n🎯 Rekomendasi AI: ${rekom}\n`;
   result += `• Entry: ${entry}\n• TP1: ${tp1}\n• TP2: ${tp2}\n• SL: ${sl}\n\n`;
-  result += `⚠️ Risiko tinggi. Gunakan money management.\n`;
+  result += `⚠️ Analisa ini bersifat semi-realtime berdasarkan data teknikal terkini.\nGunakan money management dan verifikasi tambahan sebelum entry.`;
+
   return result;
 }
+
 
 function closeAnalysis() {
   document.getElementById('analysisPopup').style.display = 'none';
