@@ -104,19 +104,23 @@ function openPopup(pair) {
         const b2 = news?.[currency2] || [];
 
         function renderNews(currency, arr) {
-          if (!arr.length) return "";
-          return `<div>
-            <div style="font-weight:bold; margin-bottom:4px;">${getFlagEmoji(currency)} ${currency}</div>
-            <ul style="padding-left:18px; margin:0;">
-              ${arr.map(str => {
-                const [judul, jam, impact] = str.split("|");
-                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-                const jamWIB = convertGMTtoWIB(jam);
-                return `<li style="color:${color}; margin-bottom:2px;">${judul} (${jamWIB})</li>`;
-              }).join("")}
-            </ul>
-          </div>`;
-        }
+  if (!arr.length) return "";
+  return `<div>
+    <div style="font-weight:bold; margin-bottom:4px;">${getFlagEmoji(currency)} ${currency}</div>
+    <ul style="padding-left:18px; margin:0;">
+      ${arr.map(str => {
+        const parts = str.split("|");
+        const judul = parts[0] || "-";
+        const jam = parts[1] || "";
+        const impact = parts[2] || "Low"; // fallback kalau belum ada
+        const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+        const jamWIB = convertGMTtoWIB(jam);
+        return `<li style="color:${color}; margin-bottom:2px;">${judul} (${jamWIB})</li>`;
+      }).join("")}
+    </ul>
+  </div>`;
+}
+
 
         const priority = [];
         if (currency1 === "USD" || currency2 === "USD") {
