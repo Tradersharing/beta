@@ -5,6 +5,7 @@ function toggleSidebar() {
 function closePopup() {
   document.getElementById('popup').style.display = 'none';
 }
+
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
@@ -84,6 +85,7 @@ function openPopup(pair) {
     signalBox.innerHTML = signals?.[pair.name] || "(Belum ada sinyal hari ini)";
   }, 100);
 }
+      
 
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
