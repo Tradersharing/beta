@@ -26,133 +26,63 @@ function openPopup(pair) {
   }).replace(/\//g, '-');
 
   const detailTop = `
-    <div style="
-      background: linear-gradient(to right, #2c3e50, #4ca1af);
-      color: white;
-      padding: 12px;
-      border-radius: 12px;
-      text-align: center;
-      font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 16px;">
-      💻 Analisa ${pair.name} 📊 ${today}
+    <div class="popup-header">💻 Analisa ${pair.name} 📊 ${today}</div>
+
+    <p class="popup-title">📝 Berita Penting Hari Ini:</p>
+    <div id="newsBox">⏳ Mengambil berita...</div>
+
+    <hr class="popup-separator">
+
+    <p class="popup-title">Analisa:</p>
+    <div>
+      <button onclick="buatAnalisaSekarang()" class="popup-button">
+        🔍 Buat Analisa ${pair.name} Sekarang
+      </button>
+      <div id="autoAnalysis" class="popup-analysis">(Hasil analisa akan muncul di sini)</div>
     </div>
 
-    <p style="font-weight:bold; margin-bottom:6px;">📝 Berita Penting Hari Ini:</p>
-    <div id="newsBox" style="font-size:13.5px; line-height:1.4em; margin-bottom:16px;">
-      ⏳ Mengambil berita...
-    </div>
+    <hr class="popup-separator">
 
-    <hr style="border:none; border-top:1px solid #ccc; margin:16px 0;">
-
-    <p style="font-weight:bold; margin-bottom:6px;">Kekuatan Mata Uang:</p>
-    <div class="strength-bar">
-      <div class="strength-gbp" style="width:${strength1}%"></div>
-      <div class="strength-usd" style="width:${strength2}%"></div>
-    </div>
-    <p style="font-size:13px; margin-bottom:16px;">
-      ${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp;&nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴
-    </p>
-
-    <hr style="border:none; border-top:1px solid #ccc; margin:16px 0;">
-
-    <p style="font-weight:bold; margin-bottom:6px;">Analisa:</p>
-    <div id="forumAnalysis" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
-      <div id="techAnalysisSection">
-        <p style="font-weight:bold; margin-top:10px;">🔍 Analisa Teknikal:</p>
-
-        <select id="indicatorSelect" class="dropdown3d" onchange="updateTechnicalAnalysis()">
-          <option value="">Pilih Indikator</option>
-          <option value="ma">Moving Average</option>
-          <option value="rsi">RSI</option>
-          <option value="bb">Bollinger Bands</option>
-        </select>
-
-        <select id="tfSelect" class="dropdown3d" onchange="updateTechnicalAnalysis()">
-          <option value="30m">30 Menit</option>
-          <option value="1h">1 Jam</option>
-          <option value="4h">4 Jam</option>
-          <option value="1d" selected>Daily</option>
-        </select>
-
-        <div id="analysisResult">(Pilih indikator dan timeframe)</div>
-      </div>
-    </div>
-
-    <hr style="border:none; border-top:1px solid #ccc; margin:16px 0;">
-
-    <p style="font-weight:bold; margin-bottom:6px;">Sinyal Hari Ini (${pair.name}):</p>
-    <div id="todaySignal" style="font-size:13.5px; line-height:1.4em; color:#ccc;">
-      (Sinyal akan ditampilkan di sini)
+    <div class="popup-chart">
+      <iframe src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_0&symbol=FX:${pair.name}&interval=60&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[]&theme=Dark" width="100%" height="250" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
     </div>
   `;
 
   document.getElementById('popup').style.display = 'flex';
+
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+    const scriptURL = "https://script.google.com/macros/s/.../exec"; // ganti dengan URL aslimu
 
     fetch(scriptURL)
       .then(res => res.json())
       .then(data => {
         const box = document.getElementById("newsBox");
-        if (!box) return;
-
         const news = data?.[today] || {};
         const b1 = news?.[currency1] || [];
         const b2 = news?.[currency2] || [];
 
-        function renderNews(currency, arr) {
-  if (!arr.length) return "";
-  return `<div>
-    <div style="font-weight:bold; margin-bottom:4px;">${getFlagEmoji(currency)} ${currency}</div>
-    <ul style="padding-left:18px; margin:0;">
-      ${arr.map(str => {
-        const parts = str.split("|");
-        const judul = parts[0] || "-";
-        const jam = parts[1] || "";
-        const impact = parts[2] || "Low"; // fallback kalau belum ada
-        const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-        const jamWIB = convertGMTtoWIB(jam);
-        return `<li style="color:${color}; margin-bottom:2px;">${judul} (${jamWIB})</li>`;
-      }).join("")}
-    </ul>
-  </div>`;
-}
+        box.innerHTML = generateNewsBox(currency1, b1, currency2, b2);
 
-
-        const priority = [];
-        if (currency1 === "USD" || currency2 === "USD") {
-          if (currency1 === "USD") {
-            priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-          } else {
-            priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-          }
-        } else {
-          priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-        }
-
-        box.innerHTML = `
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            ${priority.map(html => `
-              <div style="background:#111; padding:10px; border-radius:8px;">
-                ${html}
-              </div>
-            `).join("")}
-          </div>
-        `;
+        // simpan data utk fungsi analisa
+        window.currentPair = pair;
+        window.currentNewsB1 = b1;
+        window.currentNewsB2 = b2;
       })
       .catch(() => {
         const box = document.getElementById("newsBox");
         if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
       });
 
-    const signalBox = document.getElementById("todaySignal");
-    const signals = window.signals || {};
-    signalBox.innerHTML = signals?.[pair.name] || "(Belum ada sinyal hari ini)";
+    // SINI KITA STOP — TIDAK ADA LAGI KODE SISA LAMA:
+    // Hapus bagian lama berikut ini agar tidak dobel:
+    // const signalBox = document.getElementById("todaySignal");
+    // const signals = window.signals || {};
+    // signalBox.innerHTML = signals?.[pair.name] || "(Belum ada sinyal hari ini)";
   }, 100);
-             }
+}
+
 
   function convertGMTtoWIB(gmtTime) {
   if (!gmtTime) return "Invalid";
