@@ -1,10 +1,4 @@
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('active');
-}
 
-function closePopup() {
-  document.getElementById('popup').style.display = 'none';
-}
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
@@ -27,33 +21,34 @@ function openPopup(pair) {
       💻 Analisa ${pair.name} 📊 ${today}
     </div>
 
-    <p style="font-weight:bold; margin-bottom:6px;">📝 Berita Penting Hari Ini:</p>
-    <div id="newsBox" style="font-size:13.5px; line-height:1.4em; margin-bottom:16px;">⏳ Mengambil berita...</div>
+    <p style="font-weight:bold;">📝 Berita Penting Hari Ini:</p>
+    <div id="newsBox" style="font-size:13px;">⏳ Mengambil berita...</div>
 
-    <hr style="border:none; border-top:1px solid #ccc; margin:16px 0;">
+    <hr>
 
-    <p style="font-weight:bold; margin-bottom:6px;">Kekuatan Mata Uang:</p>
+    <p style="font-weight:bold;">Kekuatan Mata Uang:</p>
     <div class="strength-bar">
       <div class="strength-gbp" style="width:${strength1}%"></div>
       <div class="strength-usd" style="width:${strength2}%"></div>
     </div>
-    <p style="font-size:13px; margin-bottom:16px;">
-      ${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp;&nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴
-    </p>
+    <p>${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp;&nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴</p>
 
-    <hr style="border:none; border-top:1px solid #ccc; margin:16px 0;">
+    <hr>
 
-    <p style="font-weight:bold; margin-bottom:6px;">Analisa:</p>
-    <div>
-      <button onclick="buatAnalisaSekarang()" class="popup-button">
-        🔍 Buat Analisa ${pair.name} Sekarang
-      </button>
-      <div id="autoAnalysis"></div>
-    </div>
+    <p style="font-weight:bold;">Analisa:</p>
+    <select id="tfSelect" class="popup-dropdown">
+      <option value="1h" selected>H1 (Default)</option>
+      <option value="4h">H4</option>
+      <option value="1d">Daily (D1)</option>
+    </select>
+
+    <button onclick="buatAnalisaSekarang()" class="popup-button">
+      🔍 Buat Analisa ${pair.name} Sekarang
+    </button>
+    <div id="autoAnalysis" style="font-size:13px; margin-top:10px;"></div>
   `;
 
   document.getElementById('popup').style.display = 'flex';
-
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
@@ -63,50 +58,11 @@ function openPopup(pair) {
       .then(res => res.json())
       .then(data => {
         const box = document.getElementById("newsBox");
-        if (!box) return;
-
         const news = data?.[today] || {};
         const b1 = news?.[currency1] || [];
         const b2 = news?.[currency2] || [];
 
-        function renderNews(currency, arr) {
-          if (!arr.length) return "";
-          return `<div>
-            <div style="font-weight:bold; margin-bottom:4px;">${getFlagEmoji(currency)} ${currency}</div>
-            <ul style="padding-left:18px; margin:0;">
-              ${arr.map(str => {
-                const parts = str.split("|");
-                const judul = parts[0] || "-";
-                const jam = parts[1] || "";
-                const impact = parts[2] || "Low";
-                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-                const jamWIB = convertGMTtoWIB(jam);
-                return `<li style="color:${color}; margin-bottom:2px;">${judul} (${jamWIB})</li>`;
-              }).join("")}
-            </ul>
-          </div>`;
-        }
-
-        const priority = [];
-        if (currency1 === "USD" || currency2 === "USD") {
-          if (currency1 === "USD") {
-            priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-          } else {
-            priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-          }
-        } else {
-          priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-        }
-
-        box.innerHTML = `
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-            ${priority.map(html => `
-              <div style="background:#111; padding:10px; border-radius:8px;">
-                ${html}
-              </div>
-            `).join("")}
-          </div>
-        `;
+        box.innerHTML = generateNewsBox(currency1, b1, currency2, b2);
 
         window.currentPair = pair;
         window.currentNewsB1 = b1;
@@ -123,96 +79,63 @@ function openPopup(pair) {
   }, 100);
 }
 
-// === Tambahan Fungsi Analisa AI ===
-function generateAutoAnalysis(pair, rsi, macd, b1 = [], b2 = []) {
-  const currentPrice = parseFloat(pair.price).toFixed(5);
-  let result = `📌 Analisa ${pair.name} (${new Date().toLocaleDateString()})\n\n`;
+async function buatAnalisaSekarang() {
+  const tf = document.getElementById('tfSelect').value;
+  const pair = window.currentPair;
+  const currency1 = pair.name.slice(0,3);
+  const currency2 = pair.name.slice(3,6);
+
+  // Ambil Harga Real-time
+  const priceURL = `https://api.exchangerate.host/latest?base=${currency1}&symbols=${currency2}`;
+  const priceData = await fetch(priceURL).then(r => r.json());
+  const price = priceData.rates?.[currency2] || 0;
+
+  // Ambil Indikator Real
+  const rsiURL = `https://api.taapi.io/rsi?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
+  const macdURL = `https://api.taapi.io/macd?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
+
+  const rsiData = await fetch(rsiURL).then(r => r.json());
+  const macdData = await fetch(macdURL).then(r => r.json());
+
+  const rsi = rsiData.value || 0;
+  const macd = macdData.valueMACD || 0;
+
+  const result = generateAutoAnalysis(pair, rsi, macd, price, tf);
+  typeText("autoAnalysis", result);
+}
+
+function generateAutoAnalysis(pair, rsi, macd, price, tf) {
+  let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
 
   if (rsi < 30) result += `• RSI di bawah 30 (Oversold)\n`;
   else if (rsi > 70) result += `• RSI di atas 70 (Overbought)\n`;
-  else result += `• RSI Netral (${rsi.toFixed(2)})\n`;
+  else result += `• RSI Netral (${rsi})\n`;
 
-  if (macd < 0) result += `• MACD Negatif (Momentum Turun)\n`;
-  else result += `• MACD Positif (Momentum Naik)\n`;
+  if (macd < 0) result += `• MACD Negatif (Bearish)\n`;
+  else result += `• MACD Positif (Bullish)\n`;
 
-  const now = new Date();
-  const releasedNews = [...b1, ...b2].filter(str => {
-    const parts = str.split("|");
-    const jam = parts[1] || "";
-    const impact = parts[2] || "Low";
-    if (impact !== "High") return false;
-    const jamWIB = convertGMTtoWIB(jam);
-    const [hh, mm] = jamWIB.split(":").map(Number);
-    const newsTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hh, mm);
-    return newsTime < now;
-  });
+  const entry = parseFloat(price);
+  const tp1 = (entry * 1.0020).toFixed(5);
+  const tp2 = (entry * 1.0050).toFixed(5);
+  const sl = (entry * 0.9980).toFixed(5);
 
-  if (releasedNews.length > 0) {
-    result += `⚠️ Ada ${releasedNews.length} Berita High Impact sudah rilis:\n`;
-    releasedNews.forEach(str => {
-      const [judul, jam] = str.split("|");
-      const jamWIB = convertGMTtoWIB(jam);
-      result += `- ${judul} (${jamWIB} WIB)\n`;
-    });
-  }
+  result += `\n🎯 Rekomendasi: ${rsi < 30 && macd > 0 ? 'BUY' : rsi > 70 && macd < 0 ? 'SELL' : 'WAIT'}\n`;
+  result += `• Entry: ${entry}\n• TP1: ${tp1}\n• TP2: ${tp2}\n• SL: ${sl}\n\n`;
 
-  let rekomendasi = "Netral — Tunggu konfirmasi tambahan";
-  let entry = currentPrice, tp1, tp2, sl;
-  if (rsi < 30 && macd > 0) {
-    rekomendasi = "BUY";
-    tp1 = (entry * 1.0020).toFixed(5);
-    tp2 = (entry * 1.0050).toFixed(5);
-    sl  = (entry * 0.9980).toFixed(5);
-  } else if (rsi > 70 && macd < 0) {
-    rekomendasi = "SELL";
-    tp1 = (entry * 0.9980).toFixed(5);
-    tp2 = (entry * 0.9950).toFixed(5);
-    sl  = (entry * 1.0020).toFixed(5);
-  }
-  result += `\n🎯 Rekomendasi: ${rekomendasi}\n`;
-  if (rekomendasi !== "Netral — Tunggu konfirmasi tambahan") {
-    result += `• Entry: ${entry}\n• TP1: ${tp1}\n• TP2: ${tp2}\n• SL: ${sl}\n`;
-  }
+  result += `⚠️ Peringatan Risiko:\nPerdagangan forex mengandung risiko tinggi.\nAnda dapat kehilangan sebagian atau seluruh dana Anda.\nPastikan menggunakan manajemen risiko yang tepat.\n`;
 
   return result;
 }
 
-function buatAnalisaSekarang() {
-  const pair = window.currentPair;
-  const rsi = Math.random() * 100;
-  const macd = (Math.random() - 0.5) * 2;
-  const b1 = window.currentNewsB1 || [];
-  const b2 = window.currentNewsB2 || [];
-  const result = generateAutoAnalysis(pair, rsi, macd, b1, b2);
-
-  const analysisBox = `
-    <div class="win95-titlebar">Analisa ${pair.name}</div>
-    <div id="analysisContent" class="win95-content"></div>
-    <div class="win95-footer">
-      <button onclick="closeAnalysis()" class="win95-close">Close</button>
-    </div>
-  `;
-  document.getElementById("analysisPopup").innerHTML = analysisBox;
-  document.getElementById("analysisPopup").style.display = 'block';
-  typeText("analysisContent", result);
-}
-
-function closeAnalysis() {
-  document.getElementById("analysisPopup").style.display = 'none';
-}
-
 function typeText(elementId, text, speed = 20) {
-  const el = document.getElementById(elementId);
-  el.textContent = "";
+  const element = document.getElementById(elementId);
+  element.innerHTML = "";
   let i = 0;
-  function typing() {
-    if (i < text.length) {
-      el.textContent += text.charAt(i);
-      i++;
-      setTimeout(typing, speed);
-    }
-  }
-  typing();
+  const interval = setInterval(() => {
+    element.innerHTML += text.charAt(i);
+    i++;
+    if (i >= text.length) clearInterval(interval);
+  }, speed);
 }
 
 function convertGMTtoWIB(gmtTime) {
@@ -240,6 +163,47 @@ function getFlagEmoji(code) {
     AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
   };
   return flags[code] || "🏳️";
+}
+
+function generateNewsBox(currency1, b1, currency2, b2) {
+  function renderNews(currency, arr) {
+    if (!arr.length) return "";
+    return `<div>
+      <div style="font-weight:bold;">${getFlagEmoji(currency)} ${currency}</div>
+      <ul style="padding-left:18px;">
+        ${arr.map(str => {
+          const parts = str.split("|");
+          const judul = parts[0] || "-";
+          const jam = parts[1] || "";
+          const impact = parts[2] || "Low";
+          const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+          const jamWIB = convertGMTtoWIB(jam);
+          return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
+        }).join("")}
+      </ul>
+    </div>`;
+  }
+
+  const priority = [];
+  if (currency1 === "USD" || currency2 === "USD") {
+    if (currency1 === "USD") {
+      priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+    } else {
+      priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+    }
+  } else {
+    priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+  }
+
+  return `
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+      ${priority.map(html => `
+        <div style="background:#111; padding:10px; border-radius:8px;">
+          ${html}
+        </div>
+      `).join("")}
+    </div>
+  `;
 }
 
 
