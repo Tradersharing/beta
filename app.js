@@ -8,6 +8,7 @@ function closePopup() {
 
 
 
+// Final Revised openPopup function sampai sebelum convertGMTtoWIB
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
@@ -16,7 +17,6 @@ function openPopup(pair) {
   const total = long + short;
   const strength1 = (long / total) * 100;
   const strength2 = (short / total) * 100;
-
   const now = new Date();
   const today = now.toLocaleDateString('en-US', {
     timeZone: 'Asia/Jakarta',
@@ -33,18 +33,23 @@ function openPopup(pair) {
 
     <hr class="popup-separator">
 
+    <p class="popup-title">Kekuatan Mata Uang:</p>
+    <div class="strength-bar">
+      <div class="strength-gbp" style="width:${strength1}%"></div>
+      <div class="strength-usd" style="width:${strength2}%"></div>
+    </div>
+    <p style="font-size:13px; margin-bottom:16px;">
+      ${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp;&nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴
+    </p>
+
+    <hr class="popup-separator">
+
     <p class="popup-title">Analisa:</p>
     <div>
       <button onclick="buatAnalisaSekarang()" class="popup-button">
         🔍 Buat Analisa ${pair.name} Sekarang
       </button>
       <div id="autoAnalysis" class="popup-analysis">(Hasil analisa akan muncul di sini)</div>
-    </div>
-
-    <hr class="popup-separator">
-
-    <div class="popup-chart">
-      <iframe src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_0&symbol=FX:${pair.name}&interval=60&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[]&theme=Dark" width="100%" height="250" frameborder="0" allowtransparency="true" scrolling="no"></iframe>
     </div>
   `;
 
@@ -53,7 +58,7 @@ function openPopup(pair) {
   setTimeout(() => {
     document.getElementById('popupDetails').innerHTML = detailTop;
 
-    const scriptURL = "https://script.google.com/macros/s/.../exec"; // ganti dengan URL aslimu
+    const scriptURL = "https://script.google.com/macros/s/.../exec"; // real URL here
 
     fetch(scriptURL)
       .then(res => res.json())
@@ -65,7 +70,6 @@ function openPopup(pair) {
 
         box.innerHTML = generateNewsBox(currency1, b1, currency2, b2);
 
-        // simpan data utk fungsi analisa
         window.currentPair = pair;
         window.currentNewsB1 = b1;
         window.currentNewsB2 = b2;
@@ -74,17 +78,12 @@ function openPopup(pair) {
         const box = document.getElementById("newsBox");
         if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
       });
-
-    // SINI KITA STOP — TIDAK ADA LAGI KODE SISA LAMA:
-    // Hapus bagian lama berikut ini agar tidak dobel:
-    // const signalBox = document.getElementById("todaySignal");
-    // const signals = window.signals || {};
-    // signalBox.innerHTML = signals?.[pair.name] || "(Belum ada sinyal hari ini)";
   }, 100);
 }
 
 
-  function convertGMTtoWIB(gmtTime) {
+function convertGMTtoWIB(gmtTime) {
+
   if (!gmtTime) return "Invalid";
 
   const match = gmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
