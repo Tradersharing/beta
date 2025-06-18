@@ -207,21 +207,6 @@ function getFlagEmoji(code) {
 
 
 
-function convertGMTtoWIB(gmtTime) {
-  if (!gmtTime) return "Invalid";
-  const match = gmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
-  if (!match) return "Invalid";
-  let hour = parseInt(match[1], 10);
-  const minute = parseInt(match[2], 10);
-  const period = match[3].toLowerCase();
-  if (period === "pm" && hour !== 12) hour += 12;
-  if (period === "am" && hour === 12) hour = 0;
-  const date = new Date(Date.UTC(2000, 0, 1, hour, minute));
-  date.setUTCHours(date.getUTCHours() + 7);
-  return date.toTimeString().slice(0, 5);
-}
-
-
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
