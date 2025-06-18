@@ -44,9 +44,13 @@ function openPopup(pair) {
 
   document.getElementById('popup').style.display = 'flex';
 
-  setTimeout(() => {
-    document.getElementById('popupDetails').innerHTML = detailTop;
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+// Simpan pair untuk fungsi analisa AI
+window.currentPair = pair;
+
+setTimeout(() => {
+  document.getElementById('popupDetails').innerHTML = detailTop;
+
+  const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
     fetch(scriptURL)
       .then(res => res.json())
