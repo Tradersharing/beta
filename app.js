@@ -8,7 +8,6 @@ function closePopup() {
 ;
 
 
-// === Fungsi Utama: Buka Popup Analisa ===
 function closePopup() {
   document.getElementById('popup').style.display = 'none';
 }
@@ -95,7 +94,7 @@ function openPopup(pair) {
 }
 
 
-// === Fungsi Terminal Analisa popup2 ===//
+
 
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
@@ -195,44 +194,65 @@ function openAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis
     </div>
   `;
 
+async function buatAnalisaSekarang() {
+  const tf = document.getElementById('tfSelect').value;
+  const pair = window.currentPair;
+  const currency1 = pair.name.slice(0,3);
+  const currency2 = pair.name.slice(3,6);
+
+  const priceURL = `https://api.exchangerate.host/latest?base=${currency1}&symbols=${currency2}`;
+  const priceData = await fetch(priceURL).then(r => r.json());
+  const price = priceData.rates?.[currency2] || 0;
+
+  const rsiURL = `https://api.taapi.io/rsi?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
+  const macdURL = `https://api.taapi.io/macd?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
+
+  const rsiData = await fetch(rsiURL).then(r => r.json());
+  const macdData = await fetch(macdURL).then(r => r.json());
+  const rsi = rsiData.value || 0;
+  const macd = macdData.valueMACD || 0;
+
+  const fxURL = "https://script.google.com/macros/s/YOUR_FXSTREET_SCRIPT_URL/exec";
+  const fxData = await fetch(fxURL).then(r => r.json());
+  const extraAnalysis = fxData[pair.name] || "Tidak ada analisa fundamental.";
+
+  const analysisPopup = document.getElementById('analysisPopup');
+  analysisPopup.innerHTML = `
+    <div style="background:#222; color:#0f0; padding:12px; border-radius:8px; width:90%; max-width:400px; margin:20px auto; font-family:'Courier New', monospace;">
+      <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
+      <pre id="typeWriter"></pre>
+      <div style="text-align:center; margin-top:10px;">
+        <button onclick="closeAnalysis()" style="background:#444; color:#fff; padding:5px 10px; border:none;">Tutup</button>
+      </div>
+    </div>
+  `;
+  analysisPopup.style.display = 'flex';
+
+  const result = generateAutoAnalysis(pair, rsi, macd, price, tf, extraAnalysis);
   typeText("typeWriter", result);
 }
 
-// === GENERATE KESIMPULAN ANALISA TEXT ===
-function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
+function generateAutoAnalysis(pair, rsi, macd, price, tf, extraAnalysis) {
   let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
   result += `💡 Fundamental: ${extraAnalysis}\n\n`;
-
-  result += rsi < 30 ? `• RSI di bawah 30 (Oversold)\n` :
-            rsi > 70 ? `• RSI di atas 70 (Overbought)\n` :
-                       `• RSI Netral (${rsi})\n`;
-
+  result += rsi < 30 ? `• RSI di bawah 30 (Oversold)\n` : rsi > 70 ? `• RSI di atas 70 (Overbought)\n` : `• RSI Netral (${rsi})\n`;
   result += macd < 0 ? `• MACD Negatif (Bearish)\n` : `• MACD Positif (Bullish)\n`;
-  result += `• EMA 14: ${ema.toFixed(5)}\n`;
-  result += `• Supertrend: ${supertrend.toUpperCase()}\n`;
 
   const entry = parseFloat(price);
   const tp1 = (entry * 1.0020).toFixed(5);
   const tp2 = (entry * 1.0050).toFixed(5);
   const sl = (entry * 0.9980).toFixed(5);
 
-  const rekom = (rsi < 30 && macd > 0 && supertrend.toUpperCase() === "BUY") ? 'BUY' :
-                (rsi > 70 && macd < 0 && supertrend.toUpperCase() === "SELL") ? 'SELL' :
-                'WAIT';
-
-  result += `\n🎯 Rekomendasi: ${rekom}\n`;
+  result += `\n🎯 Rekomendasi: ${(rsi < 30 && macd > 0) ? 'BUY' : (rsi > 70 && macd < 0) ? 'SELL' : 'WAIT'}\n`;
   result += `• Entry: ${entry}\n• TP1: ${tp1}\n• TP2: ${tp2}\n• SL: ${sl}\n\n`;
   result += `⚠️ Risiko tinggi. Gunakan money management.\n`;
-
   return result;
 }
 
-// === TUTUP POPUP ANALISA ===
 function closeAnalysis() {
   document.getElementById('analysisPopup').style.display = 'none';
 }
 
-// === ANIMASI MENGETIK TEXT ===
 function typeText(elementId, text, speed = 20) {
   const element = document.getElementById(elementId);
   element.innerHTML = "";
@@ -244,12 +264,10 @@ function typeText(elementId, text, speed = 20) {
   }, speed);
 }
 
-      
-
 
 function convertGMTtoWIB(gmtTime) {
   if (!gmtTime) return "Invalid";
-  const match = gmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
+  const matchmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
   if (!match) return "Invalid";
   let hour = parseInt(match[1], 10);
   const minute = parseInt(match[2], 10);
