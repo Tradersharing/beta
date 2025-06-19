@@ -88,7 +88,7 @@ function openPopup(pair) {
     });
 }
 
-// === Fungsi Terminal Analisa AI ===
+// === Fungsi Terminal Analisa popup2 ===
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
@@ -142,10 +142,10 @@ async function buatAnalisaSekarang() {
   const result = generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
   analysisPopup.innerHTML = `
   <div class="analysis-terminal">
-    <div class="header-bar">📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</div>
+    <div class="header-bar">📊 Proses Analisa pair ${pair.name} (${tf.toUpperCase()})</div>
     <pre id="typeWriter"></pre>
     <div style="text-align:center; margin-top:10px;">
-      <button onclick="closeAnalysis()">Tutup</button>
+      <button onclick="closeAnalysis()">Close</button>
     </div>
   </div>
 `;
@@ -155,7 +155,7 @@ async function buatAnalisaSekarang() {
 
       
 function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
-  let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
+  let result = `💻 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
   result += `💡 Fundamental: ${extraAnalysis}\n\n`;
 
   result += rsi < 30 ? `• RSI di bawah 30 (Oversold)\n` :
@@ -175,7 +175,7 @@ function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extra
                 (rsi > 70 && macd < 0 && supertrend.toUpperCase() === "SELL") ? 'SELL' :
                 'WAIT';
 
-  result += `\n🎯 Rekomendasi AI: ${rekom}\n`;
+  result += `\n🎯 Rekomendasi Pair: ${rekom}\n`;
   result += `• Entry: ${entry}\n• TP1: ${tp1}\n• TP2: ${tp2}\n• SL: ${sl}\n\n`;
   result += `⚠️ Analisa ini bersifat semi-realtime berdasarkan data teknikal terkini.\nGunakan money management dan verifikasi tambahan sebelum entry.`;
   return result;
