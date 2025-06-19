@@ -170,7 +170,7 @@ function typeText(elementId, text, speed = 20) {
 
 function convertGMTtoWIB(gmtTime) {
   if (!gmtTime) return "Invalid";
-  const matchmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
+  const match = gmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
   if (!match) return "Invalid";
   let hour = parseInt(match[1], 10);
   const minute = parseInt(match[2], 10);
@@ -181,6 +181,7 @@ function convertGMTtoWIB(gmtTime) {
   date.setUTCHours(date.getUTCHours() + 7);
   return date.toTimeString().slice(0, 5);
 }
+
 
 function getFlagEmoji(code) {
   const flags = {
