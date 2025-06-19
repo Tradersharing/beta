@@ -78,7 +78,7 @@ function openPopup(pair) {
       if (currency1 === "USD" || currency2 === "USD") {
         if (currency1 === "USD") priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
         else priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-      } else priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+       priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
 
       box.innerHTML = `<div>${priority.join("")}</div>`;
     })
@@ -89,9 +89,16 @@ function openPopup(pair) {
 }
 
 // === Fungsi Terminal Analisa popup2 ===
+
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
+
+  if (!pair || !pair.name) {
+    alert("Pair belum dipilih.");
+    return;
+  }
+
   const currency1 = pair.name.slice(0, 3);
   const currency2 = pair.name.slice(3, 6);
   const analysisPopup = document.getElementById('analysisPopup');
@@ -132,7 +139,7 @@ async function buatAnalisaSekarang() {
   // Ambil EMA & Supertrend
   let ema = 0, supertrend = "UNKNOWN";
   try {
-    const indiURL = `https://script.google.com/macros/s/YOUR_API_ID/exec`;
+    const indiURL = `https://script.google.com/macros/s/YOUR_EMA_SUPERTREND_SCRIPT_ID/exec`;
     const indiData = await fetch(indiURL).then(r => r.json());
     ema = indiData.ema14 || 0;
     supertrend = indiData.supertrend || "UNKNOWN";
@@ -143,17 +150,14 @@ async function buatAnalisaSekarang() {
   // Analisa Fundamental
   let extraAnalysis = "Tidak ada analisa fundamental.";
   try {
-    const fxURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+    const fxURL = "https://script.google.com/macros/s/YOUR_FXSTREET_SCRIPT_URL/exec";
     const fxData = await fetch(fxURL).then(r => r.json());
-
     if (fxData?.[pair.name]) {
       extraAnalysis = fxData[pair.name];
     } else {
-      // Fallback Google Search
       const query = `${pair.name} forex news site:forexfactory.com`;
       const fallbackURL = `https://api.allorigins.win/raw?url=https://www.google.com/search?q=${encodeURIComponent(query)}`;
       const html = await fetch(fallbackURL).then(r => r.text());
-
       const match = html.match(/<h3.*?>(.*?)<\/h3>/);
       if (match && match[1]) {
         extraAnalysis = `📌 Berita Terkait: ${match[1]}`;
@@ -165,44 +169,22 @@ async function buatAnalisaSekarang() {
     console.error("Gagal ambil data analisa:", e);
   }
 
+  // Tampilkan hasil
   const result = generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
-
-  // Tampilan hasil analisa
   analysisPopup.innerHTML = `
-    <div class="analysis-terminal">
-      <div class="header-bar">📊 Proses Analisa pair ${pair.name} (${tf.toUpperCase()})</div>
+    <div style="background:#222; color:#0f0; padding:12px; border-radius:8px; width:90%; max-width:400px; margin:20px auto; font-family:'Courier New', monospace;">
+      <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
       <pre id="typeWriter"></pre>
       <div style="text-align:center; margin-top:10px;">
-        <button onclick="closeAnalysis()">Close</button>
+        <button onclick="closeAnalysis()" style="background:#444; color:#fff; padding:5px 10px; border:none;">Tutup</button>
       </div>
     </div>
   `;
-
   typeText("typeWriter", result);
 }
 
-// Fungsi mengetik perlahan
-function typeText(elId, text, delay = 25) {
-  const el = document.getElementById(elId);
-  let i = 0;
-  const typing = () => {
-    if (i < text.length) {
-      el.textContent += text[i];
-      i++;
-      setTimeout(typing, text[i - 1] === '.' ? 500 : delay);
-    }
-  };
-  typing();
-}
-
-// Menutup popup
-function closeAnalysis() {
-  document.getElementById('analysisPopup').style.display = 'none';
-}
-
-// Fungsi pembuatan isi analisis
 function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
-  let result = `💻 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
+  let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
   result += `💡 Fundamental: ${extraAnalysis}\n\n`;
 
   result += rsi < 30 ? `• RSI di bawah 30 (Oversold)\n` :
@@ -210,8 +192,8 @@ function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extra
                        `• RSI Netral (${rsi})\n`;
 
   result += macd < 0 ? `• MACD Negatif (Bearish)\n` : `• MACD Positif (Bullish)\n`;
-  result += `• EMA 14 (harga rata-rata): ${ema.toFixed(5)}\n`;
-  result += `• Supertrend Sinyal: ${supertrend.toUpperCase()}\n`;
+  result += `• EMA 14: ${ema.toFixed(5)}\n`;
+  result += `• Supertrend: ${supertrend.toUpperCase()}\n`;
 
   const entry = parseFloat(price);
   const tp1 = (entry * 1.0020).toFixed(5);
@@ -222,13 +204,27 @@ function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extra
                 (rsi > 70 && macd < 0 && supertrend.toUpperCase() === "SELL") ? 'SELL' :
                 'WAIT';
 
-  result += `\n🎯 Rekomendasi Pair: ${rekom}\n`;
+  result += `\n🎯 Rekomendasi: ${rekom}\n`;
   result += `• Entry: ${entry}\n• TP1: ${tp1}\n• TP2: ${tp2}\n• SL: ${sl}\n\n`;
-  result += `⚠️ Peringatan: Trading forex berisiko tinggi. Gunakan analisa ini sebagai referensi.`;
+  result += `⚠️ Risiko tinggi. Gunakan money management.\n`;
 
   return result;
 }
 
+function closeAnalysis() {
+  document.getElementById('analysisPopup').style.display = 'none';
+}
+
+function typeText(elementId, text, speed = 20) {
+  const element = document.getElementById(elementId);
+  element.innerHTML = "";
+  let i = 0;
+  const interval = setInterval(() => {
+    element.innerHTML += text.charAt(i);
+    i++;
+    if (i >= text.length) clearInterval(interval);
+  }, speed);
+}
 
 
       
