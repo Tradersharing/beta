@@ -126,7 +126,7 @@ async function buatAnalisaSekarang() {
 
   let ema = 0, supertrend = "UNKNOWN";
   try {
-    const indiURL = `https://script.google.com/macros/s/YOUR_TA_INDICATOR_URL/exec?pair=${currency1}${currency2}&tf=${tf}`;
+    const indiURL = `https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec}`;
     const indiData = await fetch(indiURL).then(r => r.json());
     ema = indiData.ema14 || 0;
     supertrend = indiData.supertrend || "UNKNOWN";
