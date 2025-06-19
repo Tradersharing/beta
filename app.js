@@ -126,7 +126,7 @@ async function buatAnalisaSekarang() {
 
   let ema = 0, supertrend = "UNKNOWN";
   try {
-    const indiURL = `https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec}`;
+    const indiURL = `https://script.google.com/Calon_API_SAYA}`;
     const indiData = await fetch(indiURL).then(r => r.json());
     ema = indiData.ema14 || 0;
     supertrend = indiData.supertrend || "UNKNOWN";
@@ -134,7 +134,7 @@ async function buatAnalisaSekarang() {
 
   let extraAnalysis = "Tidak ada analisa fundamental.";
   try {
-    const fxURL = "https://script.google.com/macros/s/YOUR_FXSTREET_SCRIPT_URL/exec";
+    const fxURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
     const fxData = await fetch(fxURL).then(r => r.json());
     extraAnalysis = fxData?.[pair.name] || extraAnalysis;
   } catch (e) { console.error("Gagal ambil data FX:", e); }
