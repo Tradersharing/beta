@@ -141,17 +141,19 @@ async function buatAnalisaSekarang() {
 
   const result = generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
   analysisPopup.innerHTML = `
-    <div class="analysis-terminal">
-      <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
-      <pre id="typeWriter"></pre>
-      <div style="text-align:center; margin-top:10px;">
-        <button onclick="closeAnalysis()">Tutup</button>
-      </div>
+  <div class="analysis-terminal">
+    <div class="header-bar">📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</div>
+    <pre id="typeWriter"></pre>
+    <div style="text-align:center; margin-top:10px;">
+      <button onclick="closeAnalysis()">Tutup</button>
     </div>
-  `;
+  </div>
+`;
+
   typeText("typeWriter", result);
 }
 
+      
 function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
   let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
   result += `💡 Fundamental: ${extraAnalysis}\n\n`;
