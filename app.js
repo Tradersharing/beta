@@ -132,12 +132,30 @@ async function buatAnalisaSekarang() {
     supertrend = indiData.supertrend || "UNKNOWN";
   } catch (e) { console.error("Gagal ambil EMA/Supertrend:", e); }
 
-  let extraAnalysis = "Tidak ada analisa fundamental.";
-  try {
-    const fxURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
-    const fxData = await fetch(fxURL).then(r => r.json());
-    extraAnalysis = fxData?.[pair.name] || extraAnalysis;
-  } catch (e) { console.error("Gagal ambil data FX:", e); }
+
+  
+let extraAnalysis = "Tidak ada analisa fundamental.";
+try {
+  const fxURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+  const fxData = await fetch(fxURL).then(r => r.json());
+
+  if (fxData?.[pair.name]) {
+    extraAnalysis = fxData[pair.name];
+  } else {
+    // Jika tidak ada di Apps Script, ambil dari Google Search
+    const query = `${pair.name} forex news site:forexfactory.com`;
+    const fallbackURL = `https://api.allorigins.win/raw?url=https://www.google.com/search?q=${encodeURIComponent(query)}`;
+    const html = await fetch(fallbackURL).then(r => r.text());
+
+    // Sederhana: Ambil judul hasil pertama
+    const match = html.match(/<h3.*?>(.*?)<\/h3>/);
+    if (match && match[1]) {
+      extraAnalysis = `📌 Berita Terkait: ${match[1]}`;
+    }
+  }
+} catch (e) {
+  console.error("Gagal ambil data analisa:", e);
+}
 
   const result = generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
   analysisPopup.innerHTML = `
