@@ -70,7 +70,7 @@ function openPopup(pair) {
             <ul>
               ${arr.map(str => {
                 const [judul, jam, impact] = str.split("|");
-                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+                conscolor = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
                 const jamWIB = convertGMTtoWIB(jam);
                 return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
               }).join("")}
@@ -95,89 +95,6 @@ function openPopup(pair) {
 
 
 
-
-async function buatAnalisaSekarang() {
-  const tf = document.getElementById('tfSelect').value;
-  const pair = window.currentPair;
-
-  if (!pair || !pair.name) {
-    alert("Pair belum dipilih.");
-    return;
-  }
-
-  const currency1 = pair.name.slice(0, 3);
-  const currency2 = pair.name.slice(3, 6);
-  const analysisPopup = document.getElementById('analysisPopup');
-
-  // Tampilkan loading
-  analysisPopup.innerHTML = `
-    <div class="loadingBox">
-      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="90" />
-      <p>⏳ Memproses analisa ${pair.name}...</p>
-    </div>`;
-  analysisPopup.style.display = 'flex';
-
-  // Ambil Harga
-  let price = 0;
-  try {
-    const priceURL = `https://api.exchangerate.host/latest?base=${currency1}&symbols=${currency2}`;
-    const priceData = await fetch(priceURL).then(r => r.json());
-    price = priceData.rates?.[currency2] || 0;
-  } catch (e) {
-    console.error("Gagal ambil harga:", e);
-  }
-
-  // Ambil RSI dan MACD
-  let rsi = 0, macd = 0;
-  try {
-    const rsiURL = `https://api.taapi.io/rsi?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
-    const macdURL = `https://api.taapi.io/macd?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
-    const [rsiData, macdData] = await Promise.all([
-      fetch(rsiURL).then(r => r.json()),
-      fetch(macdURL).then(r => r.json())
-    ]);
-    rsi = rsiData.value || 0;
-    macd = macdData.valueMACD || 0;
-  } catch (e) {
-    console.error("Gagal ambil RSI/MACD:", e);
-  }
-
-  // Ambil EMA & Supertrend
-  let ema = 0, supertrend = "UNKNOWN";
-  try {
-    const indiURL = `https://script.google.com/macros/s/YOUR_EMA_SUPERTREND_SCRIPT_ID/exec`;
-    const indiData = await fetch(indiURL).then(r => r.json());
-    ema = indiData.ema14 || 0;
-    supertrend = indiData.supertrend || "UNKNOWN";
-  } catch (e) {
-    console.error("Gagal ambil EMA/Supertrend:", e);
-  }
-
-  // Analisa Fundamental
-  let extraAnalysis = "Tidak ada analisa fundamental.";
-  try {
-    const fxURL = "https://script.google.com/macros/s/YOUR_FXSTREET_SCRIPT_URL/exec";
-    const fxData = await fetch(fxURL).then(r => r.json());
-    if (fxData?.[pair.name]) {
-      extraAnalysis = fxData[pair.name];
-    } else {
-      const query = `${pair.name} forex news site:forexfactory.com`;
-      const fallbackURL = `https://api.allorigins.win/raw?url=https://www.google.com/search?q=${encodeURIComponent(query)}`;
-      const html = await fetch(fallbackURL).then(r => r.text());
-      const match = html.match(/<h3.*?>(.*?)<\/h3>/);
-      if (match && match[1]) {
-        extraAnalysis = `📌 Berita Terkait: ${match[1]}`;
-      } else {
-        extraAnalysis = "🔍 Tidak ditemukan berita dari Google Search.";
-      }
-    }
-  } catch (e) {
-    console.error("Gagal ambil data analisa:", e);
-  }
-
-  // PANGGIL fungsi untuk buka hasil analisa
-  openAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
-} // ✅ Penutup fungsi utama
 
 // === BUKA POPUP HASIL ANALISA AI ===
 function openAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
