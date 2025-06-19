@@ -5,7 +5,10 @@ function toggleSidebar() {
 function closePopup() {
   document.getElementById('popup').style.display = 'none';
 }
+;
 
+
+// === Fungsi Utama: Buka Popup Analisa ===
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
@@ -43,111 +46,100 @@ function openPopup(pair) {
   `;
 
   document.getElementById('popup').style.display = 'flex';
-
-// Simpan pair untuk fungsi analisa AI
-window.currentPair = pair;
-
-setTimeout(() => {
+  window.currentPair = pair;
   document.getElementById('popupDetails').innerHTML = detailTop;
 
   const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+  fetch(scriptURL)
+    .then(res => res.json())
+    .then(data => {
+      const box = document.getElementById("newsBox");
+      if (!box) return;
+      const news = data?.[today] || {};
+      const b1 = news?.[currency1] || [];
+      const b2 = news?.[currency2] || [];
 
-    fetch(scriptURL)
-      .then(res => res.json())
-      .then(data => {
-        const box = document.getElementById("newsBox");
-        if (!box) return;
-        const news = data?.[today] || {};
-        const b1 = news?.[currency1] || [];
-        const b2 = news?.[currency2] || [];
+      function renderNews(currency, arr) {
+        if (!arr.length) return "";
+        return `<div>
+          <div style="font-weight:bold;">${getFlagEmoji(currency)} ${currency}</div>
+          <ul>
+            ${arr.map(str => {
+              const [judul, jam, impact] = str.split("|");
+              const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+              const jamWIB = convertGMTtoWIB(jam);
+              return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
+            }).join("")}
+          </ul>
+        </div>`;
+      }
 
-        function renderNews(currency, arr) {
-          if (!arr.length) return "";
-          return `<div>
-            <div style="font-weight:bold;">${getFlagEmoji(currency)} ${currency}</div>
-            <ul>
-              ${arr.map(str => {
-                const [judul, jam, impact] = str.split("|");
-                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-                const jamWIB = convertGMTtoWIB(jam);
-                return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
-              }).join("")}
-            </ul>
-          </div>`;
-        }
+      const priority = [];
+      if (currency1 === "USD" || currency2 === "USD") {
+        if (currency1 === "USD") priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+        else priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+      } else priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
 
-        const priority = [];
-        if (currency1 === "USD" || currency2 === "USD") {
-          if (currency1 === "USD") priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-          else priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-        } else priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-
-        box.innerHTML = `<div>${priority.join("")}</div>`;
-      })
-      .catch(() => {
-        const box = document.getElementById("newsBox");
-        if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
-      });
-  }, 100);
+      box.innerHTML = `<div>${priority.join("")}</div>`;
+    })
+    .catch(() => {
+      const box = document.getElementById("newsBox");
+      if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+    });
 }
 
-// === POPUP KEDUA: Analisa AI / Termux-Style ===
+// === Fungsi Terminal Analisa AI ===
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
   const currency1 = pair.name.slice(0, 3);
   const currency2 = pair.name.slice(3, 6);
-
   const analysisPopup = document.getElementById('analysisPopup');
 
-  // === TAMPILKAN LOADER GIF CHART ===
+  // Tampilkan loader
   analysisPopup.innerHTML = `
-    <div style="text-align:center; padding-top:60px;">
-      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
-      <p style="color:#fff; font-family:'Courier New'; margin-top:15px; font-size:16px;">⏳ Memproses analisa AI...</p>
+    <div class="loadingBox">
+      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="90" />
+      <p>⏳ Memproses analisa AI...</p>
     </div>
   `;
   analysisPopup.style.display = 'flex';
 
-  // === Ambil Harga Sekarang ===
   let price = 0;
   try {
     const priceURL = `https://api.exchangerate.host/latest?base=${currency1}&symbols=${currency2}`;
     const priceData = await fetch(priceURL).then(r => r.json());
     price = priceData.rates?.[currency2] || 0;
-  } catch (e) {
-    console.error("Gagal ambil harga:", e);
-  }
+  } catch (e) { console.error("Gagal ambil harga:", e); }
 
-  // === Ambil RSI & MACD dari TAAPI.io ===
   let rsi = 0, macd = 0;
   try {
     const rsiURL = `https://api.taapi.io/rsi?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
     const macdURL = `https://api.taapi.io/macd?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
-
     const [rsiData, macdData] = await Promise.all([
       fetch(rsiURL).then(r => r.json()),
       fetch(macdURL).then(r => r.json())
     ]);
-
     rsi = rsiData.value || 0;
     macd = macdData.valueMACD || 0;
-  } catch (e) {
-    console.error("Gagal ambil RSI/MACD:", e);
-  }
+  } catch (e) { console.error("Gagal ambil RSI/MACD:", e); }
 
-  // === Ambil Analisa Tambahan dari Google Script ===
+  let ema = 0, supertrend = "UNKNOWN";
+  try {
+    const indiURL = `https://script.google.com/macros/s/YOUR_TA_INDICATOR_URL/exec?pair=${currency1}${currency2}&tf=${tf}`;
+    const indiData = await fetch(indiURL).then(r => r.json());
+    ema = indiData.ema14 || 0;
+    supertrend = indiData.supertrend || "UNKNOWN";
+  } catch (e) { console.error("Gagal ambil EMA/Supertrend:", e); }
+
   let extraAnalysis = "Tidak ada analisa fundamental.";
   try {
     const fxURL = "https://script.google.com/macros/s/YOUR_FXSTREET_SCRIPT_URL/exec";
     const fxData = await fetch(fxURL).then(r => r.json());
     extraAnalysis = fxData?.[pair.name] || extraAnalysis;
-  } catch (e) {
-    console.error("Gagal ambil data FX:", e);
-  }
+  } catch (e) { console.error("Gagal ambil data FX:", e); }
 
-  // === Tampilkan Terminal Analisa dengan Efek Ketik ===
-  const result = generateAutoAnalysis(pair, rsi, macd, price, tf, extraAnalysis);
+  const result = generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
   analysisPopup.innerHTML = `
     <div class="analysis-terminal">
       <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
@@ -160,15 +152,13 @@ async function buatAnalisaSekarang() {
   typeText("typeWriter", result);
 }
 
-
-
 function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
   let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
   result += `💡 Fundamental: ${extraAnalysis}\n\n`;
 
   result += rsi < 30 ? `• RSI di bawah 30 (Oversold)\n` :
-           rsi > 70 ? `• RSI di atas 70 (Overbought)\n` :
-                      `• RSI Netral (${rsi})\n`;
+            rsi > 70 ? `• RSI di atas 70 (Overbought)\n` :
+                        `• RSI Netral (${rsi})\n`;
 
   result += macd < 0 ? `• MACD Negatif (Bearish)\n` : `• MACD Positif (Bullish)\n`;
   result += `• EMA 14 (harga rata-rata): ${ema.toFixed(5)}\n`;
@@ -186,10 +176,8 @@ function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extra
   result += `\n🎯 Rekomendasi AI: ${rekom}\n`;
   result += `• Entry: ${entry}\n• TP1: ${tp1}\n• TP2: ${tp2}\n• SL: ${sl}\n\n`;
   result += `⚠️ Analisa ini bersifat semi-realtime berdasarkan data teknikal terkini.\nGunakan money management dan verifikasi tambahan sebelum entry.`;
-
   return result;
 }
-
 
 function closeAnalysis() {
   document.getElementById('analysisPopup').style.display = 'none';
@@ -227,8 +215,6 @@ function getFlagEmoji(code) {
   };
   return flags[code] || "🏳️";
 }
-
-
 
 
 
