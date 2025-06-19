@@ -170,7 +170,10 @@ async function buatAnalisaSekarang() {
   }
 
   // Tampilkan hasil
+  function openAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
   const result = generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
+  const analysisPopup = document.getElementById("popup");
+
   analysisPopup.innerHTML = `
     <div style="background:#222; color:#0f0; padding:12px; border-radius:8px; width:90%; max-width:400px; margin:20px auto; font-family:'Courier New', monospace;">
       <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
@@ -180,8 +183,10 @@ async function buatAnalisaSekarang() {
       </div>
     </div>
   `;
+
   typeText("typeWriter", result);
 }
+
 
 function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
   let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
