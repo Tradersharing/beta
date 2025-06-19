@@ -328,16 +328,16 @@ header {
   box-shadow: inset -1px -1px 1px #aaa, inset 1px 1px 2px #fff;
 }
 
-/* ✅ Isi konten terminal */
+/* ✅ Isi konten terminal /kanvas ketik */
 .analysis-terminal pre {
-  background-color: #fff;
-  border: inset 2px #999;
-  padding: 12px;
-  min-height: 200px;
-  font-size: 14px;
-  color: #000;
-  overflow: hidden;
+  padding: 14px 16px; /* kanan-kiri lebih luas */
   margin: 12px;
+  border: inset 2px #999;
+  background: #fff;
+  color: #000;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
 }
 
 /* ✅ Tombol bawah */
@@ -373,16 +373,7 @@ header {
 .popup-button:hover {
   background: linear-gradient(to right, #1f2f40, #3b8ca5);
 }
-.analysis-terminal pre {
-  padding: 14px 16px; /* kanan-kiri lebih luas */
-  margin: 12px;
-  border: inset 2px #999;
-  background: #fff;
-  color: #000;
-  font-size: 14px;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
-}
+
 .popup-dropdown {
   width: 90%;
   max-width: 280px;
