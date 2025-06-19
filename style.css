@@ -1,6 +1,6 @@
+<style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
 
-/* === RESET & BODY === */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: 'Segoe UI', sans-serif;
@@ -8,8 +8,6 @@ body {
   color: #fff;
   overflow-x: hidden;
 }
-
-/* === HEADER === */
 header {
   background: #000044;
   color: #fff;
@@ -18,12 +16,7 @@ header {
   align-items: center;
   justify-content: space-between;
 }
-.title {
-  font-weight: bold;
-  font-size: 22px;
-  display: flex;
-  flex-direction: row;
-}
+.title { font-weight: bold; font-size: 22px; display: flex; flex-direction: row; }
 .title span.blue { color: #00bfff; }
 .title span.red { color: #ff3030; }
 .subtitle { font-size: 13px; color: #ccc; }
@@ -49,8 +42,6 @@ header {
   margin-bottom: 15px;
   font-weight: bold;
 }
-
-/* === GRID & BOX === */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
@@ -75,117 +66,7 @@ header {
 .sell { color: #ff4444; }
 .wait { color: #999; }
 
-/* === POPUP STYLE (FINAL VERSION: Win98 Retro Terminal) === */
-#analysisPopup {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: linear-gradient(to bottom, #01477c, #5fa3e6);
-  color: white;
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  font-family: 'Courier New', monospace;
-  overflow-y: auto;
-  padding: 20px;
-}
-.analysis-terminal {
-  background-color: #C0C0C0;
-  border: 3px outset #fff;
-  padding: 16px;
-  font-family: Tahoma, Verdana, system-ui;
-  color: #000;
-  width: 90%;
-  max-width: 480px;
-  margin: 20px auto;
-  box-shadow: 2px 2px 5px #333;
-}
-.analysis-terminal b {
-  font-size: 14px;
-  display: block;
-  margin-bottom: 10px;
-  color: #000080;
-}
-.analysis-terminal pre {
-  background-color: #FFF;
-  border: inset 2px #999;
-  padding: 10px;
-  height: 220px;
-  overflow-y: auto;
-  color: #000;
-  font-size: 12px;
-  white-space: pre-wrap;
-}
-.analysis-terminal button {
-  background-color: #E0E0E0;
-  border: 2px outset #FFF;
-  font-family: Tahoma, Verdana;
-  padding: 5px 20px;
-  cursor: pointer;
-  font-size: 13px;
-  margin-top: 10px;
-}
-.analysis-terminal button:hover {
-  background-color: #d4d4d4;
-}
-
-/* === CHAT BOX === */
-.chat-box {
-  margin-top: 10px;
-}
-.chat-box input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 8px;
-  border-radius: 6px;
-  border: none;
-  font-family: 'Roboto Condensed', sans-serif;
-  font-size: 14px;
-}
-.chat-box button {
-  background: #FFD700;
-  border: none;
-  padding: 10px 16px;
-  font-weight: bold;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: 'Roboto Condensed', sans-serif;
-}
-.chat-box button:hover {
-  background: #ffaa00;
-}
-.ai-response {
-  margin-top: 10px;
-  font-size: 14px;
-  background: #222;
-  padding: 10px;
-  border-radius: 6px;
-  color: #ccc;
-  white-space: pre-wrap;
-}
-
-/* === RESPONSIVE HEADER FIX === */
-@media screen and (max-width: 768px) {
-  header {
-    flex-direction: row;
-    justify-content: space-between;
-    text-align: left;
-  }
-}
-.box canvas {
-  width: 100%;
-  max-height: 80px;
-  margin: 8px 0;
-}
-
-/* === ANIMASI FADE === */
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.9); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-popup {
+.popup {
   display: none;
   position: fixed;
   top: 0; left: 0;
@@ -221,3 +102,54 @@ popup {
   color: #fff;
   transform: scale(1.2);
 }
+.popup h2 {
+  color: #FFD700;
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+.popup p {
+  margin-bottom: 8px;
+  line-height: 1.5;
+  font-size: 14px;
+}
+.strength-bar {
+  margin: 10px 0;
+  height: 16px;
+  width: 100%;
+  background: #333;
+  border-radius: 10px;
+  display: flex;
+  overflow: hidden;
+}
+.strength-bar > div { height: 100%; }
+.strength-gbp { background: #00bfff; }
+.strength-usd { background: #ff3030; }
+
+.popup-dropdown {
+  width: 160px;
+  padding: 6px 10px;
+  border: 2px solid #3498db;
+  border-radius: 8px;
+  background: linear-gradient(to right, #2980b9, #6dd5fa);
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  margin: 10px auto;
+  display: block;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+}
+
+.popup-button {
+  background: linear-gradient(to right, #2c3e50, #4ca1af);
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  font-size: 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 10px auto;
+  display: block;
+  font-weight: bold;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+}
+</style>
