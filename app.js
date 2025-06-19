@@ -68,7 +68,7 @@ function openPopup(pair) {
             <ul>
               ${arr.map(str => {
                 const [judul, jam, impact] = str.split("|");
-                conscolor = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
                 const jamWIB = convertGMTtoWIB(jam);
                 return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
               }).join("")}
