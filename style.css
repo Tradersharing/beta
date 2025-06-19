@@ -419,3 +419,42 @@ header {
   padding: 20px;
 }
 
+.analysis-terminal {
+  background-color: #C0C0C0;
+  border: 3px outset #fff;
+  padding: 16px;
+  font-family: Tahoma, Verdana, system-ui;
+  color: #000;
+  width: 90%;
+  max-width: 480px;
+  margin: 20px auto;
+  box-shadow: 2px 2px 5px #333;
+}
+
+.analysis-terminal b {
+  font-size: 14px;
+  display: block;
+  margin-bottom: 10px;
+  color: #000080;
+}
+
+.analysis-terminal pre {
+  background-color: #FFF;
+  border: inset 2px #999;
+  padding: 10px;
+  height: 220px;
+  overflow-y: auto;
+  color: #000;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+.analysis-terminal button {
+  background-color: #E0E0E0;
+  border: 2px outset #FFF;
+  font-family: Tahoma, Verdana;
+  padding: 5px 20px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 10px;
+}
