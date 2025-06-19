@@ -100,7 +100,7 @@ async function buatAnalisaSekarang() {
   analysisPopup.innerHTML = `
     <div class="loadingBox">
       <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="90" />
-      <p>⏳ Memproses analisa pair ${pair.name}...</p>
+      <p>⏳ Memproses analisa ${pair.name}...</p>
     </div>
   `;
   analysisPopup.style.display = 'flex';
