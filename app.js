@@ -186,7 +186,8 @@ async function buatAnalisaSekarang() {
 
   typeText("typeWriter", result);
 }
-
+  openAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
+                  }
 
 function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
   let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
