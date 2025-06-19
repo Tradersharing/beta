@@ -19,7 +19,10 @@ function openPopup(pair) {
   const strength2 = (short / total) * 100;
 
   const now = new Date();
-  const today = now.toLocaleDateString('en-US', {timeZone: 'Asia/Jakarta',year: 'numeric',month: '2-digit',day: '2-digit'}).replace(/\//g, '-');
+  const today = now.toLocaleDateString('en-US', {
+    timeZone: 'Asia/Jakarta',
+    year: 'numeric', month: '2-digit', day: '2-digit'
+  }).replace(/\//g, '-');
 
   const detailTop = `
     <div style="background: linear-gradient(to right, #2c3e50, #4ca1af); color: white; padding: 12px; border-radius: 12px; text-align: center;">
@@ -30,8 +33,8 @@ function openPopup(pair) {
     <hr>
     <p><b>Kekuatan Mata Uang:</b></p>
     <div class="strength-bar">
-      <div class="strength-gbp" style="width:${strength1}%"></div>
-      <div class="strength-usd" style="width:${strength2}%"></div>
+      <div class="strength-${currency1.toLowerCase()}" style="width:${strength1}%"></div>
+      <div class="strength-${currency2.toLowerCase()}" style="width:${strength2}%"></div>
     </div>
     <p>${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴</p>
     <hr>
@@ -55,6 +58,7 @@ function openPopup(pair) {
     .then(data => {
       const box = document.getElementById("newsBox");
       if (!box) return;
+
       const news = data?.[today] || {};
       const b1 = news?.[currency1] || [];
       const b2 = news?.[currency2] || [];
@@ -76,17 +80,23 @@ function openPopup(pair) {
 
       const priority = [];
       if (currency1 === "USD" || currency2 === "USD") {
-        if (currency1 === "USD") priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-        else priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-       priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+        if (currency1 === "USD") {
+          priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+        } else {
+          priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+        }
+      } else {
+        priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+      }
 
       box.innerHTML = `<div>${priority.join("")}</div>`;
     })
     .catch(() => {
-      const box = document.geod("newsBox");
+      const box = document.getElementById("newsBox");
       if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
     });
 }
+
 
 // === Fungsi Terminal Analisa popup2 ===
 
