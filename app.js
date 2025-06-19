@@ -97,19 +97,7 @@ function openPopup(pair) {
 
 
 // === BUKA POPUP HASIL ANALISA AI ===
-function openAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
-  const result = generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
-  const analysisPopup = document.getElementById("popup");
 
-  analysisPopup.innerHTML = `
-    <div style="background:#222; color:#0f0; padding:12px; border-radius:8px; width:90%; max-width:400px; margin:20px auto; font-family:'Courier New', monospace;">
-      <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
-      <pre id="typeWriter"></pre>
-      <div style="text-align:center; margin-top:10px;">
-        <button onclick="closeAnalysis()" style="background:#444; color:#fff; padding:5px 10px; border:none;">Tutup</button>
-      </div>
-    </div>
-  `;
 
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
