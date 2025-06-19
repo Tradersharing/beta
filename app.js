@@ -95,9 +95,8 @@ function openPopup(pair) {
 }
 
 
-// === Fungsi Terminal Analisa popup2 ===
+// === Fungsi Terminal Analisa popup2 ===//
 
-// === Fungsi Utama Proses Analisa ===
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
