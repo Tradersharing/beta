@@ -11,6 +11,7 @@ function closePopup() {
 
 
 function openPopup(pair) {
+  window.currentPair = pair;  // penting
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
   const currency1 = pair.name.slice(0, 3).toUpperCase();
