@@ -9,6 +9,10 @@ function closePopup() {
 
 
 // === Fungsi Utama: Buka Popup Analisa ===
+function closePopup() {
+  document.getElementById('popup').style.display = 'none';
+}
+
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
@@ -19,10 +23,7 @@ function openPopup(pair) {
   const strength2 = (short / total) * 100;
 
   const now = new Date();
-  const today = now.toLocaleDateString('en-US', {
-    timeZone: 'Asia/Jakarta',
-    year: 'numeric', month: '2-digit', day: '2-digit'
-  }).replace(/\//g, '-');
+  const today = now.toLocaleDateString('en-US', {timeZone: 'Asia/Jakarta',year: 'numeric',month: '2-digit',day: '2-digit'}).replace(/\//g, '-');
 
   const detailTop = `
     <div style="background: linear-gradient(to right, #2c3e50, #4ca1af); color: white; padding: 12px; border-radius: 12px; text-align: center;">
@@ -33,8 +34,8 @@ function openPopup(pair) {
     <hr>
     <p><b>Kekuatan Mata Uang:</b></p>
     <div class="strength-bar">
-      <div class="strength-${currency1.toLowerCase()}" style="width:${strength1}%"></div>
-      <div class="strength-${currency2.toLowerCase()}" style="width:${strength2}%"></div>
+      <div class="strength-gbp" style="width:${strength1}%"></div>
+      <div class="strength-usd" style="width:${strength2}%"></div>
     </div>
     <p>${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴</p>
     <hr>
@@ -49,52 +50,48 @@ function openPopup(pair) {
   `;
 
   document.getElementById('popup').style.display = 'flex';
-  window.currentPair = pair;
-  document.getElementById('popupDetails').innerHTML = detailTop;
 
-  const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
-  fetch(scriptURL)
-    .then(res => res.json())
-    .then(data => {
-      const box = document.getElementById("newsBox");
-      if (!box) return;
+  setTimeout(() => {
+    document.getElementById('popupDetails').innerHTML = detailTop;
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
-      const news = data?.[today] || {};
-      const b1 = news?.[currency1] || [];
-      const b2 = news?.[currency2] || [];
+    fetch(scriptURL)
+      .then(res => res.json())
+      .then(data => {
+        const box = document.getElementById("newsBox");
+        if (!box) return;
+        const news = data?.[today] || {};
+        const b1 = news?.[currency1] || [];
+        const b2 = news?.[currency2] || [];
 
-      function renderNews(currency, arr) {
-        if (!arr.length) return "";
-        return `<div>
-          <div style="font-weight:bold;">${getFlagEmoji(currency)} ${currency}</div>
-          <ul>
-            ${arr.map(str => {
-              const [judul, jam, impact] = str.split("|");
-              const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-              const jamWIB = convertGMTtoWIB(jam);
-              return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
-            }).join("")}
-          </ul>
-        </div>`;
-      }
-
-      const priority = [];
-      if (currency1 === "USD" || currency2 === "USD") {
-        if (currency1 === "USD") {
-          priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-        } else {
-          priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+        function renderNews(currency, arr) {
+          if (!arr.length) return "";
+          return `<div>
+            <div style="font-weight:bold;">${getFlagEmoji(currency)} ${currency}</div>
+            <ul>
+              ${arr.map(str => {
+                const [judul, jam, impact] = str.split("|");
+                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+                const jamWIB = convertGMTtoWIB(jam);
+                return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
+              }).join("")}
+            </ul>
+          </div>`;
         }
-      } else {
-        priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-      }
 
-      box.innerHTML = `<div>${priority.join("")}</div>`;
-    })
-    .catch(() => {
-      const box = document.getElementById("newsBox");
-      if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
-    });
+        const priority = [];
+        if (currency1 === "USD" || currency2 === "USD") {
+          if (currency1 === "USD") priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+          else priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+        } else priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+
+        box.innerHTML = `<div>${priority.join("")}</div>`;
+      })
+      .catch(() => {
+        const box = document.getElementById("newsBox");
+        if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+      });
+  }, 100);
 }
 
 
