@@ -5,12 +5,10 @@ function toggleSidebar() {
 function closePopup() {
   document.getElementById('popup').style.display = 'none';
 }
-;
 
 
-function closePopup() {
-  document.getElementById('popup').style.display = 'none';
-}
+
+
 
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
