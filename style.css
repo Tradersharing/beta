@@ -316,4 +316,19 @@ header {
 }
 
 
-  
+  /* === Blok Judul Atas (Seperti Header Installer) === */
+.analysis-header {
+  background: #d0d0d0;
+  border: 2px outset #fff;
+  padding: 10px 16px;
+  font-size: 18px;
+  font-weight: bold;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  color: black;
+  text-align: center;
+  box-shadow: inset -1px -1px 1px #aaa, inset 1px 1px 2px #fff;
+  margin: -30px auto 16px auto;
+  max-width: 540px;
+  border-radius: 4px;
+}
+
