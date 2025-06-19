@@ -177,7 +177,7 @@ function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extra
 
   result += `\n🎯 Rekomendasi Pair: ${rekom}\n`;
   result += `• Entry: ${entry}\n• TP1: ${tp1}\n• TP2: ${tp2}\n• SL: ${sl}\n\n`;
-  result += `⚠️ Analisa ini bersifat semi-realtime berdasarkan data teknikal terkini.\nGunakan money management dan verifikasi tambahan sebelum entry.`;
+  result += `⚠️ Peringaran resiko :Aktifitas Trading forex memiliki tingkat resiko yang besar,gunakan menejemen yang keuangan yang baik untuk meminimalisir kerugian.`;
   return result;
 }
 
