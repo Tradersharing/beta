@@ -390,3 +390,7 @@ header {
   font-family: 'Segoe UI', sans-serif;
 }
 
+#typeWriter {
+  background: yellow;
+  min-height: 100px;
+}
