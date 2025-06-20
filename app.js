@@ -119,23 +119,38 @@ async function buatAnalisaSekarang() {
 
   // Ganti isi popup ke tampilan terminal
   
+  async function buatAnalisaSekarang() {
+  const tf = document.getElementById('tfSelect').value;
+  const pair = window.currentPair;
+  const analysisPopup = document.getElementById('analysisPopup');
+
   analysisPopup.innerHTML = `
-  <div class="analysis-terminal">
-    <div class="analysis-sidebar">
-      <div>💿 Berita Terkini</div>
-      <div class="step" id="step1">1. Memuat berita...</div>
-      <div class="step" id="step2">2. -</div>
-      <div class="step" id="step3">3. -</div>
-    </div>
-    <div class="analysis-main">
-      <div class="header-bar">📊 Proses Analisa AI</div>
-      <pre id="typeWriter"></pre>
-      <div class="footer">
-        <button onclick="closeAnalysis()">Tutup</button>
+    <div class="analysis-terminal">
+      <div class="analysis-sidebar">
+        <div id="sidebarTitle">💿 Berita Terkini</div>
+        <div class="step" id="step1">1. Memuat berita...</div>
+        <div class="step" id="step2">2. -</div>
+        <div class="step" id="step3">3. -</div>
+      </div>
+      <div class="analysis-main">
+        <div class="header-bar">📊 Proses Analisa AI</div>
+        <pre id="typeWriter"></pre>
+        <div class="footer">
+          <button onclick="closeAnalysis()">Tutup</button>
+        </div>
       </div>
     </div>
-  </div>
-`;
+  `;
+  analysisPopup.style.display = 'flex';
+
+  tampilkanBeritaSidebar(); // ⬅️ PANGGIL DI SINI!
+
+  setTimeout(() => {
+    const result = generateAutoAnalysis(pair, tf);
+    typeText("typeWriter", result);
+  }, 500);
+}
+
 
   // Mulai efek ketik
   setTimeout(() => {
