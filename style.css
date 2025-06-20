@@ -320,7 +320,7 @@ header {
 
 /* Sidebar kiri biru */
 .analysis-sidebar {
-  width: 260px; /* Lebarkan sisi biru */
+  width: 240px; /* bisa dikurangi agar .analysis-main jadi lebih lebar */
   height: 100%;
   background: linear-gradient(to bottom, #1e5799, #2989d8);
   color: #fff;
@@ -342,38 +342,26 @@ header {
 /* Konten utama kanan abu */
 .analysis-main {
   flex-grow: 1;
-  background-color: #e4e4e4; /* abu lembut */
+  background-color: #e4e4e4;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
+  padding: 20px; /* beri padding biar konten tidak mepet */
 }
 
-/* Header abu smooth ala wizard */
-.analysis-main .header-bar {
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom, #f0f0f0, #d0d0d0);
-  padding: 10px 20px;
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
-  border-bottom: 2px ridge #bbb;
-  text-shadow: 1px 1px 0 #fff;
-}
-
-/* Efek ketik */
-.analysis-main pre {
-  padding: 16px 22px;
-  margin: 20px;
-  background: transparent;
-  color: #111;
-  font-size: 15px;
+/* Kontainer teks hasil analisa */
+.analysis-content-box {
+  background-color: #fff;
+  border: 1px solid #aaa;
+  padding: 16px;
   font-family: 'Courier New', monospace;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
+  white-space: pre-line;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
   flex-grow: 1;
-  border: none;
+  overflow-y: auto;
 }
+
 
 
 
