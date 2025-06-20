@@ -150,18 +150,21 @@ async function buatAnalisaSekarang() {
   const result = generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
 
   analysisPopup.innerHTML = `
-    <div class="analysis-terminal">
-      <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
-      <pre id="typeWriter"></pre>
-      <div style="text-align:center; margin-top:10px;">
-        <button onclick="closeAnalysis()">Tutup</button>
-      </div>
+  <div class="analysis-terminal">
+    <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
+    <pre id="typeWriter"></pre>
+    <div style="text-align:center; margin-top:10px;">
+      <button onclick="closeAnalysis()">Tutup</button>
     </div>
-  `;
-  console.log("Jalanin ketik...");
-requestAnimationFrame(() => typeText("typeWriter", result));
+  </div>
+`;
 
-}
+// Tunggu DOM siap benar2, lalu baru mulai efek ketik
+setTimeout(() => {
+  console.log("🟢 DOM siap, mulai ketik");
+  typeText("typeWriter", result);
+}, 50);
+
 
 
 
@@ -198,7 +201,7 @@ function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extra
 function closeAnalysis() {
   document.getElementById('analysisPopup').style.display = 'none';
 }
-
+console.log("typeWriter element:", document.getElementById("typeWriter"));
 function typeText(elementId, text, speed = 20) {
   const element = document.getElementById(elementId);
   element.innerHTML = "";
