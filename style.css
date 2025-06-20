@@ -390,3 +390,11 @@ header {
   font-family: 'Segoe UI', sans-serif;
 }
 
+.popup-button {
+  background: linear-gradient(to right, #3a7bd5, #00d2ff);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 0 5px #00d2ff;
+}
