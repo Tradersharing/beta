@@ -6,14 +6,6 @@ function closePopup() {
   document.getElementById('popup').style.display = 'none';
 }
 
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('active');
-}
-
-function closePopup() {
-  document.getElementById('popup').style.display = 'none';
-}
-
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
