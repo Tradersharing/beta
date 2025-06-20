@@ -300,10 +300,17 @@ header {
   /* === Blok Judul Atas (Seperti Header Installer) === */
 /* Ini tetap sesuai dengan JS karena class .analysis-terminal tidak diubah */
 .analysis-terminal {
-  display: flex;
-  flex-direction: row;
-  padding: 0; /* buang padding luar */
-  box-shadow: 3px 3px 6px #666;
+  background-color: #e0e0e0;
+  border: 3px outset #fff;
+  font-family: 'Courier New', monospace;
+  color: #222;
+  width: 100%;
+  max-width: 340px;
+  box-shadow: 2px 2px 5px #333;
+  text-align: left;
+  padding: 15px;
+  white-space: pre-wrap;
+  border-radius: 5px;
 }
 
 .analysis-sidebar {
@@ -345,7 +352,97 @@ header {
   flex-grow: 1;
 }
 
+#analysisPopup {
+  display: none;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 20px;
+  background: linear-gradient(to bottom, #1e5799 0%, #7db9e8 100%);
+  font-family: 'Courier New', monospace;
+}
 
+Dari sini
+
+
+/* Sidebar kiri (Windows 7-style setup list) */
+.sidebar-setup {
+  background-color: #2b5d9e;
+  color: white;
+  padding: 20px;
+  border-radius: 6px;
+  box-shadow: 3px 3px 0px #0003;
+  width: 200px;
+}
+
+.sidebar-setup h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+.sidebar-setup ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  line-height: 1.8em;
+}
+
+.sidebar-setup ul li {
+  padding-left: 5px;
+  color: #eef;
+  font-size: 15px;
+}
+
+/* Terminal kanan (konten analisa) */
+
+.analysis-terminal .header-bar {
+  background-color: #c0c0c0;
+  border-bottom: 2px solid #999;
+  padding: 5px 10px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.analysis-terminal pre {
+  font-family: 'Courier New', monospace;
+  font-size: 15px;
+  color: #111;
+}
+
+/* Tombol Tutup */
+.analysis-terminal button {
+  background-color: #d6d6d6;
+  color: #000;
+  border: 1px solid #999;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.analysis-terminal button:hover {
+  background-color: #c8c8c8;
+}
+
+/* Responsive agar tampil bagus di HP */
+@media (max-width: 600px) {
+  #analysisPopup {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sidebar-setup {
+    width: 100%;
+    text-align: center;
+  }
+
+  .analysis-terminal {
+    width: 100%;
+  }
+}
 
 .popup-button {
   display: block;
