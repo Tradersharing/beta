@@ -16,7 +16,9 @@ function openPopup(pair) {
   const strength2 = (short / total) * 100;
 
   const now = new Date();
-  const today = now.toLocaleDateString('en-US', {timeZone: 'Asia/Jakarta',year: 'numeric',month: '2-digit',day: '2-digit'}).replace(/\//g, '-');
+  const today = now.toLocaleDateString('en-US', {
+    timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).replace(/\//g, '-');
 
   const detailTop = `
     <div style="background: linear-gradient(to right, #2c3e50, #4ca1af); color: white; padding: 12px; border-radius: 12px; text-align: center;">
@@ -43,61 +45,61 @@ function openPopup(pair) {
   `;
 
   document.getElementById('popup').style.display = 'flex';
-
-// Simpan pair untuk fungsi analisa AI
-window.currentPair = pair;
-
-setTimeout(() => {
-  document.getElementById('popupDetails').innerHTML = detailTop;
+  window.currentPair = pair;
 
   setTimeout(() => {
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+    document.getElementById('popupDetails').innerHTML = detailTop;
 
-    fetch(scriptURL)
-      .then(res => res.json())
-      .then(data => {
-        const box = document.getElementById("newsBox");
-        if (!box) {
-          console.warn("❌ #newsBox tidak ditemukan");
-          return;
-        }
-        const news = data?.[today] || {};
-        const b1 = news?.[currency1] || [];
-        const b2 = news?.[currency2] || [];
+    setTimeout(() => {
+      const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
-        function renderNews(currency, arr) {
-          if (!arr.length) return "";
-          return `<div>
-            <div style="font-weight:bold;">${getFlagEmoji(currency)} ${currency}</div>
-            <ul>
-              ${arr.map(str => {
-                const [judul, jam, impact] = str.split("|");
-                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-                const jamWIB = convertGMTtoWIB(jam);
-                return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
-              }).join("")}
-            </ul>
-          </div>`;
-        }
+      fetch(scriptURL)
+        .then(res => res.json())
+        .then(data => {
+          const box = document.getElementById("newsBox");
+          if (!box) return;
 
-        const priority = [];
-        if (currency1 === "USD" || currency2 ==
-            = "USD") {
-          if (currency1 === "USD") priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-          else priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-        } else priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+          const news = data?.[today] || {};
+          const b1 = news?.[currency1] || [];
+          const b2 = news?.[currency2] || [];
 
-        box.innerHTML = `<div>${priority.join("")}</div>`;
-      })
-      .catch(err => {
-        const box = document.getElementById("newsBox");
-        if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
-        console.error("❌ Fetch gagal:", err);
-      });
-  }, 100); // delay agar #newsBox sempat dirender
-}, 50);
+          function renderNews(currency, arr) {
+            if (!arr.length) return "";
+            return `<div>
+              <div style="font-weight:bold;">${getFlagEmoji(currency)} ${currency}</div>
+              <ul>
+                ${arr.map(str => {
+                  const [judul, jam, impact] = str.split("|");
+                  const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+                  const jamWIB = convertGMTtoWIB(jam);
+                  return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
+                }).join("")}
+              </ul>
+            </div>`;
+          }
 
+          const priority = [];
+          if (currency1 === "USD" || currency2 === "USD") {
+            if (currency1 === "USD") {
+              priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+            } else {
+              priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+            }
+          } else {
+            priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+          }
+
+          box.innerHTML = `<div>${priority.join("")}</div>`;
+        })
+        .catch(err => {
+          const box = document.getElementById("newsBox");
+          if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+          console.error("❌ Fetch gagal:", err);
+        });
+    }, 100);
+  }, 50);
 }
+
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
 
 async function buatAnalisaSekarang() {
