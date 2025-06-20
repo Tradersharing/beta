@@ -147,74 +147,58 @@ async function buatAnalisaSekarang() {
   }
 
   // === Tampilkan Terminal Analisa dengan Efek Ketik ===
-  const result = generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
 
-analysisPopup.innerHTML = `
-  <div class="analysis-terminal">
-<div class="header-bar">📊 Proses Analisa AI ...</div>
+// === POPUP KEDUA: Analisa AI / Terminal Style (Versi Testing)
+async function buatAnalisaSekarang() {
+  const tf = document.getElementById('tfSelect').value;
+  const pair = window.currentPair;
+  const analysisPopup = document.getElementById('analysisPopup');
 
-    <pre id="typeWriter"></pre>
-    <div style="text-align:center; margin-top:10px;">
-      <button onclick="closeAnalysis()">Tutup</button>
+  // Tampilkan loader awal
+  analysisPopup.innerHTML = `
+    <div style="text-align:center; padding-top:60px;">
+      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
+      <p style="color:#fff; font-family:'Courier New'; margin-top:15px; font-size:16px;">⏳ Memproses analisa AI...</p>
     </div>
-  </div>
-`;
+  `;
+  analysisPopup.style.display = 'flex';
 
-// Tunggu DOM siap benar2, lalu baru mulai efek ketik
-setTimeout(() => {
-  const check = document.getElementById("typeWriter");
-  console.log("🟢 DOM siap, mulai ketik. Elemen ditemukan?", !!check);
-  if (!check) {
-    console.warn("❌ typeWriter tidak ditemukan, batal ketik!");
-    return;
-  }
+  // Simulasi delay proses 1 detik
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
-  typeText("typeWriter", result);
-}, 50);
+  // Hasil dummy analisa
+  const result = generateAutoAnalysis(pair, tf);
 
+  // Ganti isi popup ke tampilan terminal
+  analysisPopup.innerHTML = `
+    <div class="analysis-terminal">
+      <div class="header-bar">📊 Proses Analisa AI ...</div>
+      <pre id="typeWriter"></pre>
+      <div style="text-align:center; margin-top:10px;">
+        <button onclick="closeAnalysis()">Tutup</button>
+      </div>
+    </div>
+  `;
+
+  // Mulai efek ketik
+  setTimeout(() => {
+    const check = document.getElementById("typeWriter");
+    console.log("🟢 DOM siap, mulai ketik. Elemen ditemukan?", !!check);
+    if (!check) {
+      console.warn("❌ typeWriter tidak ditemukan, batal ketik!");
+      return;
+    }
+    typeText("typeWriter", result);
+  }, 50);
 }
 
-
-
-
-function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
-  if (!pair || isNaN(rsi) || isNaN(macd) || isNaN(ema) || !supertrend || isNaN(price)) {
-    return '❌ Data analisa tidak lengkap. Tidak bisa menghasilkan analisa otomatis.';
-  }
-
-  const superSignal = String(supertrend).toUpperCase();
-  const entry = parseFloat(price);
-  const tp1 = (entry * 1.0020).toFixed(5);
-  const tp2 = (entry * 1.0050).toFixed(5);
-  const sl = (entry * 0.9980).toFixed(5);
-
-  let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
-  result += `💡 Fundamental: ${extraAnalysis}\n\n`;
-
-  result += rsi < 30 ? `• RSI di bawah 30 (Oversold)\n` :
-           rsi > 70 ? `• RSI di atas 70 (Overbought)\n` :
-                      `• RSI Netral (${rsi})\n`;
-
-  result += macd < 0 ? `• MACD Negatif (Bearish)\n` : `• MACD Positif (Bullish)\n`;
-  result += `• EMA 14 (harga rata-rata): ${ema.toFixed(5)}\n`;
-  result += `• Supertrend: ${superSignal}\n`;
-
-  const rekom = (rsi < 30 && macd > 0 && superSignal === "BUY") ? 'BUY' :
-                (rsi > 70 && macd < 0 && superSignal === "SELL") ? 'SELL' :
-                'WAIT';
-
-  result += `\n🎯 Rekomendasi AI: ${rekom}\n`;
-  result += `• Entry: ${entry}\n• TP1: ${tp1}\n• TP2: ${tp2}\n• SL: ${sl}\n\n`;
-  result += `⚠️ Analisa ini bersifat semi-realtime berdasarkan data teknikal terkini.\nGunakan money management dan verifikasi tambahan sebelum entry.`;
-
-  return result;
+// === Dummy Generator untuk Testing
+function generateAutoAnalysis(pair, tf) {
+  return `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n` +
+         `testing testing...\nbaris kedua...\nbaris ketiga...`;
 }
 
-
-function closeAnalysis() {
-  document.getElementById('analysisPopup').style.display = 'none';
-}
-console.log("typeWriter element:", document.getElementById("typeWriter"));
+// === Efek Ketik
 function typeText(elementId, text, speed = 20) {
   const element = document.getElementById(elementId);
   element.innerHTML = "";
@@ -226,6 +210,16 @@ function typeText(elementId, text, speed = 20) {
   }, speed);
 }
 
+// === Tombol Tutup Popup
+function closeAnalysis() {
+  document.getElementById('analysisPopup').style.display = 'none';
+}
+
+
+
+
+
+
 function convertGMTtoWIB(gmtTime) {
   if (!gmtTime) return "Invalid";
   const match = gmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
@@ -233,7 +227,7 @@ function convertGMTtoWIB(gmtTime) {
   let hour = parseInt(match[1], 10);
   const minute = parseInt(match[2], 10);
   const period = match[3].toLowerCase();
-  if (period === "pm" && hour !== 12) hour += 12;
+  if (period === "pm" && hour !== 12) hour += 1;
   if (period === "am" && hour === 12) hour = 0;
   const date = new Date(Date.UTC(2000, 0, 1, hour, minute));
   date.setUTCHours(date.getUTCHours() + 7);
