@@ -151,7 +151,8 @@ async function buatAnalisaSekarang() {
 
 analysisPopup.innerHTML = `
   <div class="analysis-terminal">
-    <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
+<div class="header-bar">📊 Proses Analisa AI ...</div>
+
     <pre id="typeWriter"></pre>
     <div style="text-align:center; margin-top:10px;">
       <button onclick="closeAnalysis()">Tutup</button>
