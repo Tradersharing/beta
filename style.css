@@ -272,7 +272,9 @@ header {
   font-weight: bold;
   font-size: 15px;
   border-bottom: 2px solid #fff;
-  margin: -16px -16px 12px -16px;
+  margin: -16px -16px 12px -
+    
+    16px;
   font-family: 'Segoe UI', sans-serif;
 }
 
@@ -300,62 +302,79 @@ header {
   /* === Blok Judul Atas (Seperti Header Installer) === */
 /* Ini tetap sesuai dengan JS karena class .analysis-terminal tidak diubah */
 /* === Tampilan Popup Analisa ala Windows 7 Installer === */
+
 .analysis-terminal {
   display: flex;
   flex-direction: row;
-  width: 85%;
-  margin: 30px auto;
-  box-shadow: 3px 3px 6px #666;
+  width: 85vw;
+  max-width: 920px;
+  min-height: 400px;
+  margin: 40px auto;
+  background: #f2f2f2;
+  box-shadow: 2px 2px 6px #444;
+  border: 3px outset #ccc;
   border-radius: 6px;
   overflow: hidden;
-  background-color: #888; /* Biar latar gak putih */
+  font-family: 'Segoe UI', sans-serif;
 }
 
 .analysis-sidebar {
-  width: 30%;
+  width: 200px;
   background: linear-gradient(to bottom, #1e5799, #2989d8);
   color: #fff;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 13px;
-  padding: 20px 10px;
-  border-right: 2px ridge #aaa;
+  padding: 20px 15px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  box-sizing: border-box;
+  gap: 14px;
+  font-size: 13px;
+  border-right: 2px ridge #aaa;
+}
+
+.analysis-sidebar .step {
+  margin-bottom: 6px;
+  padding-left: 5px;
+  line-height: 1.4;
 }
 
 .analysis-main {
-  width: 70%;
-  background-color: #f2f2f2;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-sizing: border-box;
+  background: #f2f2f2;
 }
 
 .analysis-main .header-bar {
-  background: linear-gradient(to right, #d4d4d4, #e0e0e0);
-  font-weight: bold;
+  background: linear-gradient(to bottom, #d3d3d3, #eaeaea);
+  color: #222;
   padding: 10px 15px;
-  font-family: 'Segoe UI', sans-serif;
+  font-weight: bold;
   font-size: 15px;
   border-bottom: 2px ridge #aaa;
-  text-shadow: 1px 1px #ccc;
+  box-shadow: inset 0 -1px 2px #ccc;
 }
 
 .analysis-main pre {
-  padding: 14px 20px;
-  margin: 20px;
-  border: inset 2px #aaa;
-  background: #fff;
+  flex-grow: 1;
+  padding: 20px;
+  margin: 0;
+  background: transparent;
   color: #000;
   font-size: 14px;
   font-family: 'Courier New', monospace;
   white-space: pre-wrap;
-  overflow-wrap: break-word;
-  flex-grow: 1;
+  word-break: break-word;
+  overflow-y: auto;
 }
+
+.analysis-main .footer {
+  text-align: center;
+  padding: 12px;
+  border-top: 2px ridge #aaa;
+}
+
+
+
 
 /* Hapus media query supaya tidak berubah ke vertikal di layar kecil */
 
