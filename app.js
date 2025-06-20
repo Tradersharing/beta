@@ -118,23 +118,25 @@ async function buatAnalisaSekarang() {
   const result = generateAutoAnalysis(pair, tf);
 
   // Ganti isi popup ke tampilan terminal
+  
   analysisPopup.innerHTML = `
   <div class="analysis-terminal">
     <div class="analysis-sidebar">
-      <div style="font-weight:bold;">💿 Setup Windows 7</div>
-      <div>1. Collecting info...</div>
-      <div>2. Installing system</div>
-      <div>3. Finishing setup</div>
+      <div>💿 Berita Terkini</div>
+      <div class="step" id="step1">1. Memuat berita...</div>
+      <div class="step" id="step2">2. -</div>
+      <div class="step" id="step3">3. -</div>
     </div>
     <div class="analysis-main">
       <div class="header-bar">📊 Proses Analisa AI</div>
       <pre id="typeWriter"></pre>
-      <div style="text-align:center; padding:10px;">
+      <div class="footer">
         <button onclick="closeAnalysis()">Tutup</button>
       </div>
     </div>
-    </div>
+  </div>
 `;
+
   // Mulai efek ketik
   setTimeout(() => {
     const check = document.getElementById("typeWriter");
