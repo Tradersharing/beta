@@ -159,7 +159,7 @@ async function buatAnalisaSekarang() {
     </div>
   `;
   requestAnimationFrame(() => typeText("typeWriter", result));
-;
+
 }
 
 
