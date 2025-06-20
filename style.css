@@ -300,78 +300,81 @@ header {
 
 
   /* === Blok Judul Atas (Seperti Header Installer) === */
-/* Ini tetap sesuai dengan JS karena class .analysis-terminal tidak diubah */
+/* Ini tetap sesuai dengan JS karena cass .analysis-terminal tidak diubah */
 /* === Tampilan Popup Analisa ala Windows 7 Installer === */
+
+#analysisPopup {
+  width: 100%;
+  height: 100%;
+}
 
 .analysis-terminal {
   display: flex;
   flex-direction: row;
-  width: 85vw;
-  max-width: 920px;
-  min-height: 400px;
-  margin: 40px auto;
-  background: #f2f2f2;
-  box-shadow: 2px 2px 6px #444;
-  border: 3px outset #ccc;
-  border-radius: 6px;
+  width: 100%;
+  height: 100%;
+  background: #000; /* untuk nutup semua latar belakang */
   overflow: hidden;
-  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 3px 3px 6px #666;
 }
 
+/* Sidebar kiri biru */
 .analysis-sidebar {
-  width: 200px;
+  width: 260px; /* Lebarkan sisi biru */
+  height: 100%;
   background: linear-gradient(to bottom, #1e5799, #2989d8);
   color: #fff;
-  padding: 20px 15px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13px;
+  padding: 20px 12px;
+  border-right: 2px ridge #aaa;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  font-size: 13px;
-  border-right: 2px ridge #aaa;
+  gap: 12px;
 }
 
-.analysis-sidebar .step {
-  margin-bottom: 6px;
-  padding-left: 5px;
-  line-height: 1.4;
+.analysis-sidebar .section-title {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 4px;
 }
 
+/* Konten utama kanan abu */
 .analysis-main {
   flex-grow: 1;
+  background-color: #e4e4e4; /* abu lembut */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  background: #f2f2f2;
+  height: 100%;
 }
 
+/* Header abu smooth ala wizard */
 .analysis-main .header-bar {
-  background: linear-gradient(to bottom, #d3d3d3, #eaeaea);
-  color: #222;
-  padding: 10px 15px;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to bottom, #f0f0f0, #d0d0d0);
+  padding: 10px 20px;
+  font-size: 16px;
   font-weight: bold;
-  font-size: 15px;
-  border-bottom: 2px ridge #aaa;
-  box-shadow: inset 0 -1px 2px #ccc;
+  color: #333;
+  border-bottom: 2px ridge #bbb;
+  text-shadow: 1px 1px 0 #fff;
 }
 
+/* Efek ketik */
 .analysis-main pre {
-  flex-grow: 1;
-  padding: 20px;
-  margin: 0;
+  padding: 16px 22px;
+  margin: 20px;
   background: transparent;
-  color: #000;
-  font-size: 14px;
+  color: #111;
+  font-size: 15px;
   font-family: 'Courier New', monospace;
   white-space: pre-wrap;
-  word-break: break-word;
-  overflow-y: auto;
+  overflow-wrap: break-word;
+  flex-grow: 1;
+  border: none;
 }
 
-.analysis-main .footer {
-  text-align: center;
-  padding: 12px;
-  border-top: 2px ridge #aaa;
-}
 
 
 
