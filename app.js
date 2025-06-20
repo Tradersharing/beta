@@ -147,7 +147,8 @@ async function buatAnalisaSekarang() {
   }
 
   // === Tampilkan Terminal Analisa dengan Efek Ketik ===
-  const result = generateAutoAnalysis(pair, rsi, macd, price, tf, extraAnalysis);
+  const result = generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
+
   analysisPopup.innerHTML = `
     <div class="analysis-terminal">
       <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
