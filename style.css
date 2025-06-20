@@ -299,58 +299,7 @@ header {
 
   /* === Blok Judul Atas (Seperti Header Installer) === */
 /* Ini tetap sesuai dengan JS karena class .analysis-terminal tidak diubah */
-.analysis-terminal {
-  background-color: #e0e0e0;
-  border: 3px outset #fff;
-  font-family: 'Courier New', monospace;
-  color: #222;
-  width: 100%;
-  max-width: 340px;
-  box-shadow: 2px 2px 5px #333;
-  text-align: left;
-  padding: 15px;
-  white-space: pre-wrap;
-  border-radius: 5px;
-}
-
-.analysis-sidebar {
-  width: 180px;
-  background: linear-gradient(to bottom, #1e5799, #2989d8);
-  color: #fff;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 13px;
-  padding: 20px 10px;
-  border-right: 2px ridge #aaa;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.analysis-main {
-  flex-grow: 1;
-  background-color: #f2f2f2;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.analysis-main .header-bar {
-  border-bottom: 2px ridge #aaa;
-}
-
-.analysis-main pre {
-  padding: 14px 20px;
-  margin: 20px;
-  border: inset 2px #aaa;
-  background: #fff;
-  color: #000;
-  font-size: 14px;
-  font-family: 'Courier New', monospace;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
-  flex-grow: 1;
-}
+/* === Tampilan Popup Analisa ala Windows 7 Installer === */
 
 #analysisPopup {
   display: none;
@@ -359,12 +308,12 @@ header {
   align-items: flex-start;
   gap: 10px;
   padding: 20px;
-  background: linear-gradient(to bottom, #1e5799 0%, #7db9e8 100%);
+  background: linear-gradient(to bottom, #1e5799 0%, #2989d8 50%, #207cca 100%);
   font-family: 'Courier New', monospace;
+  color: #222;
 }
 
-
-/* Sidebar kiri (Windows 7-style setup list) */
+/* Sidebar kiri */
 .sidebar-setup {
   background-color: #2b5d9e;
   color: white;
@@ -392,20 +341,32 @@ header {
   font-size: 15px;
 }
 
-/* Terminal kanan (konten analisa) */
+/* Terminal analisa */
+.analysis-terminal {
+  background-color: #d0d0d0;
+  border: 3px outset #fff;
+  font-family: 'Courier New', monospace;
+  color: #111;
+  width: 100%;
+  max-width: 340px;
+  box-shadow: 2px 2px 5px #333;
+  text-align: left;
+  padding: 15px;
+  white-space: pre-wrap;
+  border-radius: 5px;
+}
 
 .analysis-terminal .header-bar {
-  background-color: #c0c0c0;
+  background-color: #bcbcbc;
   border-bottom: 2px solid #999;
   padding: 5px 10px;
   font-weight: bold;
   font-size: 14px;
-  color: #333;
+  color: #222;
   margin-bottom: 10px;
 }
 
 .analysis-terminal pre {
-  font-family: 'Courier New', monospace;
   font-size: 15px;
   color: #111;
 }
@@ -425,7 +386,7 @@ header {
   background-color: #c8c8c8;
 }
 
-/* Responsive agar tampil bagus di HP */
+/* Responsif */
 @media (max-width: 600px) {
   #analysisPopup {
     flex-direction: column;
@@ -441,6 +402,7 @@ header {
     width: 100%;
   }
 }
+
 
 .popup-button {
   display: block;
