@@ -92,59 +92,7 @@ setTimeout(() => {
 }
 
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
-async function buatAnalisaSekarang() {
-  const tf = document.getElementById('tfSelect').value;
-  const pair = window.currentPair;
-  const currency1 = pair.name.slice(0, 3);
-  const currency2 = pair.name.slice(3, 6);
 
-  const analysisPopup = document.getElementById('analysisPopup');
-
-  // === TAMPILKAN LOADER GIF CHART ===
-  analysisPopup.innerHTML = `
-    <div style="text-align:center; padding-top:60px;">
-      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
-      <p style="color:#fff; font-family:'Courier New'; margin-top:15px; font-size:16px;">⏳ Memproses analisa AI...</p>
-    </div>
-  `;
-  analysisPopup.style.display = 'flex';
-
-  // === Ambil Harga Sekarang ===
-  let price = 0;
-  try {
-    const priceURL = `https://api.exchangerate.host/latest?base=${currency1}&symbols=${currency2}`;
-    const priceData = await fetch(priceURL).then(r => r.json());
-    price = priceData.rates?.[currency2] || 0;
-  } catch (e) {
-    console.error("Gagal ambil harga:", e);
-  }
-
-  // === Ambil RSI & MACD dari TAAPI.io ===
-  let rsi = 0, macd = 0;
-  try {
-    const rsiURL = `https://api.taapi.io/rsi?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
-    const macdURL = `https://api.taapi.io/macd?secret=YOUR_API_KEY&exchange=forex&symbol=${currency1}${currency2}&interval=${tf}`;
-
-    const [rsiData, macdData] = await Promise.all([
-      fetch(rsiURL).then(r => r.json()),
-      fetch(macdURL).then(r => r.json())
-    ]);
-
-    rsi = rsiData.value || 0;
-    macd = macdData.valueMACD || 0;
-  } catch (e) {
-    console.error("Gagal ambil RSI/MACD:", e);
-  }
-
-  // === Ambil Analisa Tambahan dari Google Script ===
-  let extraAnalysis = "Tidak ada analisa fundamental.";
-  try {
-    const fxURL = "https://script.google.com/macros/s/YOUR_FXSTREET_SCRIPT_URL/exec";
-    const fxData = await fetch(fxURL).then(r => r.json());
-    extraAnalysis = fxData?.[pair.name] || extraAnalysis;
-  } catch (e) {
-    console.error("Gagal ambil data FX:", e);
-  }
 
   // === Tampilkan Terminal Analisa dengan Efek Ketik ===
 
