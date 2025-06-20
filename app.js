@@ -50,13 +50,17 @@ window.currentPair = pair;
 setTimeout(() => {
   document.getElementById('popupDetails').innerHTML = detailTop;
 
-  const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+  setTimeout(() => {
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
     fetch(scriptURL)
       .then(res => res.json())
       .then(data => {
         const box = document.getElementById("newsBox");
-        if (!box) return;
+        if (!box) {
+          console.warn("❌ #newsBox tidak ditemukan");
+          return;
+        }
         const news = data?.[today] || {};
         const b1 = news?.[currency1] || [];
         const b2 = news?.[currency2] || [];
@@ -84,12 +88,14 @@ setTimeout(() => {
 
         box.innerHTML = `<div>${priority.join("")}</div>`;
       })
-      .catch(() => {
+      .catch(err => {
         const box = document.getElementById("newsBox");
         if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+        console.error("❌ Fetch gagal:", err);
       });
-  }, 100);
-}
+  }, 100); // delay agar #newsBox sempat dirender
+}, 50);
+
 
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
 
