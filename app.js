@@ -158,7 +158,8 @@ async function buatAnalisaSekarang() {
       </div>
     </div>
   `;
-  requestAnimationFrame(() => typeText("typeWriter", result));
+  console.log("Jalanin ketik...");
+requestAnimationFrame(() => typeText("typeWriter", result));
 
 }
 
