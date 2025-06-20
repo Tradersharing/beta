@@ -133,8 +133,8 @@ async function buatAnalisaSekarang() {
         <button onclick="closeAnalysis()">Tutup</button>
       </div>
     </div>
-  </div>
-
+    </div>
+`;
   // Mulai efek ketik
   setTimeout(() => {
     const check = document.getElementById("typeWriter");
