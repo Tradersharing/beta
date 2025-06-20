@@ -304,8 +304,10 @@ header {
 .analysis-terminal {
   display: flex;
   flex-direction: row;
-  padding: 0; /* buang padding luar */
+  padding: 0;
   box-shadow: 3px 3px 6px #666;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 .analysis-sidebar {
@@ -316,36 +318,85 @@ header {
   font-size: 13px;
   padding: 20px 10px;
   border-right: 2px ridge #aaa;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+}
+
+.analysis-sidebar h3 {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.analysis-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.analysis-sidebar li {
+  margin-bottom: 6px;
+  font-size: 13px;
 }
 
 .analysis-main {
   flex-grow: 1;
-  background-color: #f2f2f2;
-  padding: 0;
+  background-color: #dcdcdc;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .analysis-main .header-bar {
-  border-bottom: 2px ridge #aaa;
+  background: linear-gradient(to bottom, #dcdcdc, #bcbcbc);
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: 15px;
+  color: #222;
+  border-bottom: 2px ridge #999;
+  box-shadow: inset 0 1px 0 #fff;
 }
 
 .analysis-main pre {
   padding: 14px 20px;
   margin: 20px;
   border: inset 2px #aaa;
-  background: #fff;
-  color: #000;
+  background: #e2e2e2;
+  color: #111;
   font-size: 14px;
   font-family: 'Courier New', monospace;
   white-space: pre-wrap;
   overflow-wrap: break-word;
   flex-grow: 1;
 }
+
+.analysis-main button {
+  align-self: center;
+  margin: 10px;
+  padding: 6px 14px;
+  background: #ccc;
+  border: 1px solid #999;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.analysis-main button:hover {
+  background: #bbb;
+}
+
+@media (max-width: 600px) {
+  .analysis-terminal {
+    flex-direction: column;
+  }
+
+  .analysis-sidebar {
+    width: 100%;
+    text-align: center;
+  }
+
+  .analysis-main {
+    width: 100%;
+  }
+}
+
 
 
 
