@@ -178,6 +178,16 @@ setTimeout(() => {
 
 
 function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis) {
+  if (!pair || isNaN(rsi) || isNaN(macd) || isNaN(ema) || !supertrend || isNaN(price)) {
+    return '❌ Data analisa tidak lengkap. Tidak bisa menghasilkan analisa otomatis.';
+  }
+
+  const superSignal = String(supertrend).toUpperCase();
+  const entry = parseFloat(price);
+  const tp1 = (entry * 1.0020).toFixed(5);
+  const tp2 = (entry * 1.0050).toFixed(5);
+  const sl = (entry * 0.9980).toFixed(5);
+
   let result = `📌 Analisa ${pair.name} (${tf.toUpperCase()})\n\n`;
   result += `💡 Fundamental: ${extraAnalysis}\n\n`;
 
@@ -186,16 +196,11 @@ function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extra
                       `• RSI Netral (${rsi})\n`;
 
   result += macd < 0 ? `• MACD Negatif (Bearish)\n` : `• MACD Positif (Bullish)\n`;
-  result += ema < 0 ? `• EMA 14 (harga rata-rata): ${ema.toFixed(5)}\n`;
-  result += supertrend > 0 ? `• Supertrend Sinyal: ${supertrend.toUpperCase()}\n`;
+  result += `• EMA 14 (harga rata-rata): ${ema.toFixed(5)}\n`;
+  result += `• Supertrend: ${superSignal}\n`;
 
-  const entry = parseFloat(price);
-  const tp1 = (entry * 1.0020).toFixed(5);
-  const tp2 = (entry * 1.0050).toFixed(5);
-  const sl = (entry * 0.9980).toFixed(5);
-
-  const rekom = (rsi < 30 && macd > 0 && supertrend.toUpperCase() === "BUY") ? 'BUY' :
-                (rsi > 70 && macd < 0 && supertrend.toUpperCase() === "SELL") ? 'SELL' :
+  const rekom = (rsi < 30 && macd > 0 && superSignal === "BUY") ? 'BUY' :
+                (rsi > 70 && macd < 0 && superSignal === "SELL") ? 'SELL' :
                 'WAIT';
 
   result += `\n🎯 Rekomendasi AI: ${rekom}\n`;
