@@ -360,6 +360,17 @@ header {
 /* Hapus media query supaya tidak berubah ke vertikal di layar kecil */
 
 
+.analysis-main .header-bar {
+  background: linear-gradient(to right, #e6e9f0, #eef1f5);
+  font-weight: bold;
+  padding: 10px 15px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 15px;
+  border-top: 1px solid #fff;          /* efek timbul di atas */
+  border-bottom: 2px ridge #aaa;       /* efek masuk di bawah */
+  text-shadow: 1px 1px #ddd;
+  color: #333;
+}
 
 
 
