@@ -119,14 +119,21 @@ async function buatAnalisaSekarang() {
 
   // Ganti isi popup ke tampilan terminal
   analysisPopup.innerHTML = `
-    <div class="analysis-terminal">
-      <div class="header-bar">📊 Proses Analisa AI ...</div>
+  <div class="analysis-terminal">
+    <div class="analysis-sidebar">
+      <div style="font-weight:bold;">💿 Setup Windows 7</div>
+      <div>1. Collecting info...</div>
+      <div>2. Installing system</div>
+      <div>3. Finishing setup</div>
+    </div>
+    <div class="analysis-main">
+      <div class="header-bar">📊 Proses Analisa AI</div>
       <pre id="typeWriter"></pre>
-      <div style="text-align:center; margin-top:10px;">
+      <div style="text-align:center; padding:10px;">
         <button onclick="closeAnalysis()">Tutup</button>
       </div>
     </div>
-  `;
+  </div>
 
   // Mulai efek ketik
   setTimeout(() => {
