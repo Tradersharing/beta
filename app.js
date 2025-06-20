@@ -96,7 +96,7 @@ setTimeout(() => {
   }, 100); // delay agar #newsBox sempat dirender
 }, 50);
 
-
+}
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
 
 
