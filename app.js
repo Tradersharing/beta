@@ -171,7 +171,7 @@ setTimeout(() => {
   typeText("typeWriter", result);
 }, 50);
 
-
+}
 
 
 
