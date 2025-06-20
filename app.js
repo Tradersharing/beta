@@ -6,12 +6,15 @@ function closePopup() {
   document.getElementById('popup').style.display = 'none';
 }
 
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('active');
+}
 
-
-
+function closePopup() {
+  document.getElementById('popup').style.display = 'none';
+}
 
 function openPopup(pair) {
-  window.currentPair = pair;  // penting
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
   const currency1 = pair.name.slice(0, 3).toUpperCase();
@@ -92,12 +95,7 @@ function openPopup(pair) {
   }, 100);
 }
 
-
-
-
-// === BUKA POPUP HASIL ANALISA AI ===
-
-
+// === POPUP KEDUA: Analisa AI / Termux-Style ===
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
@@ -168,7 +166,6 @@ function typeText(elementId, text, speed = 20) {
   }, speed);
 }
 
-
 function convertGMTtoWIB(gmtTime) {
   if (!gmtTime) return "Invalid";
   const match = gmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
@@ -182,6 +179,8 @@ function convertGMTtoWIB(gmtTime) {
   date.setUTCHours(date.getUTCHours() + 7);
   return date.toTimeString().slice(0, 5);
 }
+
+
 
 
 function getFlagEmoji(code) {
