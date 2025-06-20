@@ -186,8 +186,8 @@ function generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extra
                       `• RSI Netral (${rsi})\n`;
 
   result += macd < 0 ? `• MACD Negatif (Bearish)\n` : `• MACD Positif (Bullish)\n`;
-  result += `• EMA 14 (harga rata-rata): ${ema.toFixed(5)}\n`;
-  result += `• Supertrend Sinyal: ${supertrend.toUpperCase()}\n`;
+  result += ema < 0 ? `• EMA 14 (harga rata-rata): ${ema.toFixed(5)}\n`;
+  result += supertrend > 0 ? `• Supertrend Sinyal: ${supertrend.toUpperCase()}\n`;
 
   const entry = parseFloat(price);
   const tp1 = (entry * 1.0020).toFixed(5);
