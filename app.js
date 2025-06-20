@@ -155,6 +155,91 @@ function generateAutoAnalysis(pair, tf) {
          `testing testing...\nbaris kedua...\nbaris ketiga...`;
 }
 
+function tampilkanBeritaSidebar() {
+  const pair = window.currentPair?.name || "EURUSD";
+  const currency1 = pair.slice(0, 3);
+  const currency2 = pair.slice(3, 6);
+
+  const newsURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+
+  const today = new Date().toLocaleDateString('en-US', {
+    timeZone: 'Asia/Jakarta',
+    year: 'numeric', month: '2-digit', day: '2-digit'
+  }).replace(/\//g, '-');
+
+  try {
+    fetch(newsURL)
+      .then(r => r.json())
+      .then(data => {
+        const list1 = data?.[today]?.[currency1] || [];
+        const list2 = data?.[today]?.[currency2] || [];
+
+        const gabungan = [
+          ...list1.map(x => ({ ...pecah(x), currency: currency1 })),
+          ...list2.map(x => ({ ...pecah(x), currency: currency2 }))
+        ].slice(0, 3); // GANTI ke .slice(0, 5) jika mau 5 berita
+
+        const s1 = document.getElementById("step1");
+        const s2 = document.getElementById("step2");
+        const s3 = document.getElementById("step3");
+        const sidebarTitle = document.getElementById("sidebarTitle");
+
+        sidebarTitle.textContent = "💿 Berita Terkini";
+
+        if (gabungan.length === 0) {
+          s1.textContent = "Tidak ada berita hari ini.";
+          s2.textContent = "-";
+          s3.textContent = "-";
+          return;
+        }
+
+        const steps = [s1, s2, s3];
+        gabungan.forEach((news, i) => {
+          const flag = getFlagEmoji(news.currency);
+          steps[i].textContent =
+            `${i + 1}. ${news.judul} (${convertGMTtoWIB(news.jam)}) ${impactIcon(news.impact)} ${news.currency} ${flag}`;
+        });
+      });
+  } catch (e) {
+    const s1 = document.getElementById("step1");
+    if (s1) s1.textContent = "⚠️ Gagal memuat berita.";
+  }
+
+  function pecah(str) {
+    const [judul, jam, impact] = str.split("|");
+    return { judul, jam, impact };
+  }
+}
+
+function getFlagEmoji(code) {
+  const flags = {
+    USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
+    AUD: "🇦🇺", NZD: "🇳🇿", CAD: "🇨🇦", CHF: "🇨🇭", CNY: "🇨🇳"
+  };
+  return flags[code] || "🏳️";
+}
+
+function convertGMTtoWIB(gmt) {
+  if (!gmt) return "Invalid";
+  const match = gmt.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
+  if (!match) return "Invalid";
+  let hour = parseInt(match[1], 10);
+  const minute = parseInt(match[2], 10);
+  const period = match[3].toLowerCase();
+  if (period === "pm" && hour !== 12) hour += 12;
+  if (period === "am" && hour === 12) hour = 0;
+  const date = new Date(Date.UTC(2000, 0, 1, hour, minute));
+  date.setUTCHours(date.getUTCHours() + 7);
+  return date.toTimeString().slice(0, 5);
+}
+
+function impactIcon(level) {
+  return level === "High" ? "🔴" :
+         level === "Medium" ? "🟠" :
+         level === "Low" ? "⚪" : "❓";
+}
+
+
 // === Efek Ketik
 function typeText(elementId, text, speed = 20) {
   const element = document.getElementById(elementId);
