@@ -158,8 +158,10 @@ async function buatAnalisaSekarang() {
       </div>
     </div>
   `;
-  typeText("typeWriter", result);
+  requestAnimationFrame(() => typeText("typeWriter", result));
+;
 }
+
 
 
 
