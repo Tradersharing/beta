@@ -81,7 +81,8 @@ setTimeout(() => {
         }
 
         const priority = [];
-        if (currency1 === "USD" || currency2 === "USD") {
+        if (currency1 === "USD" || currency2 ==
+            = "USD") {
           if (currency1 === "USD") priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
           else priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
         } else priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
@@ -99,10 +100,6 @@ setTimeout(() => {
 }
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
 
-
-  // === Tampilkan Terminal Analisa dengan Efek Ketik ===
-
-// === POPUP KEDUA: Analisa AI / Terminal Style (Versi Testing)
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
@@ -120,16 +117,7 @@ async function buatAnalisaSekarang() {
   // Simulasi delay proses 1 detik
   await new Promise(resolve => setTimeout(resolve, 1000));
 
-  // Hasil dummy analisa
-  const result = generateAutoAnalysis(pair, tf);
-
   // Ganti isi popup ke tampilan terminal
-  
-  async function buatAnalisaSekarang() {
-  const tf = document.getElementById('tfSelect').value;
-  const pair = window.currentPair;
-  const analysisPopup = document.getElementById('analysisPopup');
-
   analysisPopup.innerHTML = `
     <div class="analysis-terminal">
       <div class="analysis-sidebar">
@@ -149,13 +137,19 @@ async function buatAnalisaSekarang() {
   `;
   analysisPopup.style.display = 'flex';
 
-  tampilkanBeritaSidebar(); // ⬅️ PANGGIL DI SINI!
+  tampilkanBeritaSidebar(); // Aktifkan sidebar berita
 
+  // Simulasi proses ketik
   setTimeout(() => {
     const result = generateAutoAnalysis(pair, tf);
     typeText("typeWriter", result);
   }, 500);
 }
+
+
+
+
+
 
 function tampilkanBeritaSidebar() {
   const pair = window.currentPair?.name || "EURUSD";
