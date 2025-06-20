@@ -301,107 +301,52 @@ header {
 /* Ini tetap sesuai dengan JS karena class .analysis-terminal tidak diubah */
 /* === Tampilan Popup Analisa ala Windows 7 Installer === */
 
-#analysisPopup {
-  display: none;
-  flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 20px;
-  background: linear-gradient(to bottom, #1e5799 0%, #2989d8 50%, #207cca 100%);
-  font-family: 'Courier New', monospace;
-  color: #222;
-}
-
-/* Sidebar kiri */
-.sidebar-setup {
-  background-color: #2b5d9e;
-  color: white;
-  padding: 20px;
-  border-radius: 6px;
-  box-shadow: 3px 3px 0px #0003;
-  width: 200px;
-}
-
-.sidebar-setup h3 {
-  font-size: 18px;
-  margin-bottom: 15px;
-}
-
-.sidebar-setup ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  line-height: 1.8em;
-}
-
-.sidebar-setup ul li {
-  padding-left: 5px;
-  color: #eef;
-  font-size: 15px;
-}
-
-/* Terminal analisa */
 .analysis-terminal {
-  background-color: #d0d0d0;
-  border: 3px outset #fff;
-  font-family: 'Courier New', monospace;
-  color: #111;
-  width: 100%;
-  max-width: 340px;
-  box-shadow: 2px 2px 5px #333;
-  text-align: left;
-  padding: 15px;
-  white-space: pre-wrap;
-  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  padding: 0; /* buang padding luar */
+  box-shadow: 3px 3px 6px #666;
 }
 
-.analysis-terminal .header-bar {
-  background-color: #bcbcbc;
-  border-bottom: 2px solid #999;
-  padding: 5px 10px;
-  font-weight: bold;
-  font-size: 14px;
-  color: #222;
-  margin-bottom: 10px;
+.analysis-sidebar {
+  width: 180px;
+  background: linear-gradient(to bottom, #1e5799, #2989d8);
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 13px;
+  padding: 20px 10px;
+  border-right: 2px ridge #aaa;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.analysis-terminal pre {
-  font-size: 15px;
-  color: #111;
+.analysis-main {
+  flex-grow: 1;
+  background-color: #f2f2f2;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-/* Tombol Tutup */
-.analysis-terminal button {
-  background-color: #d6d6d6;
+.analysis-main .header-bar {
+  border-bottom: 2px ridge #aaa;
+}
+
+.analysis-main pre {
+  padding: 14px 20px;
+  margin: 20px;
+  border: inset 2px #aaa;
+  background: #fff;
   color: #000;
-  border: 1px solid #999;
-  padding: 6px 14px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: inherit;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  flex-grow: 1;
 }
 
-.analysis-terminal button:hover {
-  background-color: #c8c8c8;
-}
-
-/* Responsif */
-@media (max-width: 600px) {
-  #analysisPopup {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .sidebar-setup {
-    width: 100%;
-    text-align: center;
-  }
-
-  .analysis-terminal {
-    width: 100%;
-  }
-}
 
 
 .popup-button {
