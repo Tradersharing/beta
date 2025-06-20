@@ -149,7 +149,7 @@ async function buatAnalisaSekarang() {
   // === Tampilkan Terminal Analisa dengan Efek Ketik ===
   const result = generateAutoAnalysis(pair, rsi, macd, ema, supertrend, price, tf, extraAnalysis);
 
-  analysisPopup.innerHTML = `
+analysisPopup.innerHTML = `
   <div class="analysis-terminal">
     <b>📊 Proses Analisa AI ${pair.name} (${tf.toUpperCase()})</b>
     <pre id="typeWriter"></pre>
@@ -161,9 +161,16 @@ async function buatAnalisaSekarang() {
 
 // Tunggu DOM siap benar2, lalu baru mulai efek ketik
 setTimeout(() => {
-  console.log("🟢 DOM siap, mulai ketik");
+  const check = document.getElementById("typeWriter");
+  console.log("🟢 DOM siap, mulai ketik. Elemen ditemukan?", !!check);
+  if (!check) {
+    console.warn("❌ typeWriter tidak ditemukan, batal ketik!");
+    return;
+  }
+
   typeText("typeWriter", result);
 }, 50);
+
 
 
 
