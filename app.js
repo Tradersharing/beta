@@ -92,25 +92,6 @@ setTimeout(() => {
 }
 
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
-let analysisPopup = document.getElementById("analysisPopup");
-if (!analysisPopup) {
-  analysisPopup = document.createElement("div");
-  analysisPopup.id = "analysisPopup";
-  analysisPopup.style.position = "fixed";
-  analysisPopup.style.top = "0";
-  analysisPopup.style.left = "0";
-  analysisPopup.style.width = "100%";
-  analysisPopup.style.height = "100%";
-  analysisPopup.style.background = "rgba(0,0,0,0.5)";
-  analysisPopup.style.display = "flex";
-  analysisPopup.style.alignItems = "center";
-  analysisPopup.style.justifyContent = "center";
-  analysisPopup.style.zIndex = "9999";
-  document.body.appendChild(analysisPopup);
-} else {
-  analysisPopup.style.display = "flex";
-}
-
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
