@@ -76,8 +76,7 @@ function openPopup(pair) {
                 }).join("")}
               </ul>
             </div>`;
-          }
-
+        
           const priority = [];
           if (currency1 === "USD" || currency2 === "USD") {
             if (currency1 === "USD") {
@@ -107,7 +106,7 @@ async function buatAnalisaSekarang() {
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
 
-  // Tampilkan loader awal
+  // Tampilkan loading awal
   analysisPopup.innerHTML = `
     <div style="text-align:center; padding-top:60px;">
       <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
@@ -116,14 +115,13 @@ async function buatAnalisaSekarang() {
   `;
   analysisPopup.style.display = 'flex';
 
-  // Simulasi delay proses 1 detik
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulasi delay
 
   // Ganti isi popup ke tampilan terminal
   analysisPopup.innerHTML = `
     <div class="analysis-terminal">
       <div class="analysis-sidebar">
-        <div id="sidebarTitle">💿 Berita Terkini</div>
+        <div class="section-title">💿 Berita Terkini</div>
         <div class="step" id="step1">1. Memuat berita...</div>
         <div class="step" id="step2">2. -</div>
         <div class="step" id="step3">3. -</div>
@@ -138,23 +136,51 @@ async function buatAnalisaSekarang() {
     </div>
   `;
 
-  tampilkanBeritaSidebar(); // Aktifkan sidebar berita
+  tampilkanBeritaSidebar();
 
-  // Simulasi proses ketik
+  const buyer = pair.longPercentage;
+  const seller = pair.shortPercentage;
+  const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
+
   setTimeout(() => {
-    const result = generateAutoAnalysis(pair, tf);
+    const result = generateAutoAnalysis(pair, buyer, seller, signal);
     typeText("typeWriter", result);
-  }, 500);
+  }, 600);
 }
 
-function generateAutoAnalysis(pair, tf) {
-  return `📌 Analisa ${pair} (${tf})\n
-Status: AI telah memproses data teknikal dan berita\n
-📈 Tren saat ini: Cenderung Sideways\n
-🟢 Support kuat: 1.2650\n🔴 Resistance kuat: 1.2745\n
-💡 Rekomendasi:
-Tunggu konfirmasi breakout. Buy jika harga bertahan di atas 1.2700.\n
-\n- Analisa dibuat otomatis oleh AI, harap bijak dalam mengambil keputusan.`;
+function generateAutoAnalysis(pair, buyer, seller, signal) {
+  const pairName = pair.name || "EURUSD";
+  const today = new Date();
+  const dateStr = today.toLocaleDateString("id-ID", {
+    timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric'
+  });
+
+  const buyerPercent = parseFloat(buyer).toFixed(1);
+  const sellerPercent = parseFloat(seller).toFixed(1);
+  const kecenderungan = signal === "BUY" ? "buyer"
+                        : signal === "SELL" ? "seller"
+                        : "dua sisi secara seimbang";
+
+  const step1 = document.getElementById("step1")?.textContent || "";
+  const match = step1.match(/\d+\.\s(.+?)\s\((\d{2}:\d{2})\)/);
+  let insight = "";
+
+  if (match) {
+    const [_, judul, jam] = match;
+    const efek = cariEfekBerita(judul);
+    insight = `📍 *Catatan Fundamental:*\nWaspadai rilis **${judul}** sekitar pukul ${jam} WIB.\nJika hasilnya lebih kuat dari ekspektasi, maka ${efek} — ini bisa memicu pergerakan pasar hari ini.`;
+  } else {
+    insight = `📍 *Catatan Fundamental:*\nTidak ada berita berdampak tinggi hari ini. Pasar cenderung dipengaruhi sentimen teknikal dan posisi ritel.`;
+  }
+
+  return `📌 *Analisa ${pairName} — ${dateStr}*\n
+📊 *Status Pasar Saat Ini:*\nMenurut data ritel, ${buyerPercent}% trader berada di posisi BUY dan ${sellerPercent}% di posisi SELL.\n
+Artinya, pasar saat ini menunjukkan kecenderungan ${kecenderungan}, dengan sinyal teknikal mengarah ke **${signal}**.\n
+📈 *Tren yang Terbentuk:*\nPasar mulai membentuk tekanan dari sisi ${kecenderungan}. Jika volume dan volatilitas mendukung, potensi breakout terbuka.\n
+🟢 *Support Utama:* 1.2650\n🔴 *Resistance Utama:* 1.2745\n
+💡 *Strategi Potensial:*\nAmati reaksi harga di zona support/resistance. Entry disarankan setelah konfirmasi valid berdasarkan price action.\n
+${insight}\n
+📘 *Disclaimer:*\nGunakan manajemen risiko dan tidak mengambil keputusan hanya berdasarkan AI.`;
 }
 
 function typeText(elementId, text, speed = 20) {
@@ -169,62 +195,49 @@ function typeText(elementId, text, speed = 20) {
   }, speed);
 }
 
+function closeAnalysis() {
+  const popup = document.getElementById("analysisPopup");
+  if (popup) popup.style.display = "none";
+}
+
 function tampilkanBeritaSidebar() {
-  const pair = window.currentPair?.name || "EURUSD";
-  const currency1 = pair.slice(0, 3);
-  const currency2 = pair.slice(3, 6);
-  const today = new Date().toLocaleDateString('en-US', {
-    timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
-  }).replace(/\//g, '-');
+  const sidebar = document.querySelector(".analysis-sidebar");
+  if (!sidebar) return;
 
-  fetch("https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec")
-    .then(r => r.json())
-    .then(data => {
-      const list1 = data?.[today]?.[currency1] || [];
-      const list2 = data?.[today]?.[currency2] || [];
+  const newsList = document.querySelectorAll("#newsBox li");
+  const step1 = document.getElementById("step1");
+  const step2 = document.getElementById("step2");
+  const step3 = document.getElementById("step3");
 
-      const gabungan = [
-        ...list1.map(x => ({ ...pecah(x), currency: currency1 })),
-        ...list2.map(x => ({ ...pecah(x), currency: currency2 }))
-      ].slice(0, 3);
+  if (newsList.length) {
+    const berita = newsList[0].textContent || "";
+    const timeMatch = berita.match(/\((\d{2}:\d{2})\)/);
+    const jam = timeMatch ? timeMatch[1] : "??:??";
+    const judul = berita.split("(")[0].trim();
 
-      const s1 = document.getElementById("step1");
-      const s2 = document.getElementById("step2");
-      const s3 = document.getElementById("step3");
-      const sidebarTitle = document.getElementById("sidebarTitle");
-
-      if (sidebarTitle) sidebarTitle.textContent = "💿 Berita Terkini";
-
-      if (gabungan.length === 0) {
-        s1.textContent = "Tidak ada berita hari ini.";
-        s2.textContent = "-";
-        s3.textContent = "-";
-        return;
-      }
-
-      [s1, s2, s3].forEach((el, i) => {
-        const news = gabungan[i];
-        if (!news) return;
-        el.textContent = `${i + 1}. ${news.judul} (${convertGMTtoWIB(news.jam)}) ${impactIcon(news.impact)} ${news.currency} ${getFlagEmoji(news.currency)}`;
-      });
-    })
-    .catch(() => {
-      const s1 = document.getElementById("step1");
-      if (s1) s1.textContent = "⚠️ Gagal memuat berita.";
-    });
-
-  function pecah(str) {
-    const [judul, jam, impact] = str.split("|");
-    return { judul, jam, impact };
+    if (step1) step1.textContent = `1. ${judul} (${jam})`;
+    if (step2) step2.textContent = "2. Membaca struktur teknikal...";
+    if (step3) step3.textContent = "3. Menentukan bias dan strategi...";
+  } else {
+    if (step1) step1.textContent = "1. Tidak ada berita berdampak.";
+    if (step2) step2.textContent = "2. Fokus pada price action & pola.";
+    if (step3) step3.textContent = "3. Validasi arah dari data ritel.";
   }
 }
 
-function closeAnalysis() {
-  document.getElementById('analysisPopup').style.display = 'none';
+function cariEfekBerita(judul) {
+  judul = judul.toLowerCase();
+  if (judul.includes("cpi") || judul.includes("inflation")) {
+    return "USD bisa menguat karena tekanan inflasi meningkat";
+  } else if (judul.includes("nfp") || judul.includes("non farm")) {
+    return "USD bisa menguat jika data tenaga kerja melebihi ekspektasi";
+  } else if (judul.includes("unemployment")) {
+    return "USD bisa melemah jika angka pengangguran naik";
+  } else if (judul.includes("rate") || judul.includes("suku bunga")) {
+    return "pasar akan bereaksi tajam tergantung keputusan suku bunga";
+  }
+  return "reaksi pasar bisa signifikan tergantung hasil rilisnya";
 }
-
-
-
 
 
 
