@@ -120,13 +120,7 @@ async function buatAnalisaSekarang() {
 
   // Ganti isi popup ke tampilan terminal
   analysisPopup.innerHTML = `
-    <div class="analysis-terminal">
-      <div class="analysis-sidebar">
-        <div class="section-title">💿 Berita Terkini</div>
-        <div class="step" id="step1">1. Memuat berita...</div>
-        <div class="step" id="step2">2. -</div>
-        <div class="step" id="step3">3. -</div>
-      </div>
+    
       <div class="analysis-main">
         <div class="header-bar">📊 Proses Analisa AI</div>
         <pre id="typeWriter"></pre>
