@@ -324,7 +324,7 @@ header {
   background: linear-gradient(to bottom, #007BFF, #0056b3); /* Biru mengkilap */
   color: white;
   padding: 16px;                 /* ✅ Menambah ruang dalam konten biru */
-  width: 45%;                    /* ✅ Lebarkan kolom biru dari 40% → 45% */
+  width: 65%;                    /* ✅ Lebarkan kolom biru dari 40% → 45% */
   margin: -6px -3px -6px -6px;   /* ✅ Dorong keluar agar nutup abu bagian atas & kiri */
   box-sizing: border-box;        /* ✅ Supaya width + padding tidak melebihi batas */
   display: flex;
