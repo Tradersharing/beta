@@ -137,7 +137,6 @@ async function buatAnalisaSekarang() {
       </div>
     </div>
   `;
-  analysisPopup.style.display = 'flex';
 
   tampilkanBeritaSidebar(); // Aktifkan sidebar berita
 
@@ -147,7 +146,6 @@ async function buatAnalisaSekarang() {
     typeText("typeWriter", result);
   }, 500);
 }
-
 
 function generateAutoAnalysis(pair, tf) {
   return `📌 Analisa ${pair} (${tf})\n
@@ -170,9 +168,6 @@ function typeText(elementId, text, speed = 20) {
     if (i >= text.length) clearInterval(interval);
   }, speed);
 }
-
-
-
 
 function tampilkanBeritaSidebar() {
   const pair = window.currentPair?.name || "EURUSD";
@@ -224,22 +219,6 @@ function tampilkanBeritaSidebar() {
   }
 }
 
-  // Mulai efek ketik
-
-
-// === Efek Ketik
-function typeText(elementId, text, speed = 20) {
-  const element = document.getElementById(elementId);
-  element.innerHTML = "";
-  let i = 0;
-  const interval = setInterval(() => {
-    element.innerHTML += text.charAt(i);
-    i++;
-    if (i >= text.length) clearInterval(interval);
-  }, speed);
-}
-
-// === Tombol Tutup Popup
 function closeAnalysis() {
   document.getElementById('analysisPopup').style.display = 'none';
 }
