@@ -46,14 +46,14 @@ header {
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-  gap: 12px; /* ✅ tambah jarak antar kotak */
+  gap: 12px;
   padding: 15px;
 }
 .box {
   background: linear-gradient(145deg, #1c1c1c, #000);
   border-radius: 15px;
   padding: 12px 8px;
-  height: 200px;  /* ✅ Lebih panjang ke bawah */
+  height: 200px;
   box-shadow: 4px 4px 10px #111, -4px -4px 10px #222;
   text-align: center;
   cursor: pointer;
@@ -82,7 +82,7 @@ header {
   background: linear-gradient(to bottom right, #111, #1e1e1e);
   padding: 30px;
   width: 90%;
-  max-width: 750px;  /* ✅ Lebih lebar */
+  max-width: 750px;
   color: #eee;
   font-family: 'Roboto Condensed', sans-serif;
   border-radius: 16px;
@@ -126,11 +126,61 @@ header {
 .strength-bar > div {
   height: 100%;
 }
-.strength-gbp {
-  background: #00bfff;
+.strength-gbp { background: #00bfff; }
+.strength-usd { background: #ff3030; }
+
+.popup-button {
+  padding: 4px 12px;
+  background: #e0e0e0;
+  border: 2px outset #bbb;
+  color: black;
+  font-family: 'Tahoma', sans-serif;
+  font-size: 12px;
+  box-shadow: inset 1px 1px #fff, inset -1px -1px #999;
+  cursor: pointer;
 }
-.strength-usd {
-  background: #ff3030;
+.popup-button:active {
+  border: 2px inset #bbb;
+  box-shadow: inset -1px -1px #999, inset 1px 1px #fff;
+}
+
+.popup-button {
+  display: block;
+  width: 90%;
+  max-width: 300px;
+  margin: 12px auto;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(to right, #2c3e50, #4ca1af);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+  cursor: pointer;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+}
+.popup-button:hover {
+  background: linear-gradient(to right, #1f2f40, #3b8ca5);
+}
+
+.popup-dropdown {
+  width: 90%;
+  max-width: 280px;
+  padding: 10px 14px;
+  margin: 10px auto;
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(to right, #2980b9, #6dd5fa);
+  border: none;
+  border-radius: 10px;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+  text-align: center;
+  appearance: none;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 /* ✅ CHAT STYLE */
@@ -182,227 +232,9 @@ header {
     text-align: left;
   }
 }
+
 .box canvas {
   width: 100%;
-  max-height: 80px;   /* ✅ gambar jarum lebih kecil */
-  margin: 8px 0;      /* ✅ beri jarak atas & bawah */
+  max-height: 80px;
+  margin: 8px 0;
 }
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.popup-content {
-  max-width: 420px;
-  width: 90%;
-  background: #222;
-  color: white;
-  border-radius: 10px;
-  padding: 20px;
-  margin: auto;
-
-
-.popup-button {
-  padding: 4px 12px;
-  background: #e0e0e0; /* abu soft */
-  border: 2px outset #bbb; /* efek timbul */
-  color: black;
-  font-family: 'Tahoma', sans-serif;
-  font-size: 12px;
-  box-shadow: inset 1px 1px #fff, inset -1px -1px #999;
-  cursor: pointer;
-}
-
-.popup-button:active {
-  border: 2px inset #bbb; /* efek ditekan */
-  box-shadow: inset -1px -1px #999, inset 1px 1px #fff;
-}
-
-/* === Popup Analisa AI ala Windows 95 / Fullscreen === */
-
-
-
-
-
-
-
-
-
-  /* === Blok Judul Atas (Seperti Header Installer) === */
-/* Ini tetap sesuai dengan JS karena cass .analysis-terminal tidak diubah */
-/* === Tampilan Popup Analisa ala Windows 7 Installer === */
-
-
-    #analysisPopup {
-      width: 100%;
-      height: 100%;
-      display: flex;
-    }
-
-    .analysis-terminal {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      background: #e4e4e4;
-      box-shadow: 3px 3px 6px #666;
-      border: 2px solid #ddd;
-    }
-
-    /* Sidebar biru: 40% */
-    .analysis-sidebar {
-  background: linear-gradient(to bottom, #007BFF, #0056b3); /* Biru mengkilap */
-  color: white;
-  padding: 16px;                 /* ✅ Menambah ruang dalam konten biru */
-  width: 65%;                    /* ✅ Lebarkan kolom biru dari 40% → 45% */
-  margin: -6px -3px -6px -6px;   /* ✅ Dorong keluar agar nutup abu bagian atas & kiri */
-  box-sizing: border-box;        /* ✅ Supaya width + padding tidak melebihi batas */
-  display: flex;
-  flex-direction: column;
-  font-size: 13px;
-  border-right: 2px solid #333;
-  border-top-left-radius: 4px;   /* Opsional: Biar pojokan biru agak bulat */
-  border-bottom-left-radius: 4px;
-}
-
-.analysis-sidebar .section-title {
-  font-weight: bold;
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-    /* Area abu: 60% */
-    .analysis-main {
-      flex: 1; /* Sisa 60% */
-      background-color: #e4e4e4;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
-      padding: 20px;
-      font-family: 'Courier New', monospace;
-    }
-
-/* Box isi teks/analisa */
-.analysis-content-box {
-  background-color: #fff;
-  border: 1px solid #aaa;
-  padding: 16px;
-  font-family: 'Courier New', monospace;
-  white-space: pre-line;
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-  flex-grow: 1;
-  overflow-y: auto;
-}
-
-
-
-
-
-
-
-/* Hapus media query supaya tidak berubah ke vertikal di layar kecil */
-
-
-.analysis-main .header-bar {
-  background: linear-gradient(to right, #e6e9f0, #eef1f5);
-  font-weight: bold;
-  padding: 10px 15px;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 15px;
-  border-top: 1px solid #fff;          /* efek timbul di atas */
-  border-bottom: 2px ridge #aaa;       /* efek masuk di bawah */
-  text-shadow: 1px 1px #ddd;
-  color: #333;
-}
-
-/* ini yang selanjutnya */
-
-
-* { box-sizing: border-box; }
-
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-
-
-
-
-
-    .section-title {
-      font-weight: bold;
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
-
-
-
-    .header-bar {
-      font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
-
-    #typeWriter {
-      white-space: pre-line;
-      flex-grow: 1;
-      overflow-y: auto;
-    }
-
-    .footer {
-      margin-top: 12px;
-      text-align: right;
-    }
-
-    button {
-      padding: 6px 12px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-
-
-.popup-button {
-  display: block;
-  width: 90%;
-  max-width: 300px;
-  margin: 12px auto;
-  padding: 12px 16px;
-  font-size: 14px;
-  font-weight: bold;
-  color: white;
-  background: linear-gradient(to right, #2c3e50, #4ca1af);
-  border: none;
-  border-radius: 12px;
-  box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
-  cursor: pointer;
-  font-family: 'Segoe UI', sans-serif;
-  text-align: center;
-}
-
-.popup-button:hover {
-  background: linear-gradient(to right, #1f2f40, #3b8ca5);
-}
-
-.popup-dropdown {
-  width: 90%;
-  max-width: 280px;
-  padding: 10px 14px;
-  margin: 10px auto;
-  display: block;
-  font-size: 14px;
-  font-weight: bold;
-  color: white;
-  background: linear-gradient(to right, #2980b9, #6dd5fa);
-  border: none;
-  border-radius: 10px;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
-  text-align: center;
-  appearance: none;
-  font-family: 'Segoe UI', sans-serif;
-}
-
