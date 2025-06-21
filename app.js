@@ -76,6 +76,7 @@ function openPopup(pair) {
                 }).join("")}
               </ul>
             </div>`;
+          } //
         
           const priority = [];
           if (currency1 === "USD" || currency2 === "USD") {
