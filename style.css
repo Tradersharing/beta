@@ -185,17 +185,27 @@ header {
 
 /* ✅ CHAT STYLE */
 .chat-box {
-  margin-top: 10px;
-}
-.chat-box input {
   width: 100%;
+  padding: 8px 12px;           /* ✅ Jarak dari tepi dalam container abu */
+  box-sizing: border-box;     /* ✅ Supaya padding tidak nambah lebar total */
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;                    /* ✅ Jarak antar elemen dalam box */
+}
+
+.chat-box textarea {
+  width: 100%;
+  resize: none;               /* ✅ Supaya tidak bisa di-resize manual */
   padding: 10px;
-  margin-bottom: 8px;
   border-radius: 6px;
   border: none;
   font-family: 'Roboto Condensed', sans-serif;
   font-size: 14px;
+  overflow-y: hidden;         /* ✅ Hilangkan scroll, baris nambah otomatis */
+  min-height: 36px;
 }
+
 .chat-box button {
   background: #FFD700;
   border: none;
@@ -204,19 +214,14 @@ header {
   border-radius: 6px;
   cursor: pointer;
   font-family: 'Roboto Condensed', sans-serif;
+  font-size: 14px;
+  align-self: flex-end;       /* ✅ Tombol di kanan bawah */
 }
+
 .chat-box button:hover {
   background: #ffaa00;
 }
-.ai-response {
-  margin-top: 10px;
-  font-size: 14px;
-  background: #222;
-  padding: 10px;
-  border-radius: 6px;
-  color: #ccc;
-  white-space: pre-wrap;
-}
+
 
 /* ✅ ANIMASI */
 @keyframes fadeIn {
