@@ -143,7 +143,7 @@ async function buatAnalisaSekarang() {
   }, 600);
 }
 
-function generateAutoAnalysis(pair, buyer, seller, signal) {
+function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
   const pairName = pair.name || "EURUSD";
   const today = new Date();
   const dateStr = today.toLocaleDateString("id-ID", {
@@ -172,7 +172,7 @@ function generateAutoAnalysis(pair, buyer, seller, signal) {
 📊 *Status Pasar Saat Ini:*\nMenurut data ritel, ${buyerPercent}% trader berada di posisi BUY dan ${sellerPercent}% di posisi SELL.\n
 Artinya, pasar saat ini menunjukkan kecenderungan ${kecenderungan}, dengan sinyal teknikal mengarah ke **${signal}**.\n
 📈 *Tren yang Terbentuk:*\nPasar mulai membentuk tekanan dari sisi ${kecenderungan}. Jika volume dan volatilitas mendukung, potensi breakout terbuka.\n
-🟢 *Support Utama:* 1.2650\n🔴 *Resistance Utama:* 1.2745\n
+🟦 *Support Utama:* ${support}\n 🟥 *Resistance Utama:* ${resistance}\n 
 💡 *Strategi Potensial:*\nAmati reaksi harga di zona support/resistance. Entry disarankan setelah konfirmasi valid berdasarkan price action.\n
 ${insight}\n
 📘 *Disclaimer:*\nGunakan manajemen risiko dan tidak mengambil keputusan hanya berdasarkan AI.`;
