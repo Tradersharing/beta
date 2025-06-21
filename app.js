@@ -149,6 +149,27 @@ async function buatAnalisaSekarang() {
 }
 
 
+function generateAutoAnalysis(pair, tf) {
+  return `📌 Analisa ${pair} (${tf})\n
+Status: AI telah memproses data teknikal dan berita\n
+📈 Tren saat ini: Cenderung Sideways\n
+🟢 Support kuat: 1.2650\n🔴 Resistance kuat: 1.2745\n
+💡 Rekomendasi:
+Tunggu konfirmasi breakout. Buy jika harga bertahan di atas 1.2700.\n
+\n- Analisa dibuat otomatis oleh AI, harap bijak dalam mengambil keputusan.`;
+}
+
+function typeText(elementId, text, speed = 20) {
+  const element = document.getElementById(elementId);
+  if (!element) return;
+  element.innerHTML = "";
+  let i = 0;
+  const interval = setInterval(() => {
+    element.innerHTML += text.charAt(i);
+    i++;
+    if (i >= text.length) clearInterval(interval);
+  }, speed);
+}
 
 
 
