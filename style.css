@@ -303,36 +303,34 @@ header {
 /* Ini tetap sesuai dengan JS karena cass .analysis-terminal tidak diubah */
 /* === Tampilan Popup Analisa ala Windows 7 Installer === */
 
-#analysisPopup {
-  width: 100%;
-  height: 100%;
-  background-color: #3a81c3; /* untuk mengganti hitam */
-}
 
-.analysis-terminal {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, #1e5799 0%, #2989d8 100%);
-  box-shadow: 3px 3px 6px #666;
-  border: 2px solid #ddd;
-}
+    #analysisPopup {
+      width: 100%;
+      height: 100%;
+      display: flex;
+    }
 
-/* Sidebar kiri biru glossy */
-.analysis-sidebar {
-  width: 260px;
-  height: 100%;
-  background: linear-gradient(to bottom, #1e5799 0%, #2989d8 100%);
-  color: #fff;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 13px;
-  padding: 20px 12px;
-  border-right: 2px ridge #aaa;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+    .analysis-terminal {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      background: #e4e4e4;
+      box-shadow: 3px 3px 6px #666;
+      border: 2px solid #ddd;
+    }
+
+    /* Sidebar biru: 40% */
+    .analysis-sidebar {
+      flex: 0 0 40%;
+      background: linear-gradient(to bottom, #1e5799 0%, #2989d8 100%);
+      color: #fff;
+      font-size: 13px;
+      padding: 20px 12px;
+      border-right: 2px ridge #aaa;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
 
 .analysis-sidebar .section-title {
   font-weight: bold;
@@ -340,16 +338,17 @@ header {
   margin-bottom: 4px;
 }
 
-/* Konten utama kanan abu */
-.analysis-main {
-  flex-grow: 1;
-  background-color: #e4e4e4;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  padding: 20px;
-}
+    /* Area abu: 60% */
+    .analysis-main {
+      flex: 1; /* Sisa 60% */
+      background-color: #e4e4e4;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 100%;
+      padding: 20px;
+      font-family: 'Courier New', monospace;
+    }
 
 /* Box isi teks/analisa */
 .analysis-content-box {
@@ -384,7 +383,56 @@ header {
   color: #333;
 }
 
+/* ini yang selanjutnya */
 
+
+* { box-sizing: border-box; }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+
+
+
+
+
+    .section-title {
+      font-weight: bold;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+
+
+    .header-bar {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    #typeWriter {
+      white-space: pre-line;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .footer {
+      margin-top: 12px;
+      text-align: right;
+    }
+
+    button {
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+
+/* sampai sini */
 
 .popup-button {
   display: block;
