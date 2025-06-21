@@ -320,119 +320,75 @@ header {
     }
 
     /* Sidebar biru: 40% */
-    .analysis-sidebar {
-  background: linear-gradient(to bottom, #007BFF, #0056b3); /* Biru mengkilap */
+    
+/* Header style: lebih atas dan center */
+.header-bar {
+  background: linear-gradient(to right, #e6e9f0, #eef1f5);
+  font-weight: bold;
+  padding: 10px 15px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 16px;
+  border-top: 1px solid #fff;
+  border-bottom: 2px ridge #aaa;
+  text-shadow: 1px 1px #ddd;
+  color: #333;
+  text-align: center;       /* Center text */
+  margin-top: -10px;        /* Lebih ke atas */
+}
+
+/* Box biru glossy 3D */
+.analysis-sidebar {
+  background: linear-gradient(to bottom, #5cb0ff, #0056b3); /* 3D glossy gradient */
   color: white;
-  padding: 20px;                 /* ✅ Menambah ruang dalam konten biru */
-  width: 5%;                    /* ✅ Lebarkan kolom biru dari 40% → 45% */
-  margin: 0px 0px 0px 0px;   /* ✅ Dorong keluar agar nutup abu bagian atas & kiri */
-  box-sizing: border-box;        /* ✅ Supaya width + padding tidak melebihi batas */
+  padding: 20px;
+  width: 45%;
+  margin: 0;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   font-size: 13px;
   border-right: 2px solid #333;
-  border-top-left-radius: 4px;   /* Opsional: Biar pojokan biru agak bulat */
-  border-bottom-left-radius: 4px;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  box-shadow: inset -2px -2px 6px rgba(255,255,255,0.3), inset 2px 2px 6px rgba(0,0,0,0.3);
 }
 
-.analysis-sidebar .section-title {
-  font-weight: bold;
-  font-size: 14px;
-  margin-bottom: 4px;
+/* Teks seperti Termux */
+.analysis-main {
+  flex: 1;
+  background-color: #e4e4e4;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 20px;
+  font-family: 'Courier New', monospace; /* Termux style */
+  color: #111; /* Warna lebih kontras */
 }
 
-    /* Area abu: 60% */
-    .analysis-main {
-      flex: 1; /* Sisa 85% */
-      background-color: #e4e4e4;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
-      padding: 20px;
-      font-family: 'Courier New', monospace;
-    }
-
-/* Box isi teks/analisa */
+/* Box teks putih berbayang */
 .analysis-content-box {
   background-color: #fff;
   border: 1px solid #aaa;
   padding: 16px;
   font-family: 'Courier New', monospace;
   white-space: pre-line;
-  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 3px 3px 6px rgba(0,0,0,0.3);
   flex-grow: 1;
   overflow-y: auto;
+  color: #222;
+  line-height: 1.5;
 }
 
-
-
-
-
-
-
-/* Hapus media query supaya tidak berubah ke vertikal di layar kecil */
-
-
-.analysis-main .header-bar {
-  background: linear-gradient(to right, #e6e9f0, #eef1f5);
-  font-weight: bold;
-  padding: 10px 15px;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 15px;
-  border-top: 1px solid #fff;          /* efek timbul di atas */
-  border-bottom: 2px ridge #aaa;       /* efek masuk di bawah */
-  text-shadow: 1px 1px #ddd;
-  color: #333;
+/* Tombol tutup */
+button {
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  background: #f0f0f0;
+  border: 1px solid #888;
 }
-
-/* ini yang selanjutnya */
-
-
-* { box-sizing: border-box; }
-
-    body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      font-family: 'Segoe UI', sans-serif;
-    }
-
-
-
-
-
-
-    .section-title {
-      font-weight: bold;
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
-
-
-
-    .header-bar {
-      font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 10px;
-    }
-
-    #typeWriter {
-      white-space: pre-line;
-      flex-grow: 1;
-      overflow-y: auto;
-    }
-
-    .footer {
-      margin-top: 12px;
-      text-align: right;
-    }
-
-    button {
-      padding: 6px 12px;
-      font-size: 14px;
-      cursor: pointer;
-    }
 
 
 /* sampai sini */
