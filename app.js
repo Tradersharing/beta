@@ -222,7 +222,7 @@ function convertGMTtoWIB(gmtTime) {
   if (period === "pm" && hour !== 12) hour += 1;
   if (period === "am" && hour === 12) hour = 0;
   const date = new Date(Date.UTC(2000, 0, 1, hour, minute));
-lkl  date.setUTCHours(date.getUTCHours() + 7);
+ date.setUTCHours(date.getUTCHours() + 7);
   return date.toTimeString().slice(0, 5);
 }
 
