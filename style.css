@@ -469,3 +469,7 @@ button {
 .analysis-content-box::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+#typeWriter {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
