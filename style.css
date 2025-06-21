@@ -321,16 +321,19 @@ header {
 
     /* Sidebar biru: 40% */
     .analysis-sidebar {
-      flex: 0 0 40%;
-      background: linear-gradient(to bottom, #1e5799 0%, #2989d8 100%);
-      color: #fff;
-      font-size: 13px;
-      padding: 20px 12px;
-      border-right: 2px ridge #aaa;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+  background: linear-gradient(to bottom, #007BFF, #0056b3); /* Biru mengkilap */
+  color: white;
+  padding: 16px;                 /* ✅ Menambah ruang dalam konten biru */
+  width: 45%;                    /* ✅ Lebarkan kolom biru dari 40% → 45% */
+  margin: -6px -3px -6px -6px;   /* ✅ Dorong keluar agar nutup abu bagian atas & kiri */
+  box-sizing: border-box;        /* ✅ Supaya width + padding tidak melebihi batas */
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  border-right: 2px solid #333;
+  border-top-left-radius: 4px;   /* Opsional: Biar pojokan biru agak bulat */
+  border-bottom-left-radius: 4px;
+}
 
 .analysis-sidebar .section-title {
   font-weight: bold;
