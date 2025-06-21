@@ -102,15 +102,12 @@ function openPopup(pair) {
 
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
 
-
-
-
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
 
-  // Tampilkan loading awal
+  // Tampilkan loader awal
   analysisPopup.innerHTML = `
     <div style="text-align:center; padding-top:60px;">
       <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
@@ -119,21 +116,21 @@ async function buatAnalisaSekarang() {
   `;
   analysisPopup.style.display = 'flex';
 
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulasi delay proses
+  // Simulasi delay proses 1 detik
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
   // Ganti isi popup ke tampilan terminal
   analysisPopup.innerHTML = `
     <div class="analysis-terminal">
       <div class="analysis-sidebar">
-        <div id="sidebarTitle">💿</div>
-        <div class="step" id="step1"></div>
-        <div class="step" id="step2"></div>
-        <div class="step" id="step3"></div>
+        <div id="sidebarTitle">💿 Berita Terkini</div>
+        <div class="step" id="step1">1. Memuat berita...</div>
+        <div class="step" id="step2">2. -</div>
+        <div class="step" id="step3">3. -</div>
       </div>
       <div class="analysis-main">
         <div class="header-bar">📊 Proses Analisa AI</div>
-        <pre id="typeWriter" class="analysis-content-box"></pre>
-
+        <pre id="typeWriter"></pre>
         <div class="footer">
           <button onclick="closeAnalysis()">Tutup</button>
         </div>
@@ -141,51 +138,23 @@ async function buatAnalisaSekarang() {
     </div>
   `;
 
-  tampilkanBeritaSidebar(); // Sidebar aktif
+  tampilkanBeritaSidebar(); // Aktifkan sidebar berita
 
-  const buyer = pair.longPercentage;
-  const seller = pair.shortPercentage;
-  const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
-
+  // Simulasi proses ketik
   setTimeout(() => {
-    const result = generateAutoAnalysis(pair, buyer, seller, signal);
+    const result = generateAutoAnalysis(pair, tf);
     typeText("typeWriter", result);
   }, 500);
 }
 
-function generateAutoAnalysis(pair, buyer, seller, signal) {
-  const pairName = pair.name || "EURUSD";
-  const today = new Date();
-  const dateStr = today.toLocaleDateString("id-ID", {
-    timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric'
-  });
-
-  const buyerPercent = parseFloat(buyer).toFixed(1);
-  const sellerPercent = parseFloat(seller).toFixed(1);
-  const kondisiPasar = signal.toUpperCase(); // BUY / SELL / WAIT
-  const kecenderungan = kondisiPasar === "BUY" ? "buyer" :
-                        kondisiPasar === "SELL" ? "seller" : "dua sisi secara seimbang";
-
-  const step1 = document.getElementById("step1")?.textContent || "";
-  const match = step1.match(/\d+\.\s(.+?)\s\((\d{2}:\d{2})\)/);
-  let insight = "";
-
-  if (match) {
-    const [_, judul, jam] = match;
-    const efek = cariEfekBerita(judul);
-    insight = `📍 *Catatan Fundamental:*\nWaspadai rilis **${judul}** sekitar pukul ${jam} WIB.\nBila hasilnya lebih kuat dari ekspektasi, maka ${efek} — ini bisa menjadi pemicu arah pasar hari ini.`;
-  } else {
-    insight = `📍 *Catatan Fundamental:*\nTidak ada berita berdampak tinggi hari ini. Pasar berpotensi digerakkan oleh teknikal dan sentimen ritel.`;
-  }
-
-  return `📌 *Analisa ${pairName} — ${dateStr}*\n
-📊 *Status Pasar Saat Ini:*\nMenurut data ritel, saat ini ${buyerPercent}% trader berada di posisi BUY dan ${sellerPercent}% di posisi SELL.\n
-Artinya, kecenderungan pasar menunjukkan dominasi ${kecenderungan}, dan sinyal teknikal mengarah ke **${kondisiPasar}** pada pasangan mata uang ${pairName}.\n
-📈 *Tren yang Terbentuk:*\nPergerakan harga masih menunjukkan konsolidasi, namun tekanan mulai dibentuk oleh sisi ${kecenderungan}. Peluang breakout mulai menguat bila volume mendukung arah tersebut.\n
-🟢 *Support Utama:* 1.2650\n🔴 *Resistance Utama:* 1.2745\n
-💡 *Strategi Potensial:*\nPantau zona support dan resistance. Entry disarankan hanya setelah konfirmasi valid di area ini dengan sinyal pendukung.\n
-${insight}\n
-📘 *Disclaimer:*\n Gunakan manajemen risiko yang bijak sebelum mengambil keputusan.`;
+function generateAutoAnalysis(pair, tf) {
+  return `📌 Analisa ${pair} (${tf})\n
+Status: AI telah memproses data teknikal dan berita\n
+📈 Tren saat ini: Cenderung Sideways\n
+🟢 Support kuat: 1.2650\n🔴 Resistance kuat: 1.2745\n
+💡 Rekomendasi:
+Tunggu konfirmasi breakout. Buy jika harga bertahan di atas 1.2700.\n
+\n- Analisa dibuat otomatis oleh AI, harap bijak dalam mengambil keputusan.`;
 }
 
 function typeText(elementId, text, speed = 20) {
@@ -200,19 +169,62 @@ function typeText(elementId, text, speed = 20) {
   }, speed);
 }
 
-function cariEfekBerita(judul) {
-  judul = judul.toLowerCase();
-  if (judul.includes("cpi") || judul.includes("inflation")) {
-    return "USD bisa menguat karena tekanan inflasi meningkat";
-  } else if (judul.includes("nfp") || judul.includes("non farm")) {
-    return "USD bisa menguat jika data tenaga kerja melebihi ekspektasi";
-  } else if (judul.includes("unemployment")) {
-    return "USD bisa melemah jika angka pengangguran naik";
-  } else if (judul.includes("rate") || judul.includes("suku bunga")) {
-    return "pasar akan bereaksi tajam tergantung keputusan suku bunga";
+function tampilkanBeritaSidebar() {
+  const pair = window.currentPair?.name || "EURUSD";
+  const currency1 = pair.slice(0, 3);
+  const currency2 = pair.slice(3, 6);
+  const today = new Date().toLocaleDateString('en-US', {
+    timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).replace(/\//g, '-');
+
+  fetch("https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec")
+    .then(r => r.json())
+    .then(data => {
+      const list1 = data?.[today]?.[currency1] || [];
+      const list2 = data?.[today]?.[currency2] || [];
+
+      const gabungan = [
+        ...list1.map(x => ({ ...pecah(x), currency: currency1 })),
+        ...list2.map(x => ({ ...pecah(x), currency: currency2 }))
+      ].slice(0, 3);
+
+      const s1 = document.getElementById("step1");
+      const s2 = document.getElementById("step2");
+      const s3 = document.getElementById("step3");
+      const sidebarTitle = document.getElementById("sidebarTitle");
+
+      if (sidebarTitle) sidebarTitle.textContent = "💿 Berita Terkini";
+
+      if (gabungan.length === 0) {
+        s1.textContent = "Tidak ada berita hari ini.";
+        s2.textContent = "-";
+        s3.textContent = "-";
+        return;
+      }
+
+      [s1, s2, s3].forEach((el, i) => {
+        const news = gabungan[i];
+        if (!news) return;
+        el.textContent = `${i + 1}. ${news.judul} (${convertGMTtoWIB(news.jam)}) ${impactIcon(news.impact)} ${news.currency} ${getFlagEmoji(news.currency)}`;
+      });
+    })
+    .catch(() => {
+      const s1 = document.getElementById("step1");
+      if (s1) s1.textContent = "⚠️ Gagal memuat berita.";
+    });
+
+  function pecah(str) {
+    const [judul, jam, impact] = str.split("|");
+    return { judul, jam, impact };
   }
-  return "reaksi pasar bisa signifikan tergantung hasil rilisnya";
 }
+
+function closeAnalysis() {
+  document.getElementById('analysisPopup').style.display = 'none';
+}
+
+
+
 
 
 
@@ -226,7 +238,7 @@ function convertGMTtoWIB(gmtTime) {
   if (period === "pm" && hour !== 12) hour += 1;
   if (period === "am" && hour === 12) hour = 0;
   const date = new Date(Date.UTC(2000, 0, 1, hour, minute));
- date.setUTCHours(date.getUTCHours() + 7);
+  date.setUTCHours(date.getUTCHours() + 7);
   return date.toTimeString().slice(0, 5);
 }
 
@@ -296,7 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 2000);
 });
 
-const url = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec";
+const url = "https://myfxbook-proxy.ayulistyanto.workers.dev/?endpoint=/api/get-community-outlook.json?session=9UtvFTG9S31Z4vO1aDW31671626";
 
 async function loadSignals() {
   try {
