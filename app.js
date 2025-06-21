@@ -102,6 +102,9 @@ function openPopup(pair) {
 
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
 
+
+
+
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
@@ -129,7 +132,8 @@ async function buatAnalisaSekarang() {
       </div>
       <div class="analysis-main">
         <div class="header-bar">📊 Proses Analisa AI</div>
-        <pre id="typeWriter"></pre>
+        <pre id="typeWriter" class="analysis-content-box"></pre>
+
         <div class="footer">
           <button onclick="closeAnalysis()">Tutup</button>
         </div>
