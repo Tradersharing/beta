@@ -234,6 +234,24 @@ function cariEfekBerita(judul) {
   return "reaksi pasar bisa signifikan tergantung hasil rilisnya";
 }
 
+setTimeout(async () => {
+  const pairSymbol = pair.name + '=X'; // format untuk Yahoo Finance
+  const urlSR = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
+
+  let support = "??", resistance = "??";
+
+  try {
+    const res = await fetch(urlSR);
+    const json = await res.json();
+    support = json.support || "??";
+    resistance = json.resistance || "??";
+  } catch (e) {
+    console.error("Gagal ambil data S&R:", e);
+  }
+
+  const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
+  typeText("typeWriter", result);
+}, 600);
 
 
 function convertGMTtoWIB(gmtTime) {
