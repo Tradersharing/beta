@@ -113,6 +113,7 @@ const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
 const support = srData?.support || '??';
 const resistance = srData?.resistance || '??';
 
+
   // Tampilkan loading awal
   analysisPopup.innerHTML = `
     <div style="text-align:center; padding-top:60px;">
@@ -144,10 +145,12 @@ const resistance = srData?.resistance || '??';
   const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
 
   setTimeout(() => {
-    const result = generateAutoAnalysis(pair, buyer, seller, signal);
+    const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
+
     typeText("typeWriter", result);
   }, 600);
 }
+
 
 function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
   const pairName = pair.name || "EURUSD";
