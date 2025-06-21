@@ -125,10 +125,10 @@ async function buatAnalisaSekarang() {
   analysisPopup.innerHTML = `
     <div class="analysis-terminal">
       <div class="analysis-sidebar">
-        <div id="sidebarTitle">💿 Berita Terkini</div>
-        <div class="step" id="step1">1. Memuat berita...</div>
-        <div class="step" id="step2">2. -</div>
-        <div class="step" id="step3">3. -</div>
+        <div id="sidebarTitle">💿</div>
+        <div class="step" id="step1"></div>
+        <div class="step" id="step2"></div>
+        <div class="step" id="step3"></div>
       </div>
       <div class="analysis-main">
         <div class="header-bar">📊 Proses Analisa AI</div>
