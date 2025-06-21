@@ -106,6 +106,11 @@ async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
+const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pair.name}`;
+
+const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
+const support = srData?.support || '??';
+const resistance = srData?.resistance || '??';
 
   // Tampilkan loading awal
   analysisPopup.innerHTML = `
@@ -172,7 +177,7 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
 📊 *Status Pasar Saat Ini:*\nMenurut data ritel, ${buyerPercent}% trader berada di posisi BUY dan ${sellerPercent}% di posisi SELL.\n
 Artinya, pasar saat ini menunjukkan kecenderungan ${kecenderungan}, dengan sinyal teknikal mengarah ke **${signal}**.\n
 📈 *Tren yang Terbentuk:*\nPasar mulai membentuk tekanan dari sisi ${kecenderungan}. Jika volume dan volatilitas mendukung, potensi breakout terbuka.\n
-🟦 *Support Utama:* ${support}\n 🟥 *Resistance Utama:* ${resistance}\n 
+🟦 *Support Utama:* ${support}\n🟥 *Resistance Utama:* ${resistance}\n 
 💡 *Strategi Potensial:*\nAmati reaksi harga di zona support/resistance. Entry disarankan setelah konfirmasi valid berdasarkan price action.\n
 ${insight}\n
 📘 *Disclaimer:*\nGunakan manajemen risiko dan tidak mengambil keputusan hanya berdasarkan AI.`;
