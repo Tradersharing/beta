@@ -306,6 +306,7 @@ header {
 #analysisPopup {
   width: 100%;
   height: 100%;
+  background-color: #3a81c3; /* untuk mengganti hitam */
 }
 
 .analysis-terminal {
@@ -313,16 +314,16 @@ header {
   flex-direction: row;
   width: 100%;
   height: 100%;
-  background: #000; /* untuk nutup semua latar belakang */
-  overflow: hidden;
+  background: linear-gradient(to bottom, #1e5799 0%, #2989d8 100%);
   box-shadow: 3px 3px 6px #666;
+  border: 2px solid #ddd;
 }
 
-/* Sidebar kiri biru */
+/* Sidebar kiri biru glossy */
 .analysis-sidebar {
-  width: 240px; /* bisa dikurangi agar .analysis-main jadi lebih lebar */
+  width: 260px;
   height: 100%;
-  background: linear-gradient(to bottom, #1e5799, #2989d8);
+  background: linear-gradient(to bottom, #1e5799 0%, #2989d8 100%);
   color: #fff;
   font-family: 'Segoe UI', sans-serif;
   font-size: 13px;
@@ -347,10 +348,10 @@ header {
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  padding: 20px; /* beri padding biar konten tidak mepet */
+  padding: 20px;
 }
 
-/* Kontainer teks hasil analisa */
+/* Box isi teks/analisa */
 .analysis-content-box {
   background-color: #fff;
   border: 1px solid #aaa;
@@ -361,6 +362,7 @@ header {
   flex-grow: 1;
   overflow-y: auto;
 }
+
 
 
 
