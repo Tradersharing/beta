@@ -343,7 +343,23 @@ document.addEventListener("DOMContentLoaded", () => {
   }, 2000);
 });
 
+// === maintanance ===
+
 const url = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec";
+const gifURL = "https://media.giphy.com/media/26tPo2QFmRmpuXNiU/giphy.gif"; // Ganti dengan gambar kamu
+
+fetch(url)
+  .then(res => res.json())
+  .then(data => {
+    if (!data || data.error || !data.symbols) throw new Error("Invalid");
+  })
+  .catch(() => {
+    // Langsung alihkan ke GIF
+    location.href = gifURL;
+  });
+// === BATAS ===
+
+
 
 async function loadSignals() {
   try {
