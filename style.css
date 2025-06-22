@@ -283,7 +283,7 @@ header {
   font-family: 'Courier New', monospace;
   border: 2px solid #222;
   box-shadow: inset 2px 2px 4px #0f0, inset -2px -2px 4px #000;
-  padding: 20px;
+  padding: 20px 24px;
   margin: 15px;
   border-radius: 6px;
   flex-grow: 1;
@@ -291,6 +291,8 @@ header {
   word-break: break-word;
   overflow-y: auto;
 }
+
+
 
 /* 5. Judul Header Terminal */
 .win-titlebar {
@@ -378,3 +380,18 @@ header {
 
 /* === END FINAL TERMINAL ANALISA === */
  
+#typeWriter {
+  background: #f2f2f2;
+  color: #333;
+  padding: 12px;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  max-width: 100%;
+  display: block;
+}
+
