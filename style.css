@@ -278,18 +278,15 @@ header {
 
 /* 4. Konten Utama Analisa (Output AI) */
 .analysis-main {
-  background: #000;
-  color: #00FF00;
+  background: linear-gradient(145deg, #f4f4f4, #e0e0e0);
+  color: black;
+  padding: 20px;
+  margin-top: 40px;
+  width: 95%;
+  max-width: 650px;
+  border-radius: 10px;
+  box-shadow: inset 2px 2px 4px #fff, inset -2px -2px 4px #bbb;
   font-family: 'Courier New', monospace;
-  border: 2px solid #222;
-  box-shadow: inset 2px 2px 4px #0f0, inset -2px -2px 4px #000;
-  padding: 20px 24px;
-  margin: 15px;
-  border-radius: 6px;
-  flex-grow: 1;
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-y: auto;
 }
 
 
@@ -394,13 +391,20 @@ header {
   box-shadow: 6px 6px 12px #aaa, -6px -6px 12px #fff;
 }
 
-
-
-
-#analysisPopup .analysis-main {
-  background: transparent;
-  box-shadow: none;
-  border: none;
-  padding: 0;
-  margin: 0;
+.header-bar {
+  background: linear-gradient(145deg, #dcdcdc, #f0f0f0);
+  color: black;
+  padding: 12px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 16px;
+  border: 2px solid #999;
+  border-radius: 8px 8px 0 0;
+  box-shadow: inset 2px 2px 4px #fff, inset -2px -2px 4px #bbb;
+  font-family: 'Segoe UI', sans-serif;
 }
+
+
+
+
+
