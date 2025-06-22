@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setTimeout(() => {
     document.getElementById("pageLoader")?.remove();
-  }, 8000);
+  }, 6500);
 });
 
 
