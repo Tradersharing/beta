@@ -277,18 +277,18 @@ header {
 }
 
 /* 4. Konten Utama Analisa (Output AI) */
+
 .analysis-main {
   background: linear-gradient(145deg, #f4f4f4, #e0e0e0);
   color: black;
   padding: 20px;
-  margin-top: 40px;
+  margin: 40px auto; /* auto untuk center */
   width: 95%;
   max-width: 650px;
   border-radius: 10px;
   box-shadow: inset 2px 2px 4px #fff, inset -2px -2px 4px #bbb;
   font-family: 'Courier New', monospace;
 }
-
 
 
 
@@ -354,7 +354,11 @@ header {
 }
 
 /* === END FINAL TERMINAL ANALISA === */
-#typeWriter {
+
+
+
+
+  #typeWriter {
   white-space: pre-wrap;
   word-wrap: break-word;
   font-family: 'Courier New', monospace;
@@ -377,4 +381,20 @@ header {
   box-shadow: inset 2px 2px 4px #fff, inset -2px -2px 4px #bbb;
   color: #222;
   font-family: 'Segoe UI', sans-serif;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.footer button {
+  background: linear-gradient(145deg, #e0e0e0, #f8f8f8);
+  border: 1px solid #aaa;
+  box-shadow: inset 1px 1px 2px #fff, inset -1px -1px 2px #bbb;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-weight: bold;
+  font-family: 'Segoe UI', sans-serif;
+  cursor: pointer;
 }
