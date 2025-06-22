@@ -35,11 +35,7 @@ function openPopup(pair) {
     <p>${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴</p>
     <hr>
     <p><b>Analisa:</b></p>
-    <select id="tfSelect" class="popup-dropdown">
-      <option value="1h" selected>H1 (default)</option>
-      <option value="4h">H4</option>
-      <option value="1d">D1</option>
-    </select>
+    
     <button onclick="buatAnalisaSekarang()" class="popup-button">📊 Mulai Proses Analisa ${pair.name}</button>
     <div id="autoAnalysis"></div>
   `;
