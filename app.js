@@ -98,7 +98,7 @@ function openPopup(pair) {
 
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
 async function buatAnalisaSekarang() {
-  const tf = document.getElementById('tfSelect').value;
+
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
   const pairSymbol = (pair?.name || 'EURUSD') + '=X';
