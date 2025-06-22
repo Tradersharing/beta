@@ -369,18 +369,7 @@ header {
   box-shadow: 6px 6px 12px #aaa, -6px -6px 12px #fff;
 }
 
-.header-bar {
-  background: linear-gradient(145deg, #dcdcdc, #f0f0f0);
-  color: black;
-  padding: 12px;
-  text-align: center;
-  font-weight: bold;
-  font-size: 16px;
-  border: 2px solid #999;
-  border-radius: 8px 8px 0 0;
-  box-shadow: inset 2px 2px 4px #fff, inset -2px -2px 4px #bbb;
-  font-family: 'Segoe UI', sans-serif;
-}
+
 
 
 
