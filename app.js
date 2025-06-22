@@ -124,7 +124,7 @@ async function buatAnalisaSekarang() {
 
   analysisPopup.innerHTML = `
 <div class="analysis-main">
-  <div class="corner-label">📊 Proses Analisa AI</div>
+  <div class="corner-label">📊Analisa pair ${pairName} ${today}</div>
   <pre id="typeWriter"></pre>
   <div class="footer">
     <button onclick="closeAnalysis()">Tutup</button>
