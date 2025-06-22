@@ -375,15 +375,16 @@ header {
 
 
 .corner-label {
+  display: block;
+  text-align: center;
   font-weight: bold;
-  font-size: 14px;
-  color: #333;
-  padding: 4px 8px;
-  background: #f2f2f2;
-  border-radius: 6px;
-  display: inline-block;
-  margin-bottom: 8px;
-  box-shadow: inset 1px 1px 2px #fff, inset -1px -1px 2px #ccc;
+  font-size: 18px;
+  padding: 10px 16px;
+  margin: 0 auto 16px auto;
+  width: fit-content;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #e0e0e0, #f4f4f4);
+  box-shadow: inset 2px 2px 4px #fff, inset -2px -2px 4px #bbb;
+  color: #222;
   font-family: 'Segoe UI', sans-serif;
 }
-
