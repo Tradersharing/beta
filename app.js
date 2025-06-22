@@ -123,16 +123,15 @@ async function buatAnalisaSekarang() {
   await new Promise(resolve => setTimeout(resolve, 1000));
 
   analysisPopup.innerHTML = `
-    <div class="analysis-main">
+<div class="analysis-main">
   <div class="corner-label">📊 Proses Analisa AI</div>
   <pre id="typeWriter"></pre>
+  <div class="footer">
+    <button onclick="closeAnalysis()">Tutup</button>
+  </div>
 </div>
-      <div class="footer">
-        <button onclick="closeAnalysis()">Tutup</button>
-      </div>
-    </div>
   `;
-
+  
   tampilkanBeritaSidebar();
 
   const buyer = pair.longPercentage;
