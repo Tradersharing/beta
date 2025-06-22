@@ -60,23 +60,22 @@ function openPopup(pair) {
           const b2 = news?.[currency2] || [];
 
           function renderNews(currency, arr) {
-  const flag = getFlagEmoji(currency);
-  return `<div style="margin-bottom:10px;">
-    <div style="font-weight:bold;">${flag} ${currency}</div>
-    ${
-      arr.length
-        ? `<ul>${arr.map(str => {
-            const [judul, jam, impact] = str.split("|");
-            const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-            const jamWIB = convertGMTtoWIB(jam);
-            return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
-          }).join("")}</ul>`
-        : `<p style="color:gray;">Tidak ada berita penting hari ini.</p>`
-    }
-  </div>`;
-}
+            const flag = getFlagEmoji(currency);
+            return `<div style="margin-bottom:10px;">
+              <div style="font-weight:bold;">${flag} ${currency}</div>
+              ${
+                arr.length
+                  ? `<ul>${arr.map(str => {
+                      const [judul, jam, impact] = str.split("|");
+                      const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+                      const jamWIB = convertGMTtoWIB(jam);
+                      return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
+                    }).join("")}</ul>`
+                  : `<p style="color:gray;">Tidak ada berita penting hari ini.</p>`
+              }
+            </div>`;
+          }
 
-        
           const priority = [];
           if (currency1 === "USD" || currency2 === "USD") {
             if (currency1 === "USD") {
@@ -98,6 +97,7 @@ function openPopup(pair) {
     }, 100);
   }, 50);
 }
+
 
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
 async function buatAnalisaSekarang() {
