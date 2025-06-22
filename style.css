@@ -415,23 +415,7 @@ button {
   background: linear-gradient(to right, #1f2f40, #3b8ca5);
 }
 
-.popup-dropdown {
-  width: 90%;
-  max-width: 280px;
-  padding: 10px 14px;
-  margin: 10px auto;
-  display: block;
-  font-size: 14px;
-  font-weight: bold;
-  color: white;
-  background: linear-gradient(to right, #2980b9, #6dd5fa);
-  border: none;
-  border-radius: 10px;
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
-  text-align: center;
-  appearance: none;
-  font-family: 'Segoe UI', sans-serif;
-}
+
 
 .analysis-content-box {
   position: relative;
