@@ -379,19 +379,28 @@ header {
 }
 
 /* === END FINAL TERMINAL ANALISA === */
- 
 #typeWriter {
-  background: #f2f2f2;
+  background: linear-gradient(145deg, #eeeeee, #dcdcdc);
   color: #333;
-  padding: 12px;
-  border-radius: 6px;
+  padding: 20px;
+  border-radius: 10px;
   font-family: 'Courier New', monospace;
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: break-word;
   box-sizing: border-box;
-  margin-bottom: 16px;
-  max-width: 100%;
-  display: block;
+  margin: 20px auto;
+  max-width: 90%;
+  box-shadow: 6px 6px 12px #aaa, -6px -6px 12px #fff;
 }
 
+
+
+
+#analysisPopup .analysis-main {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
