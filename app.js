@@ -104,40 +104,44 @@ function openPopup(pair) {
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
-  const buyer = pair.longPercentage;
-  const seller = pair.shortPercentage;
-  const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
-
-  // 1. Tampilkan terminal SEBELUM fetch data
   const analysisPopup = document.getElementById('analysisPopup');
+  const pairSymbol = (pair?.name || 'EURUSD') + '=X';
+  const srURL = `https://script.google.com/macros/s/.../exec?pair=${pairSymbol}`;
+
+  const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
+  const support = srData?.support || '??';
+  const resistance = srData?.resistance || '??';
+
+  analysisPopup.innerHTML = `
+    <div style="text-align:center; padding-top:60px;">
+      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
+      <p style="color:#fff; font-family:'Courier New'; margin-top:15px; font-size:16px;">⏳ Memproses analisa AI...</p>
+    </div>
+  `;
+  analysisPopup.style.display = 'flex';
+
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
   analysisPopup.innerHTML = `
     <div class="analysis-main">
       <div class="header-bar">📊 Proses Analisa AI</div>
-      <pre id="typeWriter">⏳ Mengambil data S&R dan berita...</pre>
+      <pre id="typeWriter"></pre>
       <div class="footer">
         <button onclick="closeAnalysis()">Tutup</button>
       </div>
     </div>
   `;
-  analysisPopup.style.display = 'flex';
 
-  // 2. Ambil Support & Resistance (jalan di belakang)
-  let support = "??", resistance = "??";
-  try {
-    const pairSymbol = (pair?.name || 'EURUSD') + '=X';
-    const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
-    const srData = await fetch(srURL).then(res => res.json());
-    support = srData?.support || '??';
-    resistance = srData?.resistance || '??';
-  } catch (e) {
-    console.warn("Gagal ambil S&R:", e);
-  }
+  tampilkanBeritaSidebar();
 
-  // 3. Tampilkan hasil ke typeWriter
+  const buyer = pair.longPercentage;
+  const seller = pair.shortPercentage;
+  const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
+
   const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
-  typeText("typeWriter", result);
-}
-  , 600);
+  setTimeout(() => {
+    typeText("typeWriter", result);
+  }, 600);
 }
 
 
@@ -232,24 +236,7 @@ function cariEfekBerita(judul) {
   return "reaksi pasar bisa signifikan tergantung hasil rilisnya";
 }
 
-setTimeout(async () => {
-  const pairSymbol = pair.name + '=X'; // format untuk Yahoo Finance
-  const urlSR = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
 
-  let support = "??", resistance = "??";
-
-  try {
-    const res = await fetch(urlSR);
-    const json = await res.json();
-    support = json.support || "??";
-    resistance = json.resistance || "??";
-  } catch (e) {
-    console.error("Gagal ambil data S&R:", e);
-  }
-
-  const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
-  typeText("typeWriter", result);
-}, 600);
 
 
 function convertGMTtoWIB(gmtTime) {
