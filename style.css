@@ -279,15 +279,16 @@ header {
 /* 4. Konten Utama Analisa (Output AI) */
 
 .analysis-main {
-  background: linear-gradient(145deg, #f4f4f4, #e0e0e0);
+  background: linear-gradient(to bottom, #d7d7d7, #f0f0f0); /* gradasi tegas abu tua ke terang */
   color: black;
   padding: 20px;
-  margin: 40px auto; /* auto untuk center */
+  margin: 40px auto;
   width: 95%;
   max-width: 650px;
-  border-radius: 10px;
-  box-shadow: inset 2px 2px 4px #fff, inset -2px -2px 4px #bbb;
-  font-family: 'Courier New', monospace;
+  border-radius: 4px; /* biar tetap agak membulat kayak Win7 */
+  border: 1px solid #999; /* garis tegas di pinggir */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* bayangan jatuh klasik */
+  font-family: 'Segoe UI', sans-serif; /* khas Win7 */
 }
 
 
