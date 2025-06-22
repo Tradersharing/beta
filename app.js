@@ -106,7 +106,8 @@ async function buatAnalisaSekarang() {
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
   const pairSymbol = (pair?.name || 'EURUSD') + '=X';
-  const srURL = `https://script.google.com/macros/s/.../exec?pair=${pairSymbol}`;
+  const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
+
 
   const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
   const support = srData?.support || '??';
