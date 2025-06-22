@@ -124,8 +124,9 @@ async function buatAnalisaSekarang() {
 
   analysisPopup.innerHTML = `
     <div class="analysis-main">
-     <div class="corner-label">📊 Proses Analisa AI</div>
-      <pre id="typeWriter"></pre>
+  <div class="corner-label">📊 Proses Analisa AI</div>
+  <pre id="typeWriter"></pre>
+</div>
       <div class="footer">
         <button onclick="closeAnalysis()">Tutup</button>
       </div>
@@ -180,17 +181,22 @@ ${insight}\n
 📘 *Disclaimer:*\nGunakan manajemen risiko dan tidak mengambil keputusan hanya berdasarkan AI.`;
 }
 
-function typeText(elementId, text, speed = 20) {
-  const element = document.getElementById(elementId);
-  if (!element) return;
-  element.innerHTML = "";
+function typeText(elementId, text, speed = 25) {
+  const el = document.getElementById(elementId);
+  el.textContent = "";
   let i = 0;
-  const interval = setInterval(() => {
-    element.innerHTML += text.charAt(i);
-    i++;
-    if (i >= text.length) clearInterval(interval);
-  }, speed);
+
+  function type() {
+    if (i < text.length) {
+      el.textContent += text.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    }
+  }
+
+  type();
 }
+
 
 function closeAnalysis() {
   const popup = document.getElementById("analysisPopup");
