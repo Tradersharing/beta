@@ -101,54 +101,43 @@ function openPopup(pair) {
 }
 
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
-
 async function buatAnalisaSekarang() {
   const tf = document.getElementById('tfSelect').value;
   const pair = window.currentPair;
-  const analysisPopup = document.getElementById('analysisPopup');
-const pairSymbol = (pair?.name || 'EURUSD') + '=X';
-const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
-
-const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
-const support = srData?.support || '??';
-const resistance = srData?.resistance || '??';
-
-
-  // Tampilkan loading awal
-  analysisPopup.innerHTML = `
-    <div style="text-align:center; padding-top:60px;">
-      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
-      <p style="color:#fff; font-family:'Courier New'; margin-top:15px; font-size:16px;">⏳ Memproses analisa AI...</p>
-    </div>
-  `;
-  analysisPopup.style.display = 'flex';
-
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulasi delay
-
-  // Ganti isi popup ke tampilan terminal
-  analysisPopup.innerHTML = `
-    
-      <div class="analysis-main">
-        <div class="header-bar">📊 Proses Analisa AI</div>
-        <pre id="typeWriter"></pre>
-        <div class="footer">
-          <button onclick="closeAnalysis()">Tutup</button>
-        </div>
-      </div>
-    </div>
-  `;
-
-  tampilkanBeritaSidebar();
-
   const buyer = pair.longPercentage;
   const seller = pair.shortPercentage;
   const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
 
-  setTimeout(() => {
-    const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
+  // 1. Tampilkan terminal SEBELUM fetch data
+  const analysisPopup = document.getElementById('analysisPopup');
+  analysisPopup.innerHTML = `
+    <div class="analysis-main">
+      <div class="header-bar">📊 Proses Analisa AI</div>
+      <pre id="typeWriter">⏳ Mengambil data S&R dan berita...</pre>
+      <div class="footer">
+        <button onclick="closeAnalysis()">Tutup</button>
+      </div>
+    </div>
+  `;
+  analysisPopup.style.display = 'flex';
 
-    typeText("typeWriter", result);
-  }, 600);
+  // 2. Ambil Support & Resistance (jalan di belakang)
+  let support = "??", resistance = "??";
+  try {
+    const pairSymbol = (pair?.name || 'EURUSD') + '=X';
+    const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
+    const srData = await fetch(srURL).then(res => res.json());
+    support = srData?.support || '??';
+    resistance = srData?.resistance || '??';
+  } catch (e) {
+    console.warn("Gagal ambil S&R:", e);
+  }
+
+  // 3. Tampilkan hasil ke typeWriter
+  const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
+  typeText("typeWriter", result);
+}
+  , 600);
 }
 
 
