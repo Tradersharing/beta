@@ -427,16 +427,22 @@ header {
   margin: 0 auto 16px auto;
   width: fit-content;
   border-radius: 6px;
-  background: linear-gradient(to bottom, #d7d7d7, #f0f0f0); /* sama seperti footer */
+  background: linear-gradient(to bottom, #d7d7d7, #f0f0f0);
   border: 1px solid #aaa;
   box-shadow:
     inset 1px 1px 2px #fff,
     inset -1px -1px 2px #bbb,
-    2px 2px 5px rgba(0, 0, 0, 0.15); /* outer shadow seperti footer */
-
+    2px 2px 5px rgba(0, 0, 0, 0.15);
   color: #222;
   font-family: 'Segoe UI', sans-serif;
+
+  /* Tambahan biar nyatu */
+  box-sizing: border-box;
+  position: relative;
+  top: -4px; /* seakan nempel ke card */
+  z-index: 1;
 }
+
 
 
 
