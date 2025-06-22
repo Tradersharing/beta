@@ -300,6 +300,7 @@ header {
 }
 
 /* 7. Tombol */
+/* Tombol utama */
 .popup-button {
   display: block;
   width: 90%;
@@ -312,34 +313,34 @@ header {
   background: linear-gradient(to right, #2c3e50, #4ca1af);
   border: none;
   border-radius: 12px;
-  box-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
   cursor: pointer;
   font-family: 'Segoe UI', sans-serif;
   text-align: center;
   transition: background 0.3s ease;
-
-  /* Ripple support */
   position: relative;
-  overflow: hidden;
+  overflow: hidden; /* penting untuk efek ripple */
 }
 
-.popup-button::after {
-  content: "";
+/* Efek animasi ripple (dari JS) */
+.popup-button .ripple {
   position: absolute;
   border-radius: 50%;
-  width: 10px;
-  height: 10px;
-  background: rgba(255, 255, 255, 0.5); /* titik terang seperti Win7 */
   transform: scale(0);
-  opacity: 0;
+  animation: ripple-animation 0.6s ease-out;
+  background: rgba(255, 255, 255, 0.4);
   pointer-events: none;
-  transition: transform 0.6s ease-out, opacity 1s ease-out;
+  z-index: 1;
 }
 
-
-.popup-button:hover {
-  background: linear-gradient(to right, #1f2f40, #3b8ca5);
+/* Keyframe animasi ripple */
+@keyframes ripple-animation {
+  to {
+    transform: scale(2.5);
+    opacity: 0;
+  }
 }
+
 
 /* 8. Kursor Berkedip */
 #aiText::after {
