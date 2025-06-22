@@ -355,22 +355,12 @@ header {
 
 /* === END FINAL TERMINAL ANALISA === */
 #typeWriter {
-  background: linear-gradient(145deg, #eeeeee, #dcdcdc);
-  color: #333;
-  padding: 20px;
-  border-radius: 10px;
-  font-family: 'Courier New', monospace;
   white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: break-word;
-  box-sizing: border-box;
-  margin: 20px auto;
-  max-width: 90%;
-  box-shadow: 6px 6px 12px #aaa, -6px -6px 12px #fff;
+  word-wrap: break-word;
+  font-family: 'Courier New', monospace;
+  font-size: 16px;
+  color: black;
 }
-
-
-
 
 
 
