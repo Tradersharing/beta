@@ -290,8 +290,9 @@ header {
   font-weight: bold;
 }
 
-@keyframes blinkCursor {
-  50% { opacity: 0; }
+@keyframes shine {
+  from { left: -50%; }
+  to { left: 150%; }
 }
 
 
@@ -322,18 +323,16 @@ header {
     /* Sidebar biru: 40% */
     
 /* Header style: lebih atas dan center */
-.header-bar {
-  background: linear-gradient(to right, #e6e9f0, #eef1f5);
-  font-weight: bold;
-  padding: 10px 15px;
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 16px;
-  border-top: 1px solid #fff;
-  border-bottom: 2px ridge #aaa;
-  text-shadow: 1px 1px #ddd;
-  color: #333;
-  text-align: center;       /* Center text */
-  margin-top: -10px;        /* Lebih ke atas */
+.header-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 50%;
+  height: 100%;
+  background: rgba(255,255,255,0.3);
+  transform: skewX(-25deg);
+  animation: shine 2s ease-in-out infinite;
 }
 
 /* Box biru glossy 3D */
@@ -355,16 +354,17 @@ header {
 
 /* Teks seperti Termux */
 .analysis-main {
-  flex: 1;
-  background-color: #e4e4e4;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
+  background: #f2f2f2;
+  border: 3px outset #bbb;
+  box-shadow: inset 2px 2px 4px #fff,
+              inset -2px -2px 4px rgba(0,0,0,0.2);
   padding: 20px;
-  font-family: 'Courier New', monospace; /* Termux style */
-  color: #111; /* Warna lebih kontras */
+  margin: 15px;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  white-space: pre-line;
 }
+
 
 /* Box teks putih berbayang */
 .analysis-content-box {
@@ -474,8 +474,6 @@ button {
   word-wrap: break-word;
 }
 
-Di gabung gini gpp ya biar sekali copy
-
 .analysis-content-box {
   position: relative;
   background: linear-gradient(to bottom right, #fefefe, #dcdcdc); /* warna glossy putih keabu */
@@ -513,4 +511,24 @@ Di gabung gini gpp ya biar sekali copy
 
 .analysis-content-box::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+/* Opsional: Tambahan frame konten abu-abu seperti jendela */
+.analysis-content-box {
+  border: 2px ridge #ccc;
+  background: #f9f9f9;
+  padding: 15px;
+  margin-top: 10px;
+  border-radius: 4px;
+}
+
+.footer button {
+  background: #e0e0e0;
+  border: 2px outset #bbb;
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.footer button:active {
+  border: 2px inset #bbb;
 }
