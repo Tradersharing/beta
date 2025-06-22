@@ -401,7 +401,7 @@ header {
   margin: 0 auto 16px auto;
   width: fit-content;
   border-radius: 6px;
-  background: linear-gradient(145deg, #f4f4f4, #e0e0e0); /* sama seperti main */
+  background: linear-gradient(to bottom, #d7d7d7, #f0f0f0); /* sama seperti main */
   box-shadow: 
     inset 2px 2px 3px #ffffff, 
     inset -2px -2px 3px #bbbbbb, 
