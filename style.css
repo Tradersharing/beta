@@ -516,3 +516,20 @@ button {
 .footer button:active {
   border: 2px inset #bbb;
 }
+.popup-dropdown {
+  width: 90%;
+  max-width: 280px;
+  padding: 10px 14px;
+  margin: 10px auto;
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(to right, #2980b9, #6dd5fa);
+  border: none;
+  border-radius: 10px;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+  text-align: center;
+  appearance: none;
+  font-family: 'Segoe UI', sans-serif;
+}
