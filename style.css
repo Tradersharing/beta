@@ -291,29 +291,7 @@ header {
 
 
 
-/* 5. Judul Header Terminal */
-.win-titlebar {
-  background: #000080;
-  color: white;
-  padding: 6px 10px;
-  font-weight: bold;
-  font-size: 15px;
-  border-bottom: 2px solid #fff;
-  font-family: 'Segoe UI', sans-serif;
-}
 
-/* 6. Efek Shine Latar */
-.header-bar::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -50%;
-  width: 50%;
-  height: 100%;
-  background: rgba(255,255,255,0.2);
-  transform: skewX(-25deg);
-  animation: shine 4s ease-in-out infinite;
-}
 
 @keyframes shine {
   from { left: -50%; }
