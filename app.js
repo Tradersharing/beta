@@ -366,7 +366,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   setTimeout(() => {
     document.getElementById("pageLoader")?.remove();
-  }, 2500);
+  }, 3000);
 });
 
 
