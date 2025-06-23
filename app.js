@@ -199,41 +199,6 @@ async function buatAnalisaSekarang() {
 }
 
 
-function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
-  const pairName = pair.name || "EURUSD";
-  const today = new Date();
-  const dateStr = today.toLocaleDateString("id-ID", {
-    timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric'
-  });
-
-  const buyerPercent = parseFloat(buyer).toFixed(1);
-  const sellerPercent = parseFloat(seller).toFixed(1);
-  const kecenderungan = signal === "BUY" ? "buyer"
-                        : signal === "SELL" ? "seller"
-                        : "dua sisi secara seimbang";
-
-  const beritaUtama = window.currentNews?.[0] || "";
-  const match = beritaUtama.match(/(.+?)\|(.+)/);
-  let insight = "";
-
-  if (match) {
-    const judul = match[1].trim();
-    const jamWIB = convertGMTtoWIB(match[2].trim());
-    const efek = cariEfekBerita(judul);
-    insight = `📍 *Catatan Fundamental:*\nWaspadai rilis **${judul}** sekitar pukul ${jamWIB} WIB.\n${efek}.`;
-  } else {
-    insight = `📍 *Catatan Fundamental:*\nTidak ada berita berdampak tinggi hari ini. Pasar cenderung tenang.`;
-  }
-
-  return `📌 *Analisa ${pairName} — ${dateStr}*\n
-📊 *Status Pasar Saat Ini:*\nMenurut data ritel, ${buyerPercent}% trader berada di posisi BUY dan ${sellerPercent}% di posisi SELL.\n
-Artinya, pasar saat ini menunjukkan kecenderungan ${kecenderungan}, dengan sinyal teknikal mengarah ke **${signal}**.\n
-📈 *Tren yang Terbentuk:*\nPasar mulai membentuk tekanan dari sisi ${kecenderungan}. Jika volume dan volatilitas mendukung...\n
-🟦 *Support Utama:* ${support}\n🟥 *Resistance Utama:* ${resistance}\n
-💡 *Strategi Potensial:*\nAmati reaksi harga di zona support/resistance. Entry disarankan setelah konfirmasi pola...\n
-${insight}\n
-📘 *Disclaimer:*\nGunakan manajemen risiko dan jangan mengambil keputusan hanya berdasarkan AI.`;
-}
 
 
 
@@ -268,6 +233,98 @@ function tampilkanBeritaSidebar() {
   }
 }
 //disini
+// === Fungsi Analisa AI (diperbaiki agar cocok dengan format multiline "step1") ===
+
+function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
+  const pairName = pair.name || "EURUSD";
+  const today = new Date();
+  const dateStr = today.toLocaleDateString("id-ID", {
+    timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric'
+  });
+
+  const buyerPercent = parseFloat(buyer).toFixed(1);
+  const sellerPercent = parseFloat(seller).toFixed(1);
+  const kecenderungan = signal === "BUY" ? "buyer"
+                        : signal === "SELL" ? "seller"
+                        : "dua sisi secara seimbang";
+
+  const semuaBaris = document.getElementById("step1")?.textContent.split("\u2022") || []; // pisah berdasarkan bullet "•"
+  const barisUtama = semuaBaris.find(baris => baris.includes("(") && baris.includes(")")) || "";
+  const match = barisUtama.match(/(.+?)\s\((\d{2}:\d{2})\)/);
+  let insight = "";
+
+  if (match) {
+    const [_, judul, jam] = match;
+    const efek = cariEfekBerita(judul);
+    insight = `📍 *Catatan Fundamental:*
+Waspadai rilis **${judul.trim()}** sekitar pukul ${jam} WIB.
+Jika hasilnya lebih kuat dari ekspektasi, maka pasar bisa bereaksi positif.`;
+  } else {
+    insight = `📍 *Catatan Fundamental:*
+Tidak ada berita berdampak tinggi hari ini. Pasar cenderung bergerak berdasarkan teknikal dan sentimen umum.`;
+  }
+
+  return `📌 *Analisa ${pairName} — ${dateStr}*
+
+📊 *Status Pasar Saat Ini:*
+Menurut data ritel, ${buyerPercent}% trader berada di posisi BUY dan ${sellerPercent}% di posisi SELL.
+
+Artinya, pasar saat ini menunjukkan kecenderungan ${kecenderungan}, dengan sinyal teknikal mengarah ke **${signal}**.
+
+📈 *Tren yang Terbentuk:*
+Pasar mulai membentuk tekanan dari sisi ${kecenderungan}. Jika volume dan volatilitas mendukung, peluang entry bisa muncul.
+
+🟦 *Support Utama:* ${support}
+🔵 *Resistance Utama:* ${resistance}
+
+💡 *Strategi Potensial:*
+Amati reaksi harga di zona support/resistance. Entry disarankan setelah konfirmasi candle atau breakout palsu.
+
+${insight}
+
+📘 *Disclaimer:*
+Gunakan manajemen risiko dan jangan mengambil keputusan hanya berdasarkan AI.`;
+}
+
+// === Fungsi bantu tampilkan insight di step1 dari berita hari ini ===
+
+async function tampilkanInsightBerita(pair, step1Id = "step1") {
+  const step1 = document.getElementById(step1Id);
+  const today = new Date().toLocaleDateString('en-US', {
+    timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).replace(/\//g, '-');
+
+  const currency1 = pair.name.slice(0, 3);
+  const currency2 = pair.name.slice(3, 6);
+  const newsURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+
+  try {
+    const newsData = await fetch(newsURL).then(res => res.json());
+    const newsToday = newsData?.[today] || {};
+    const b1 = newsToday[currency1] || [];
+    const b2 = newsToday[currency2] || [];
+    const semuaBerita = [...b1, ...b2];
+
+    if (step1) {
+      if (semuaBerita.length) {
+        const daftar = semuaBerita.map(str => {
+          const [judul, jam] = str.split("|");
+          const jamWIB = convertGMTtoWIB(jam);
+          const efek1 = ambilDampakDariKeyword(judul, currency1.toLowerCase());
+          const efek2 = ambilDampakDariKeyword(judul, currency2.toLowerCase());
+          const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
+          return `• ${judul} (${jamWIB})\n  🕵️ ${efek}`;
+        }).join("\n\n");
+
+        step1.textContent = `1. Berita Hari Ini:\n\n${daftar}`;
+      } else {
+        step1.textContent = "1. Tidak ada berita hari ini.";
+      }
+    }
+  } catch (err) {
+    console.warn("❌ Gagal ambil berita:", err);
+  }
+}
 
 
 function cariEfekBerita(judul) {
