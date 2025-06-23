@@ -275,192 +275,105 @@ header {
 
  /* === FINAL STYLE UNTUK POPUP TERMINAL ANALISA AI === */
 
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
 /* 1. Popup Fullscreen */
 #analysisPopup {
   position: fixed;
   top: 0; left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(to bottom, #01477c, #5fa3e6);
+  background: 
+    linear-gradient(170deg, #005ea8, #0078d4),
+    radial-gradient(circle at 30% 20%, rgba(255,255,255,0.2), transparent 40%);
+  background-blend-mode: screen;
   display: none;
   justify-content: center;
   align-items: flex-start;
   z-index: 9999;
-  font-family: 'Courier New', monospace;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
   overflow-y: auto;
   padding: 20px;
 }
 
-/* 2. Terminal Container */
-.analysis-terminal {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  background: #e4e4e4;
-  box-shadow: 3px 3px 6px #666;
-  border: 2px solid #ddd;
-}
-
-/* 3. Sidebar Kiri */
-.analysis-sidebar {
-  background: linear-gradient(to bottom, #5cb0ff, #0056b3);
-  color: white;
-  padding: 20px;
-  width: 45%;
-  display: flex;
-  flex-direction: column;
-  font-size: 13px;
-  border-right: 2px solid #333;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  box-shadow: inset -2px -2px 6px rgba(255,255,255,0.3), inset 2px 2px 6px rgba(0,0,0,0.3);
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-/* 4. Konten Utama Analisa (Output AI) */
-
+/* 2. Konten Utama Analisa (blok isi) */
 .analysis-main {
-  background: linear-gradient(to bottom, #d7d7d7, #f0f0f0); /* gradasi tegas abu tua ke terang */
-  color: black;
-  padding: 20px;
-  margin: 40px auto;
-  width: 95%;
-  max-width: 650px;
-  border-radius: 4px; /* biar tetap agak membulat kayak Win7 */
-  border: 1px solid #999; /* garis tegas di pinggir */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3); /* bayangan jatuh klasik */
-  font-family: 'Segoe UI', sans-serif; /* khas Win7 */
+  width: 100%;
+  max-width: 720px;
+  margin: 60px auto 40px auto;
+  padding: 0 20px;
+  background: transparent;
+  box-shadow: none;
+  border: none;
 }
 
-
-
-
-@keyframes shine {
-  from { left: -50%; }
-  to { left: 150%; }
+/* 3. Judul di tengah (centered title) */
+.corner-label {
+  display: block;
+  text-align: center;
+  font-weight: 600;
+  font-size: 20px;
+  padding: 10px 20px;
+  margin: 0 auto 20px auto;
+  width: fit-content;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  backdrop-filter: blur(4px);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
-/* 7. Tombol */
-/* Tombol utama */
-
-
-
-
-/* 8. Kursor Berkedip */
-#aiText::after {
-  content: '|';
-  animation: blinkCursor 1s step-start infinite;
-  margin-left: 4px;
-  color: #00ff00;
-  font-weight: bold;
+/* 4. Typewriter content rata kiri */
+#typeWriter {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  text-align: left;
+  font-family: 'Inter', 'Courier New', monospace;
+  font-size: 16px;
+  color: #ffffff;
+  margin: 16px auto;
+  max-width: 90%;
+  line-height: 1.7;
+  animation: fadeIn 0.4s ease-in-out;
+  text-shadow: 0 0 2px rgba(0,0,0,0.3);
 }
 
-@keyframes blinkCursor {
-  50% { opacity: 0; }
-}
-
-/* 9. Scrollbar Gaya */
-.analysis-main::-webkit-scrollbar {
-  width: 8px;
-}
-.analysis-main::-webkit-scrollbar-track {
-  background: #111;
-}
-.analysis-main::-webkit-scrollbar-thumb {
-  background: #00aa00;
-  border-radius: 4px;
-}
-
-/* 10. Tambahan transisi masuk */
+/* 5. Efek animasi masuk */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* === END FINAL TERMINAL ANALISA === */
-
-
-
-
-#typeWriter {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  font-family: 'Courier New', monospace;
-  font-size: 17px;
-  color: #00ff88;
-  background-color: #000;
-  padding: 12px;
-  border-radius: 8px;
-  box-shadow: inset 0 0 10px #00ff88;
+/* 6. Kursor berkedip */
+#aiText::after {
+  content: '|';
+  animation: blinkCursor 1s step-start infinite;
+  margin-left: 4px;
+  color: #fff;
   font-weight: bold;
-  line-height: 1.5;
-  position: relative;
 }
-
-#typeWriter {
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  font-family: 'Courier New', monospace;
-  font-size: 16px;
-  color: #00ff88;
-
-  text-shadow: 0 0 2px #00ff88, 0 0 5px #006644;
-  line-height: 1.6;
-  animation: glowIn 0.4s ease-in-out;
-}
-
-@keyframes blink {
-  0%, 100% { opacity: 1; }
+@keyframes blinkCursor {
   50% { opacity: 0; }
 }
 
-
-.corner-label {
-  display: block;
-  text-align: center;
-  font-weight: bold;
-  font-size: 18px;
-  padding: 10px 20px;
-  margin: 0 auto 16px auto;
-  width: fit-content;
-  border-radius: 6px;
-  background: linear-gradient(to bottom, #d7d7d7, #f0f0f0);
-  border: 1px solid #aaa;
-  box-shadow:
-    inset 1px 1px 2px #fff,
-    inset -1px -1px 2px #bbb,
-    2px 2px 5px rgba(0, 0, 0, 0.15);
-  color: #222;
-  font-family: 'Segoe UI', sans-serif;
-
-  /* Tambahan biar nyatu */
-  box-sizing: border-box;
-  position: relative;
-  top: -4px; /* seakan nempel ke card */
-  z-index: 1;
-}
-
-
-
-
-
-
-
-
-
-
+/* 7. Tombol footer */
 .footer {
   text-align: center;
-  margin-top: 20px;
+  margin-top: 30px;
 }
-
 .footer button {
-  background: linear-gradient(to bottom, #d7d7d7, #f0f0f0);
+  background: linear-gradient(to bottom, #ffffffcc, #eeeeeecc);
   border: 1px solid #aaa;
-  box-shadow: inset 1px 1px 2px #fff, inset -1px -1px 2px #bbb;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
   border-radius: 6px;
-  padding: 8px 20px;
+  padding: 10px 24px;
   font-weight: bold;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-size: 14px;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+.footer button:hover {
+  background: #ffffffee;
+  transform: scale(1.03);
 }
