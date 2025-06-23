@@ -260,6 +260,23 @@ function cariEfekBerita(judul) {
   return "reaksi pasar bisa signifikan tergantung hasil rilisnya";
 }
 
+function ambilDampakDariKeyword(judul, mataUang = 'usd') {
+  const raw = document.getElementById("impactKeywordData");
+  if (!raw) return "";
+  const data = JSON.parse(raw.textContent || "{}");
+  const daftar = data[mataUang.toLowerCase()] || [];
+  const judulLower = judul.toLowerCase();
+
+  for (const item of daftar) {
+    const regex = new RegExp(item.keyword, 'i');
+    if (regex.test(judulLower)) return item.impact;
+  }
+
+  return "reaksi pasar bisa signifikan tergantung hasil rilisnya";
+}
+
+
+
 function convertGMTtoWIB(gmtTime) {
   if (!gmtTime) return "Invalid";
   const match = gmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
