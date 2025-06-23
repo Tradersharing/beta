@@ -212,23 +212,38 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
                         : signal === "SELL" ? "seller"
                         : "dua sisi secara seimbang";
 
-  const semuaBaris = document.getElementById("step1")?.textContent.split("\u2022") || []; // pisah berdasarkan bullet "•"
-  const barisUtama = semuaBaris.find(baris => baris.includes("(") && baris.includes(")")) || "";
-  const match = barisUtama.match(/(.+?)\s\((\d{2}:\d{2})\)/);
-  let insight = "";
+  function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
+  const pairName = pair.name || "EURUSD";
+  const today = new Date();
+  const dateStr = today.toLocaleDateString("id-ID", {
+    timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric'
+  });
 
-  if (match) {
-    const [_, judul, jam] = match;
-    const efek = cariEfekBerita(judul);
-    insight = `📍 *Catatan Fundamental:*
-Waspadai rilis **${judul.trim()}** sekitar pukul ${jam} WIB.
-Jika hasilnya lebih kuat dari ekspektasi, maka pasar bisa bereaksi positif.`;
-  } else {
-    insight = `📍 *Catatan Fundamental:*
+  const buyerPercent = parseFloat(buyer).toFixed(1);
+  const sellerPercent = parseFloat(seller).toFixed(1);
+  const kecenderungan = signal === "BUY" ? "buyer"
+                        : signal === "SELL" ? "seller"
+                        : "dua sisi secara seimbang";
+
+  const semuaBaris = document.getElementById("step1")?.textContent.split("\n") || [];
+  const insightList = semuaBaris.filter(line => line.includes("(") && line.includes(")"))
+    .map(baris => {
+      const match = baris.match(/•\s(.+?)\s\((\d{2}:\d{2})\)/);
+      if (!match) return null;
+      const [_, judul, jam] = match;
+      const efek = cariEfekBerita(judul);
+      return `• ${judul} (${jam})\n  👉 ${efek}`;
+    }).filter(Boolean);
+
+  const insight = insightList.length
+    ? `📍 *Catatan Fundamental Hari Ini:*
+
+${insightList.join("\n\n")}`
+    : `📍 *Catatan Fundamental:*
 Tidak ada berita berdampak tinggi hari ini. Pasar cenderung bergerak berdasarkan teknikal dan sentimen umum.`;
-  }
 
   return `📌 *Analisa ${pairName} — ${dateStr}*
+
 
 📊 *Status Pasar Saat Ini:*
 Menurut data ritel, ${buyerPercent}% trader berada di posisi BUY dan ${sellerPercent}% di posisi SELL.
