@@ -322,10 +322,6 @@ function getFlagEmoji(code) {
 }
 
 
-
-
-
-
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
   canvas.width = 150;
@@ -378,8 +374,19 @@ document.addEventListener("DOMContentLoaded", () => {
   setTimeout(() => {
     document.getElementById("pageLoader")?.remove();
   }, 3000);
-});
 
+  // Pasang event listener search disini (supaya tidak dobel)
+  const search = document.getElementById("pairSearch");
+  if (search) {
+    search.addEventListener("input", () => {
+      const term = search.value.toLowerCase();
+      document.querySelectorAll("#signals .box").forEach(box => {
+        const match = box.dataset.pair.includes(term);
+        box.style.display = match ? "" : "none";
+      });
+    });
+  }
+});
 
 const url = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec";
 
@@ -387,21 +394,27 @@ async function loadSignals() {
   try {
     const res = await fetch(url);
     const data = await res.json();
+    const symbols = data?.symbols;
+
+    if (!Array.isArray(symbols)) {
+      throw new Error("Data symbols kosong atau bukan array");
+    }
 
     const majorPairs = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD"];
     const majors = [], others = [];
 
-    data.symbols.forEach(pair => {
+    symbols.forEach(pair => {
       (majorPairs.includes(pair.name) ? majors : others).push(pair);
     });
 
     const sorted = [...majors, ...others];
     const container = document.getElementById("signals");
+    if (!container) return;
     container.innerHTML = "";
 
     sorted.forEach(pair => {
-      const buy = parseFloat(pair.longPercentage);
-      const sell = parseFloat(pair.shortPercentage);
+      const buy = parseFloat(pair.longPercentage) || 0;
+      const sell = parseFloat(pair.shortPercentage) || 0;
       const status = buy >= 70 ? 'BUY' : sell >= 70 ? 'SELL' : 'WAIT';
       const cls = buy >= 70 ? 'buy' : sell >= 70 ? 'sell' : 'wait';
 
@@ -431,22 +444,16 @@ async function loadSignals() {
       container.appendChild(box);
     });
 
-    const search = document.getElementById("pairSearch");
-    if (search) {
-      search.addEventListener("input", () => {
-        const term = search.value.toLowerCase();
-        document.querySelectorAll("#signals .box").forEach(box => {
-          const match = box.dataset.pair.includes(term);
-          box.style.display = match ? "" : "none";
-        });
-      });
-    }
-
   } catch (e) {
-    document.getElementById("signals").innerHTML =
-      '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
+    const container = document.getElementById("signals");
+    if (container) {
+      container.innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
+    }
   }
 }
 
 loadSignals();
 setInterval(loadSignals, 60000);
+
+
+ 
