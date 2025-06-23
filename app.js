@@ -199,6 +199,41 @@ async function buatAnalisaSekarang() {
 }
 
 
+function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
+  const pairName = pair.name || "EURUSD";
+  const today = new Date();
+  const dateStr = today.toLocaleDateString("id-ID", {
+    timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric'
+  });
+
+  const buyerPercent = parseFloat(buyer).toFixed(1);
+  const sellerPercent = parseFloat(seller).toFixed(1);
+  const kecenderungan = signal === "BUY" ? "buyer"
+                        : signal === "SELL" ? "seller"
+                        : "dua sisi secara seimbang";
+
+  const beritaUtama = window.currentNews?.[0] || "";
+  const match = beritaUtama.match(/(.+?)\|(.+)/);
+  let insight = "";
+
+  if (match) {
+    const judul = match[1].trim();
+    const jamWIB = convertGMTtoWIB(match[2].trim());
+    const efek = cariEfekBerita(judul);
+    insight = `📍 *Catatan Fundamental:*\nWaspadai rilis **${judul}** sekitar pukul ${jamWIB} WIB.\n${efek}.`;
+  } else {
+    insight = `📍 *Catatan Fundamental:*\nTidak ada berita berdampak tinggi hari ini. Pasar cenderung tenang.`;
+  }
+
+  return `📌 *Analisa ${pairName} — ${dateStr}*\n
+📊 *Status Pasar Saat Ini:*\nMenurut data ritel, ${buyerPercent}% trader berada di posisi BUY dan ${sellerPercent}% di posisi SELL.\n
+Artinya, pasar saat ini menunjukkan kecenderungan ${kecenderungan}, dengan sinyal teknikal mengarah ke **${signal}**.\n
+📈 *Tren yang Terbentuk:*\nPasar mulai membentuk tekanan dari sisi ${kecenderungan}. Jika volume dan volatilitas mendukung...\n
+🟦 *Support Utama:* ${support}\n🟥 *Resistance Utama:* ${resistance}\n
+💡 *Strategi Potensial:*\nAmati reaksi harga di zona support/resistance. Entry disarankan setelah konfirmasi pola...\n
+${insight}\n
+📘 *Disclaimer:*\nGunakan manajemen risiko dan jangan mengambil keputusan hanya berdasarkan AI.`;
+}
 
 
 
