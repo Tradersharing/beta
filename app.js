@@ -79,7 +79,7 @@ function openPopup(pair) {
           const priority = [];
           if (currency1 === "USD" || currency2 === "USD") {
             if (currency1 === "USD") {
-            priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+          priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
             } else {
               priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
             }
@@ -105,75 +105,116 @@ function openPopup(pair) {
 
 async function buatAnalisaSekarang() {
   const pair = window.currentPair;
-  const popup = document.getElementById('analysisPopup');
+  const analysisPopup = document.getElementById('analysisPopup');
   const pairSymbol = (pair?.name || 'EURUSD') + '=X';
-
-  // Loading awal
-  popup.innerHTML = `<div style="text-align:center; padding-top:60px;">
-    <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
-    <p style="color:#fff; font-family:'Courier New'; margin-top:15px; font-size:16px;">⏳ Memproses analisa AI...</p>
-  </div>`;
-  popup.style.display = 'flex';
-
-  // Ambil SR
   const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
+
   const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
   const support = srData?.support || '??';
   const resistance = srData?.resistance || '??';
 
-  // Ambil keyword impact dari index2.html
-  let impactKeywords = {};
-  try {
-    const html = await fetch("https://tradersharing.github.io/beta/index2.html").then(r => r.text());
-    const jsonText = html.match(/<script id="impactKeywordData"[^>]*>([\s\S]*?)<\/script>/)?.[1];
-    if (jsonText) impactKeywords = JSON.parse(jsonText);
-  } catch (e) {
-    console.warn("⚠️ Gagal muat index2.html:", e);
-  }
+  analysisPopup.innerHTML = `
+    <div style="text-align:center; padding-top:60px;">
+      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
+      <p style="color:#fff; font-family:'Courier New'; margin-top:15px; font-size:16px;">⏳ Memproses analisa AI...</p>
+    </div>
+  `;
+  analysisPopup.style.display = 'flex';
 
-  // Ambil news hari ini
-  const newsURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  analysisPopup.innerHTML = `
+  <div class="analysis-main">
+    <div class="corner-label">📊Analisa pair</div>
+    <pre id="typeWriter"></pre>
+    <div id="step1" style="display:none;"></div>
+    <div class="footer">
+      <button onclick="closeAnalysis()">Tutup</button>
+    </div>
+  </div>
+  `;
+
+  const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
   const today = new Date().toLocaleDateString('en-US', {
     timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
   }).replace(/\//g, '-');
 
-  let beritaUtama = "";
+  const currency1 = pair.name.slice(0, 3);
+  const currency2 = pair.name.slice(3, 6);
+
   try {
-    const newsData = await fetch(newsURL).then(res => res.json());
-    const currency1 = pair.name.slice(0, 3);
-    const currency2 = pair.name.slice(3, 6);
-    const newsToday = newsData?.[today] || {};
-    const b1 = newsToday[currency1] || [];
-    const b2 = newsToday[currency2] || [];
-    beritaUtama = [...b1, ...b2].find(Boolean) || "";
+    const res = await fetch(scriptURL);
+    const data = await res.json();
+    const news = data?.[today] || {};
+    const b1 = news?.[currency1] || [];
+    const b2 = news?.[currency2] || [];
+
+    const priority = [];
+    function renderNews(currency, arr) {
+      const flag = getFlagEmoji(currency);
+      return `<div style="margin-bottom:10px;">
+        <div style="font-weight:bold;">${flag} ${currency}</div>
+        ${
+          arr.length
+            ? `<ul>${arr.map(str => {
+                const [judul, jam, impact] = str.split("|");
+                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+                const jamWIB = convertGMTtoWIB(jam);
+                return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
+              }).join("")}</ul>`
+            : `<p style="color:gray;">Tidak ada berita penting hari ini.</p>`
+        }
+      </div>`;
+    }
+
+    if (currency1 === "USD" || currency2 === "USD") {
+      if (currency1 === "USD") {
+        priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+      } else {
+        priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+      }
+    } else {
+      priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+    }
+
+    // Gabungkan dan tampilkan semua berita di typewriter step1
+    const htmlBeritaGabungan = priority.join("");
+    const divDummy = document.createElement("div");
+    divDummy.innerHTML = htmlBeritaGabungan;
+    const liList = divDummy.querySelectorAll("li");
+
+    const daftarBerita = Array.from(liList).map(li => li.textContent);
+    const beritaTayang = daftarBerita.map((str, idx) => `${idx + 1}. ${str}`).join("\n");
+
+    // Step1 tetap ambil berita pertama (jika ada)
+    const beritaPertama = liList[0]?.textContent || "";
+    if (beritaPertama) {
+      const timeMatch = beritaPertama.match(/\((\d{2}:\d{2})\)/);
+      const jam = timeMatch ? timeMatch[1] : "??:??";
+      const judul = beritaPertama.split("(")[0].trim();
+      const step1 = document.getElementById("step1");
+      if (step1) step1.textContent = `1. ${judul} (${jam})`;
+    }
+
+    // simpan sebagai preview (opsional tampilkan di sidebar kalau mau)
+    window.fullNewsList = daftarBerita;
+
   } catch (err) {
     console.warn("❌ Gagal ambil berita:", err);
   }
 
-  await new Promise(r => setTimeout(r, 800));
-  popup.innerHTML = `<div class="analysis-main">
-    <div class="corner-label">📊 Analisa ${pair.name}</div>
-    <pre id="typeWriter"></pre>
-    <div id="step1" style="display:none"></div>
-    <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
-  </div>`;
-
-  // Isi step1 biar bisa dibaca AI
-  if (beritaUtama) {
-    const [judul, jam] = beritaUtama.split("|");
-    const jamWIB = convertStandardGMTtoWIB (jam);
-    document.getElementById("step1").textContent = `1. ${judul} (${jamWIB})`;
-  }
+  tampilkanBeritaSidebar();
 
   const buyer = pair.longPercentage;
   const seller = pair.shortPercentage;
-  const signal = buyer >= 70 ? "BUY" : seller >= 70 ? "SELL" : "WAIT";
+  const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
 
-  const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance, impactKeywords);
+  const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
   setTimeout(() => {
     typeText("typeWriter", result);
   }, 600);
 }
+
 
 function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??", impactKeywords = {}) {
   const pairName = pair.name || "EURUSD";
