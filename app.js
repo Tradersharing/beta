@@ -278,20 +278,14 @@ function convertGMTtoWIB(gmtTime) {
   const minute = parseInt(match[2], 10);
   const period = match[3].toLowerCase();
 
-  // Perbaiki konversi am/pm ke 24 jam
   if (period === "pm" && hour !== 12) hour += 12;
   if (period === "am" && hour === 12) hour = 0;
 
-  // Buat tanggal GMT pada tanggal arbitrer (tidak penting)
   const date = new Date(Date.UTC(2000, 0, 1, hour, minute));
-
-  // Tambah 7 jam untuk WIB
   date.setUTCHours(date.getUTCHours() + 7);
 
-  // Ambil jam dan menit, format 2 digit
   const h = String(date.getUTCHours()).padStart(2, "0");
   const m = String(date.getUTCMinutes()).padStart(2, "0");
-
   return `${h}:${m}`;
 }
 
