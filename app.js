@@ -35,7 +35,6 @@ function openPopup(pair) {
     <p>${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴</p>
     <hr>
     <p><b>Analisa:</b></p>
-    
     <button onclick="buatAnalisaSekarang()" class="popup-button">📊 Mulai Proses Analisa ${pair.name}</button>
     <div id="autoAnalysis"></div>
   `;
@@ -79,9 +78,9 @@ function openPopup(pair) {
           const priority = [];
           if (currency1 === "USD" || currency2 === "USD") {
             if (currency1 === "USD") {
-          priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+              priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
             } else {
-              priority.push(renderNews(currency2, b2), renderNews(currecy1, b1));
+              priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
             }
           } else {
             priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
@@ -90,7 +89,7 @@ function openPopup(pair) {
           box.innerHTML = `<div>${priority.join("")}</div>`;
         })
         .catch(err => {
-          const box = document.getElementById("newsBox);
+          const box = document.getElementById("newsBox");
           if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
           console.error("❌ Fetch gagal:", err);
         });
@@ -101,11 +100,6 @@ function openPopup(pair) {
 
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
 
-// app.js terbaru
-
-
-    
-// Final versi rapi: buatAnalisaSekarang & dependencies
 async function buatAnalisaSekarang() {
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
@@ -127,75 +121,38 @@ async function buatAnalisaSekarang() {
   await new Promise(resolve => setTimeout(resolve, 1000));
 
   analysisPopup.innerHTML = `
-  <div class="analysis-main">
-    <div class="corner-label">📊Analisa pair</div>
-    <pre id="typeWriter"></pre>
-    <div id="step1" style="display:none;"></div>
-    <div class="footer">
-      <button onclick="closeAnalysis()">Tutup</button>
-    </div>
+<div class="analysis-main">
+  <div class="corner-label">📊Analisa pair</div>
+  <pre id="typeWriter"></pre>
+  <div id="step1" style="display:none;"></div> <!-- penting untuk insight -->
+  <div class="footer">
+    <button onclick="closeAnalysis()">Tutup</button>
   </div>
+</div>
   `;
 
-  const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+  // Ambil berita hari ini sesuai pair
+  const newsURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
   const today = new Date().toLocaleDateString('en-US', {
     timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
   }).replace(/\//g, '-');
 
-  const currency1 = pair.name.slice(0, 3);
-  const currency2 = pair.name.slice(3, 6);
-
   try {
-    const res = await fetch(scriptURL);
-    const data = await res.json();
-    const news = data?.[today] || {};
-    const b1 = news?.[currency1] || [];
-    const b2 = news?.[currency2] || [];
+    const newsData = await fetch(newsURL).then(res => res.json());
+    const currency1 = pair.name.slice(0, 3);
+    const currency2 = pair.name.slice(3, 6);
+    const newsToday = newsData?.[today] || {};
+    const b1 = newsToday[currency1] || [];
+    const b2 = newsToday[currency2] || [];
 
-    const priority = [];
-    function renderNews(currency, arr) {
-      const flag = getFlagEmoji(currency);
-      return `<div style="margin-bottom:10px;">
-        <div style="font-weight:bold;">${flag} ${currency}</div>
-        ${
-          arr.length
-            ? `<ul>${arr.map(str => {
-                const [judul, jam, impact] = str.split("|");
-                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-                const jamWIB = convertGMTtoWIB(jam);
-                return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
-              }).join("")}</ul>`
-            : `<p style="color:gray;">Tidak ada berita penting hari ini.</p>`
-        }
-      </div>`;
-    }
+    const beritaUtama = [...b1, ...b2].find(Boolean); // ambil 1 berita dari b1/b2
 
-    if (currency1 === "USD" || currency2 === "USD") {
-      if (currency1 === "USD") {
-        priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-      } else {
-        priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-      }
-    } else {
-      priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-    }
-
-    const htmlBeritaGabungan = priority.join("");
-    const divDummy = document.createElement("div");
-    divDummy.innerHTML = htmlBeritaGabungan;
-    const liList = divDummy.querySelectorAll("li");
-    const daftarBerita = Array.from(liList).map(li => li.textContent);
-    window.fullNewsList = daftarBerita;
-
-    const beritaPertama = liList[0]?.textContent || "";
-    if (beritaPertama) {
-      const timeMatch = beritaPertama.match(/\((\d{2}:\d{2})\)/);
-      const jam = timeMatch ? timeMatch[1] : "??:??";
-      const judul = beritaPertama.split("(")[0].trim();
+    if (beritaUtama) {
+      const [judul, jam] = beritaUtama.split("|");
+      const jamWIB = convertGMTtoWIB(jam);
       const step1 = document.getElementById("step1");
-      if (step1) step1.textContent = `1. ${judul} (${jam})`;
+      if (step1) step1.textContent = `1. ${judul} (${jamWIB})`;
     }
-
   } catch (err) {
     console.warn("❌ Gagal ambil berita:", err);
   }
@@ -212,6 +169,7 @@ async function buatAnalisaSekarang() {
   }, 600);
 }
 
+
 function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
   const pairName = pair.name || "EURUSD";
   const today = new Date();
@@ -221,68 +179,84 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
 
   const buyerPercent = parseFloat(buyer).toFixed(1);
   const sellerPercent = parseFloat(seller).toFixed(1);
-  const kecenderungan = signal === "BUY" ? "buyer" : signal === "SELL" ? "seller" : "dua sisi secara seimbang";
+  const kecenderungan = signal === "BUY" ? "buyer"
+                        : signal === "SELL" ? "seller"
+                        : "dua sisi secara seimbang";
 
   const step1 = document.getElementById("step1")?.textContent || "";
   const match = step1.match(/\d+\.\s(.+?)\s\((\d{2}:\d{2})\)/);
   let insight = "";
 
   if (match) {
-    const [_, judul, jamStr] = match;
+    const [_, judul, jam] = match;
     const efek = cariEfekBerita(judul);
-    const [jam, menit] = jamStr.split(":").map(Number);
-
-    const now = new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
-    const nowDate = new Date(now);
-    const newsTime = new Date(nowDate);
-    newsTime.setHours(jam, menit, 0, 0);
-
-    if (nowDate < newsTime) {
-      insight = `📍 *Catatan Fundamental:*\nWaspadai rilis **${judul}** sekitar pukul ${jamStr} WIB.\nJika hasilnya lebih kuat dari ekspektasi, maka ${efek} — ini bisa memicu pergerakan pasar hari ini.`;
-    } else {
-      insight = `📍 *Catatan Fundamental:*\n⚠️ Berita **${judul}** telah dirilis pada pukul ${jamStr} WIB.\nNamun, efeknya mungkin masih berlangsung di pasar hari ini. ${efek}.`;
-    }
+    insight = `📍 *Catatan Fundamental:*\nWaspadai rilis **${judul}** sekitar pukul ${jam} WIB.\nJika hasilnya lebih kuat dari eksep...`;
   } else {
-    insight = `📍 *Catatan Fundamental:*\nTidak ada berita berdampak tinggi hari ini. Pasar cenderung dipengaruhi sentimen teknikal dan posisi ritel.`;
+    insight = `📍 *Catatan Fundamental:*\nTidak ada berita berdampak tinggi hari ini. Pasar cenderung...`;
   }
-
-  const volatilityNote = `\n⚡ *Volatilitas Pasar:*\nVolatilitas dapat meningkat tajam saat sesi Eropa dan Amerika, terutama jika didorong oleh hasil berita berdampak tinggi.`;
 
   return `📌 *Analisa ${pairName} — ${dateStr}*\n
 📊 *Status Pasar Saat Ini:*\nMenurut data ritel, ${buyerPercent}% trader berada di posisi BUY dan ${sellerPercent}% di posisi SELL.\n
 Artinya, pasar saat ini menunjukkan kecenderungan ${kecenderungan}, dengan sinyal teknikal mengarah ke **${signal}**.\n
-📈 *Tren yang Terbentuk:*\nPasar mulai membentuk tekanan dari sisi ${kecenderungan}. Jika volume dan volatilitas mendukung, potensi breakout terbuka.\n
+📈 *Tren yang Terbentuk:*\nPasar mulai membentuk tekanan dari sisi ${kecenderungan}. Jika volume dan volatilitas...\n
 🟦 *Support Utama:* ${support}\n🟥 *Resistance Utama:* ${resistance}\n 
-💡 *Strategi Potensial:*\nAmati reaksi harga di zona support/resistance. Entry disarankan setelah konfirmasi valid berdasarkan price action.\n
-${insight}${volatilityNote}\n
+💡 *Strategi Potensial:*\nAmati reaksi harga di zona support/resistance. Entry disarankan setelah...\n
+${insight}\n
 📘 *Disclaimer:*\nGunakan manajemen risiko dan tidak mengambil keputusan hanya berdasarkan AI.`;
 }
 
-function typeText(elId, text, speed = 25) {
-  const el = document.getElementById(elId);
+function typeText(elementId, text, speed = 25) {
+  const el = document.getElementById(elementId);
   el.textContent = "";
   let i = 0;
-  function ketik() {
+
+  function type() {
     if (i < text.length) {
       el.textContent += text.charAt(i);
       i++;
-      setTimeout(ketik, speed);
+      setTimeout(type, speed);
     }
   }
-  ketik();
+
+  type();
+}
+
+function closeAnalysis() {
+  const popup = document.getElementById("analysisPopup");
+  if (popup) popup.style.display = "none";
+}
+
+function tampilkanBeritaSidebar() {
+  const sidebar = document.querySelector(".analysis-sidebar");
+  if (!sidebar) return;
+
+  const newsList = document.querySelectorAll("#newsBox li");
+  const step1 = document.getElementById("step1");
+  const step2 = document.getElementById("step2");
+  const step3 = document.getElementById("step3");
+
+  if (newsList.length) {
+    const berita = newsList[0].textContent || "";
+    const timeMatch = berita.match(/\((\d{2}:\d{2})\)/);
+    const jam = timeMatch ? timeMatch[1] : "??:??";
+    const judul = berita.split("(")[0].trim();
+
+    if (step1) step1.textContent = `1. ${judul} (${jam})`;
+    if (step2) step2.textContent = "2. Membaca struktur teknikal...";
+    if (step3) step3.textContent = "3. Menentukan bias dan strategi...";
+  } else {
+    if (step1) step1.textContent = "1. Tidak ada berita berdampak.";
+    if (step2) step2.textContent = "2. Fokus pada price action & pola.";
+    if (step3) step3.textContent = "3. Validasi arah dari data ritel.";
+  }
 }
 
 function cariEfekBerita(judul) {
-  const teks = judul.toLowerCase();
-  if (teks.includes("cpi") || teks.includes("inflation")) {
-    return "USD bisa menguat karena tekanan inflasi meningkat";
-  } else if (teks.includes("nfp") || teks.includes("non farm")) {
-    return "USD bisa menguat jika data tenaga kerja melebihi ekspektasi";
-  } else if (teks.includes("unemployment")) {
-    return "USD bisa melemah jika angka pengangguran naik";
-  } else if (teks.includes("rate") || teks.includes("suku bunga")) {
-    return "pasar akan bereaksi tajam tergantung keputusan suku bunga";
-  }
+  judul = judul.toLowerCase();
+  if (judul.includes("cpi") || judul.includes("inflation")) return "USD bisa menguat karena tekanan inflasi meningkat";
+  if (judul.includes("nfp") || judul.includes("non farm")) return "USD bisa menguat jika data tenaga kerja melebihi ekspektasi";
+  if (judul.includes("unemployment")) return "USD bisa melemah jika angka pengangguran naik";
+  if (judul.includes("rate") || judul.includes("suku bunga")) return "pasar akan bereaksi tajam tergantung keputusan suku bunga";
   return "reaksi pasar bisa signifikan tergantung hasil rilisnya";
 }
 
