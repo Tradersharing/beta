@@ -98,10 +98,12 @@ async function buatAnalisaSekarang() {
   const pairSymbol = (pair?.name || 'EURUSD') + '=X';
   const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
 
+  // Ambil support/resistance dari Google Apps Script
   const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
   const support = srData?.support || '??';
   const resistance = srData?.resistance || '??';
 
+  // Tampilkan loading animasi dulu
   analysisPopup.innerHTML = `
     <div style="text-align:center; padding-top:60px;">
       <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
@@ -109,8 +111,9 @@ async function buatAnalisaSekarang() {
     </div>
   `;
   analysisPopup.style.display = 'flex';
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  await new Promise(resolve => setTimeout(resolve, 1000)); // delay 1 detik
 
+  // Buat struktur popup analisa dan step1 container untuk berita
   analysisPopup.innerHTML = `
     <div class="analysis-main">
       <div class="corner-label">📊Analisa pair</div>
@@ -119,13 +122,18 @@ async function buatAnalisaSekarang() {
       <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
     </div>`;
 
+  // ⏬ Ambil berita dan isi ke step1 (harus ditunggu sebelum generate analisa)
   await tampilkanInsightBerita(pair);
 
+  // Logika sinyal: BUY / SELL / WAIT
   const buyer = pair.longPercentage;
   const seller = pair.shortPercentage;
   const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
 
+  // Buat isi analisa otomatis dari semua data
   const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
+
+  // Ketik hasil analisa dengan animasi
   setTimeout(() => {
     typeText("typeWriter", result);
   }, 600);
