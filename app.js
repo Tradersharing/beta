@@ -179,10 +179,12 @@ const seller = pair.shortPercentage;
 const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
 
 const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
-setTimeout(() => {
-  typeText("typeWriter", result);
-}, 600);
 
+
+  setTimeout(() => {
+    typeText("typeWriter", result);
+  }, 600);
+}  // ← pastikan ini ada
 
 
 
