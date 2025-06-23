@@ -144,19 +144,30 @@ async function buatAnalisaSekarang() {
     const newsToday = newsData?.[today] || {};
     const b1 = newsToday[currency1] || [];
     const b2 = newsToday[currency2] || [];
+    const semuaBerita = [...b1, ...b2];
+    const step1 = document.getElementById("step1");
 
-    const beritaUtama = [...b1, ...b2].find(Boolean); // ambil 1 berita dari b1/b2
+if (step1) {
+  if (semuaBerita.length) {
+    const currency1 = pair.name.slice(0, 3).toLowerCase();
+    const currency2 = pair.name.slice(3, 6).toLowerCase();
 
-    if (beritaUtama) {
-      const [judul, jam] = beritaUtama.split("|");
+    const daftar = semuaBerita.map(str => {
+      const [judul, jam] = str.split("|");
       const jamWIB = convertGMTtoWIB(jam);
-      const step1 = document.getElementById("step1");
-      if (step1) step1.textContent = `1. ${judul} (${jamWIB})`;
-    }
-  } catch (err) {
-    console.warn("❌ Gagal ambil berita:", err);
-  }
 
+      const efek1 = ambilDampakDariKeyword(judul, currency1);
+      const efek2 = ambilDampakDariKeyword(judul, currency2);
+      const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
+
+      return `• ${judul} (${jamWIB})\n  👉 ${efek}`;
+    }).join('\n\n');
+
+    step1.textContent = `1. Berita Hari Ini:\n\n${daftar}`;
+  } else {
+    step1.textContent = '1. Tidak ada berita hari ini.';
+  }
+}
   tampilkanBeritaSidebar();
 
   const buyer = pair.longPercentage;
@@ -168,6 +179,12 @@ async function buatAnalisaSekarang() {
     typeText("typeWriter", result);
   }, 600);
 }
+
+
+
+
+
+
 
 
 function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
