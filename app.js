@@ -79,7 +79,7 @@ function openPopup(pair) {
           const priority = [];
           if (currency1 === "USD" || currency2 === "USD") {
             if (currency1 === "USD") {
-              priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+            priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
             } else {
               priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
             }
@@ -105,49 +105,39 @@ function openPopup(pair) {
 
 async function buatAnalisaSekarang() {
   const pair = window.currentPair;
-  const analysisPopup = document.getElementById('analysisPopup');
+  const popup = document.getElementById('analysisPopup');
   const pairSymbol = (pair?.name || 'EURUSD') + '=X';
-  const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
 
+  // Loading awal
+  popup.innerHTML = `<div style="text-align:center; padding-top:60px;">
+    <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
+    <p style="color:#fff; font-family:'Courier New'; margin-top:15px; font-size:16px;">⏳ Memproses analisa AI...</p>
+  </div>`;
+  popup.style.display = 'flex';
+
+  // Ambil SR
+  const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
   const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
   const support = srData?.support || '??';
   const resistance = srData?.resistance || '??';
 
-  analysisPopup.innerHTML = `
-    <div style="text-align:center; padding-top:60px;">
-      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
-      <p style="color:#fff; font-family:'Courier New'; margin-top:15px; font-size:16px;">⏳ Memproses analisa AI...</p>
-    </div>
-  `;
-  analysisPopup.style.display = 'flex';
-
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  analysisPopup.innerHTML = `
-<div class="analysis-main">
-  <div class="corner-label">📊Analisa pair</div>
-  <pre id="typeWriter"></pre>
-  <div id="step1" style="display:none;"></div>
-  <div class="footer">
-    <button onclick="closeAnalysis()">Tutup</button>
-  </div>
-</div>
-  `;
-
-  const newsURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
-  const today = new Date().toLocaleDateString('en-US', {
-    timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
-  }).replace(/\//g, '-');
-
+  // Ambil keyword impact dari index2.html
   let impactKeywords = {};
   try {
     const html = await fetch("https://tradersharing.github.io/beta/index2.html").then(r => r.text());
     const jsonText = html.match(/<script id="impactKeywordData"[^>]*>([\s\S]*?)<\/script>/)?.[1];
     if (jsonText) impactKeywords = JSON.parse(jsonText);
   } catch (e) {
-    console.warn("⚠️ Gagal memuat keyword impact:", e);
+    console.warn("⚠️ Gagal muat index2.html:", e);
   }
 
+  // Ambil news hari ini
+  const newsURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+  const today = new Date().toLocaleDateString('en-US', {
+    timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).replace(/\//g, '-');
+
+  let beritaUtama = "";
   try {
     const newsData = await fetch(newsURL).then(res => res.json());
     const currency1 = pair.name.slice(0, 3);
@@ -155,23 +145,29 @@ async function buatAnalisaSekarang() {
     const newsToday = newsData?.[today] || {};
     const b1 = newsToday[currency1] || [];
     const b2 = newsToday[currency2] || [];
-
-    const beritaUtama = [...b1, ...b2].find(Boolean);
-    if (beritaUtama) {
-      const [judul, jam] = beritaUtama.split("|");
-      const jamWIB = convertGMTtoWIB(jam);
-      const step1 = document.getElementById("step1");
-      if (step1) step1.textContent = `1. ${judul} (${jamWIB})`;
-    }
+    beritaUtama = [...b1, ...b2].find(Boolean) || "";
   } catch (err) {
     console.warn("❌ Gagal ambil berita:", err);
   }
 
-  tampilkanBeritaSidebar();
+  await new Promise(r => setTimeout(r, 800));
+  popup.innerHTML = `<div class="analysis-main">
+    <div class="corner-label">📊 Analisa ${pair.name}</div>
+    <pre id="typeWriter"></pre>
+    <div id="step1" style="display:none"></div>
+    <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
+  </div>`;
+
+  // Isi step1 biar bisa dibaca AI
+  if (beritaUtama) {
+    const [judul, jam] = beritaUtama.split("|");
+    const jamWIB = convertGMTtoWIB(jam);
+    document.getElementById("step1").textContent = `1. ${judul} (${jamWIB})`;
+  }
 
   const buyer = pair.longPercentage;
   const seller = pair.shortPercentage;
-  const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
+  const signal = buyer >= 70 ? "BUY" : seller >= 70 ? "SELL" : "WAIT";
 
   const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance, impactKeywords);
   setTimeout(() => {
@@ -188,76 +184,75 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
 
   const buyerPercent = parseFloat(buyer).toFixed(1);
   const sellerPercent = parseFloat(seller).toFixed(1);
-  const kecenderungan = signal === "BUY" ? "buyer" : signal === "SELL" ? "seller" : "dua sisi secara seimbang";
+  const kecenderungan = signal === "BUY" ? "buyer"
+                        : signal === "SELL" ? "seller"
+                        : "dua sisi secara seimbang";
 
   const step1 = document.getElementById("step1")?.textContent || "";
   const match = step1.match(/\d+\.\s(.+?)\s\((\d{2}:\d{2})\)/);
   let insight = "";
 
   if (match) {
-    const [_, judul, jam] = match;
+    const [_, judul, jamStr] = match;
     const efek = cariEfekBerita(judul, impactKeywords);
-    insight = `📍 *Catatan Fundamental:*\nWaspadai rilis **${judul}** sekitar pukul ${jam} WIB.\nJika hasilnya lebih kuat dari ekspektasi, maka ${efek} — ini bisa memicu pergerakan pasar hari ini.`;
+
+    const [jam, menit] = jamStr.split(":").map(Number);
+    const now = new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
+    const nowDate = new Date(now);
+    const newsTime = new Date(nowDate);
+    newsTime.setHours(jam, menit, 0, 0);
+
+    if (nowDate < newsTime) {
+      insight = `📍 *Catatan Fundamental:*\nWaspadai rilis **${judul}** sekitar pukul ${jamStr} WIB.\nJika hasilnya lebih kuat dari ekspektasi, maka ${efek} — ini bisa memicu pergerakan pasar hari ini.`;
+    } else {
+      insight = `📍 *Catatan Fundamental:*\n⚠️ Berita **${judul}** telah dirilis pada pukul ${jamStr} WIB.\nNamun, efeknya mungkin masih berlangsung di pasar hari ini. ${efek}.`;
+    }
   } else {
     insight = `📍 *Catatan Fundamental:*\nTidak ada berita berdampak tinggi hari ini. Pasar cenderung dipengaruhi sentimen teknikal dan posisi ritel.`;
   }
 
-  return `📌 *Analisa ${pairName} — ${dateStr}*\n\n📊 *Status Pasar Saat Ini:*\nMenurut data ritel, ${buyerPercent}% trader berada di posisi BUY dan ${sellerPercent}% di posisi SELL.\n\nArtinya, pasar saat ini menunjukkan kecenderungan ${kecenderungan}, dengan sinyal teknikal mengarah ke **${signal}**.\n\n📈 *Tren yang Terbentuk:*\nPasar mulai membentuk tekanan dari sisi ${kecenderungan}. Jika volume dan volatilitas mendukung, potensi breakout terbuka.\n\n🟦 *Support Utama:* ${support}\n🟥 *Resistance Utama:* ${resistance}\n \n💡 *Strategi Potensial:*\nAmati reaksi harga di zona support/resistance. Entry disarankan setelah konfirmasi valid berdasarkan price action.\n\n${insight}\n\n📘 *Disclaimer:*\nGunakan manajemen risiko dan tidak mengambil keputusan hanya berdasarkan AI.`;
+  const volatilityNote = `\n⚡ *Volatilitas Pasar:*\nVolatilitas dapat meningkat tajam saat sesi Eropa dan Amerika, terutama jika didorong oleh hasil berita berdampak tinggi.`;
+
+  return `📌 *Analisa ${pairName} — ${dateStr}*\n
+📊 *Status Pasar Saat Ini:*\nMenurut data ritel, ${buyerPercent}% trader berada di posisi BUY dan ${sellerPercent}% di posisi SELL.\n
+Artinya, pasar saat ini menunjukkan kecenderungan ${kecenderungan}, dengan sinyal teknikal mengarah ke **${signal}**.\n
+📈 *Tren yang Terbentuk:*\nPasar mulai membentuk tekanan dari sisi ${kecenderungan}. Jika volume dan volatilitas mendukung, potensi breakout terbuka.\n
+🟦 *Support Utama:* ${support}\n🟥 *Resistance Utama:* ${resistance}\n 
+💡 *Strategi Potensial:*\nAmati reaksi harga di zona support/resistance. Entry disarankan setelah konfirmasi valid berdasarkan price action.\n
+${insight}${volatilityNote}\n
+📘 *Disclaimer:*\nGunakan manajemen risiko dan tidak mengambil keputusan hanya berdasarkan AI.`;
 }
 
-function cariEfekBerita(judul, impactKeywords = {}) {
-  judul = judul.toLowerCase();
-  for (const [efek, keywordList] of Object.entries(impactKeywords)) {
-    if (keywordList.some(k => judul.includes(k))) return efek;
+function typeText(elId, text, speed = 25) {
+  const el = document.getElementById(elId);
+  el.textContent = "";
+  let i = 0;
+  function ketik() {
+    if (i < text.length) {
+      el.textContent += text.charAt(i);
+      i++;
+      setTimeout(ketik, speed);
+    }
+  }
+  ketik();
+}
+
+function convertGMTtoWIB(jamGMT) {
+  const [h, m] = jamGMT.split(":").map(Number);
+  let wib = h + 7;
+  if (wib >= 24) wib -= 24;
+  return `${wib.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+}
+
+function cariEfekBerita(judul, keywordMap = {}) {
+  const teks = judul.toLowerCase();
+  for (const [keyword, effect] of Object.entries(keywordMap)) {
+    if (teks.includes(keyword.toLowerCase())) return effect;
   }
   return "reaksi pasar bisa signifikan tergantung hasil rilisnya";
 }
 
-function typeText(elementId, text, speed = 25) {
-  const el = document.getElementById(elementId);
-  el.textContent = "";
-  let i = 0;
-
-  function type() {
-    if (i < text.length) {
-      el.textContent += text.charAt(i);
-      i++;
-      setTimeout(type, speed);
-    }
-  }
-  type();
-}
-
-function closeAnalysis() {
-  const popup = document.getElementById("analysisPopup");
-  if (popup) popup.style.display = "none";
-}
-
-function tampilkanBeritaSidebar() {
-  const sidebar = document.querySelector(".analysis-sidebar");
-  if (!sidebar) return;
-
-  const newsList = document.querySelectorAll("#newsBox li");
-  const step1 = document.getElementById("step1");
-  const step2 = document.getElementById("step2");
-  const step3 = document.getElementById("step3");
-
-  if (newsList.length) {
-    const berita = newsList[0].textContent || "";
-    const timeMatch = berita.match(/\((\d{2}:\d{2})\)/);
-    const jam = timeMatch ? timeMatch[1] : "??:??";
-    const judul = berita.split("(")[0].trim();
-
-    if (step1) step1.textContent = `1. ${judul} (${jam})`;
-    if (step2) step2.textContent = "2. Membaca struktur teknikal...";
-    if (step3) step3.textContent = "3. Menentukan bias dan strategi...";
-  } else {
-    if (step1) step1.textContent = "1. Tidak ada berita berdampak.";
-    if (step2) step2.textContent = "2. Fokus pada price action & pola.";
-    if (step3) step3.textContent = "3. Validasi arah dari data ritel.";
-  }
-}
-
+  
 if (match) {
   const [_, judul, jamStr] = match;
   const efek = cariEfekBerita(judul);
@@ -272,7 +267,7 @@ if (match) {
     insight = `📍 *Catatan Fundamental:*\nWaspadai rilis **${judul}** sekitar pukul ${jamStr} WIB.\nJika hasilnya lebih kuat dari ekspektasi, maka ${efek} — ini bisa memicu pergerakan pasar hari ini.`;
   } else {
     // Sudah lewat, tapi mungkin masih berdampak
-    insight = `📍 *Catatan Fundamental:*\n⚠️ Berita **${judul}** telah dirilis pada pukul ${jamStr} WIB.\nNamun, efeknya mungkin masih berlangsung di pasar hari ini. ${efek}.`;
+    insight = `📍 *Ctatan Fundamental:*\n⚠️ Berita **${judul}** telah dirilis pada pukul ${jamStr} WIB.\nNamun, efeknya mungkin masih berlangsung di pasar hari ini. ${efek}.`;
   }
 }
 
