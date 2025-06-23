@@ -161,7 +161,7 @@ async function buatAnalisaSekarang() {
   // Isi step1 biar bisa dibaca AI
   if (beritaUtama) {
     const [judul, jam] = beritaUtama.split("|");
-    const jamWIB = convertGMTtoWIB(jam);
+    const jamWIB = convertStandardGMTtoWIB (jam);
     document.getElementById("step1").textContent = `1. ${judul} (${jamWIB})`;
   }
 
@@ -237,7 +237,7 @@ function typeText(elId, text, speed = 25) {
   ketik();
 }
 
-function convertGMTtoWIB(jamGMT) {
+function convertStandardGMTtoWIB() {
   const [h, m] = jamGMT.split(":").map(Number);
   let wib = h + 7;
   if (wib >= 24) wib -= 24;
