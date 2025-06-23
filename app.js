@@ -267,7 +267,7 @@ function typeText(elementId, text, speed = 25) {
   type();
 }
 
-function tampilkanInsightBerita(pair) {
+async function tampilkanInsightBerita(pair) {
   const step1 = document.getElementById("step1");
   const today = new Date().toLocaleDateString('en-US', {
     timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
@@ -275,16 +275,25 @@ function tampilkanInsightBerita(pair) {
 
   const currency1 = pair.name.slice(0, 3);
   const currency2 = pair.name.slice(3, 6);
-  const flag1 = getFlagEmoji(currency1);
-  const flag2 = getFlagEmoji(currency2);
 
   const newsURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
-  fetch(newsURL).then(res => res.json()).then(newsData => {
+  try {
+    const res = await fetch(newsURL);
+    const newsData = await res.json();
+
     const newsToday = newsData?.[today] || {};
     const b1 = newsToday[currency1] || [];
     const b2 = newsToday[currency2] || [];
     const semuaBerita = [...b1, ...b2];
+
+    const daftar = semuaBerita.map(j => `- ${j}`).join("\n");
+
+    if (step1) step1.textContent = daftar || "Tidak ada berita hari ini.";
+  } catch (e) {
+    if (step1) step1.textContent = "⚠️ Gagal ambil berita.";
+  }
+}
 
     if (step1) {
       if (semuaBerita.length) {
