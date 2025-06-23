@@ -258,6 +258,23 @@ function tampilkanBeritaSidebar() {
   }
 }
 
+if (match) {
+  const [_, judul, jamStr] = match;
+  const efek = cariEfekBerita(judul);
+
+  const now = new Date();
+  const jamParts = jamStr.split(':');
+  const beritaTime = new Date(now);
+  beritaTime.setHours(parseInt(jamParts[0]), parseInt(jamParts[1]), 0, 0);
+
+  if (now.getTime() < beritaTime.getTime()) {
+    // Belum terjadi
+    insight = `📍 *Catatan Fundamental:*\nWaspadai rilis **${judul}** sekitar pukul ${jamStr} WIB.\nJika hasilnya lebih kuat dari ekspektasi, maka ${efek} — ini bisa memicu pergerakan pasar hari ini.`;
+  } else {
+    // Sudah lewat, tapi mungkin masih berdampak
+    insight = `📍 *Catatan Fundamental:*\n⚠️ Berita **${judul}** telah dirilis pada pukul ${jamStr} WIB.\nNamun, efeknya mungkin masih berlangsung di pasar hari ini. ${efek}.`;
+  }
+}
 
 
 
