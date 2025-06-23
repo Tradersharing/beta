@@ -1,4 +1,4 @@
-// ✅ Full app.js lengkap, fix bug: openPopup, berita lengkap, flag sesuai mata uang, typewriter jalan, loader awal aktif, dan sinkron ke impact-keyword (html2)
+qq// ✅ Full app.js lengkap, fix bug: openPopup, berita lengkap, flag sesuai mata uang, typewriter jalan, loader awal aktif, dan sinkron ke impact-keyword (html2)
 const url = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec";
 
 async function loadSignals() {
@@ -57,6 +57,36 @@ async function loadSignals() {
 loadSignals();
 setInterval(loadSignals, 60000);
 
+function renderGauge(buy, sell) {
+  const canvas = document.createElement("canvas");
+  canvas.width = 150;
+  canvas.height = 100;
+  const ctx = canvas.getContext("2d");
+
+  ctx.beginPath();
+  ctx.arc(75, 100, 70, Math.PI, 2 * Math.PI);
+  ctx.strokeStyle = "#FFD700";
+  ctx.lineWidth = 3;
+  ctx.stroke();
+
+  const buyAngle = Math.PI + (buy / 100) * Math.PI;
+  ctx.beginPath();
+  ctx.moveTo(75, 100);
+  ctx.lineTo(75 + 60 * Math.cos(buyAngle), 100 + 60 * Math.sin(buyAngle));
+  ctx.strokeStyle = "#00ff00";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  const sellAngle = Math.PI + (sell / 100) * Math.PI;
+  ctx.beginPath();
+  ctx.moveTo(75, 100);
+  ctx.lineTo(75 + 60 * Math.cos(sellAngle), 100 + 60 * Math.sin(sellAngle));
+  ctx.strokeStyle = "#ff4444";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  return canvas;
+}
 
 
 
@@ -113,36 +143,6 @@ function ambilDampakDariKeyword(judul, mataUang = 'usd') {
   return "reaksi pasar bisa signifikan tergantung hasil rilisnya";
 }
 
-function renderGauge(buy, sell) {
-  const canvas = document.createElement("canvas");
-  canvas.width = 150;
-  canvas.height = 100;
-  const ctx = canvas.getContext("2d");
-
-  ctx.beginPath();
-  ctx.arc(75, 100, 70, Math.PI, 2 * Math.PI);
-  ctx.strokeStyle = "#FFD700";
-  ctx.lineWidth = 3;
-  ctx.stroke();
-
-  const buyAngle = Math.PI + (buy / 100) * Math.PI;
-  ctx.beginPath();
-  ctx.moveTo(75, 100);
-  ctx.lineTo(75 + 60 * Math.cos(buyAngle), 100 + 60 * Math.sin(buyAngle));
-  ctx.strokeStyle = "#00ff00";
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  const sellAngle = Math.PI + (sell / 100) * Math.PI;
-  ctx.beginPath();
-  ctx.moveTo(75, 100);
-  ctx.lineTo(75 + 60 * Math.cos(sellAngle), 100 + 60 * Math.sin(sellAngle));
-  ctx.strokeStyle = "#ff4444";
-  ctx.lineWidth = 2;
-  ctx.stroke();
-
-  return canvas;
-}
 
 function typeText(elementId, text, speed = 25) {
   const el = document.getElementById(elementId);
