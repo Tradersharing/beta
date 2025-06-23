@@ -199,18 +199,7 @@ function tampilkanBeritaSidebar() {
 //disini
 // === Fungsi Analisa AI (diperbaiki agar cocok dengan format multiline "step1") ===
 
-function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
-  const pairName = pair.name || "EURUSD";
-  const today = new Date();
-  const dateStr = today.toLocaleDateString("id-ID", {
-    timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric'
-  });
 
-  const buyerPercent = parseFloat(buyer).toFixed(1);
-  const sellerPercent = parseFloat(seller).toFixed(1);
-  const kecenderungan = signal === "BUY" ? "buyer"
-                        : signal === "SELL" ? "seller"
-                        : "dua sisi secara seimbang";
 
   function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
   const pairName = pair.name || "EURUSD";
