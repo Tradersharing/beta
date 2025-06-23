@@ -1,61 +1,169 @@
-qq// ✅ Full app.js lengkap, fix bug: openPopup, berita lengkap, flag sesuai mata uang, typewriter jalan, loader awal aktif, dan sinkron ke impact-keyword (html2)
-const url = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec";
+// ✅ Full app.js lengkap, fix bug: openPopup, berita lengkap, flag sesuai mata uang, typewriter jalan, loader awal aktif, dan sinkron ke impact-keyword (html2)
 
-async function loadSignals() {
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    const symbols = data?.symbols;
+function openPopup(pair) {
+  const long = parseFloat(pair.longPercentage);
+  const short = parseFloat(pair.shortPercentage);
+  const currency1 = pair.name.slice(0, 3).toUpperCase();
+  const currency2 = pair.name.slice(3, 6).toUpperCase();
+  const total = long + short;
+  const strength1 = (long / total) * 100;
+  const strength2 = (short / total) * 100;
 
-    const majorPairs = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD"];
-    const majors = [], others = [];
+  const now = new Date();
+  const today = now.toLocaleDateString('en-US', {
+    timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).replace(/\//g, '-');
 
-    symbols.forEach(pair => {
-      (majorPairs.includes(pair.name) ? majors : others).push(pair);
-    });
+  const detailTop = `
+    <div style="background: linear-gradient(to right, #2c3e50, #4ca1af); color: white; padding: 12px; border-radius: 12px; text-align: center;">
+      ${getFlagEmoji(currency1)}${currency1}/${currency2}${getFlagEmoji(currency2)} 📊 ${today}
+    </div>
+    <p><b>📝 Berita Penting Hari Ini:</b></p>
+    <div id="newsBox">⏳ Mengambil berita...</div>
+    <hr>
+    <p><b>Kekuatan Mata Uang:</b></p>
+    <div class="strength-bar">
+      <div class="strength-gbp" style="width:${strength1}%"></div>
+      <div class="strength-usd" style="width:${strength2}%"></div>
+    </div>
+    <p>${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴</p>
+    <hr>
+    <p><b>Analisa:</b></p>
+    <button onclick="buatAnalisaSekarang()" class="popup-button">📊 Mulai Proses Analisa ${pair.name}</button>
+    <div id="autoAnalysis"></div>
+  `;
 
-    const sorted = [...majors, ...others];
-    const container = document.getElementById("signals");
-    container.innerHTML = "";
+  document.getElementById('popup').style.display = 'flex';
+  window.currentPair = pair;
 
-    sorted.forEach(pair => {
-      const buy = parseFloat(pair.longPercentage);
-      const sell = parseFloat(pair.shortPercentage);
-      const status = buy >= 70 ? 'BUY' : sell >= 70 ? 'SELL' : 'WAIT';
-      const cls = buy >= 70 ? 'buy' : sell >= 70 ? 'sell' : 'wait';
+  setTimeout(() => {
+    document.getElementById('popupDetails').innerHTML = detailTop;
 
-      const box = document.createElement("div");
-      box.className = "box";
-      box.dataset.pair = pair.name.toLowerCase();
-      box.onclick = () => openPopup(pair);
+    setTimeout(() => {
+      const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
-      const name = document.createElement("div");
-      name.className = "pair";
-      name.textContent = pair.name;
+      fetch(scriptURL)
+        .then(res => res.json())
+        .then(data => {
+          const box = document.getElementById("newsBox");
+          if (!box) return;
 
-      const gauge = renderGauge(buy, sell);
+          const news = data?.[today] || {};
+          const b1 = news?.[currency1] || [];
+          const b2 = news?.[currency2] || [];
 
-      const val = document.createElement("div");
-      val.className = "value";
-      val.textContent = `Buy: ${buy}% | Sell: ${sell}%`;
+          function renderNews(currency, arr) {
+            const flag = getFlagEmoji(currency);
+            return `<div style="margin-bottom:10px;">
+              <div style="font-weight:bold;">${flag} ${currency}</div>
+              ${
+                arr.length
+                  ? `<ul>${arr.map(str => {
+                      const [judul, jam, impact] = str.split("|");
+                      const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
+                      const jamWIB = convertGMTtoWIB(jam);
+                      return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
+                    }).join("")}</ul>`
+                 : `<p style="color:gray;">Tidak ada berita penting hari ini.</p>`
+              }
+            </div>`;
+          }
 
-      const signal = document.createElement("div");
-      signal.className = `signal ${cls}`;
-      signal.textContent = status;
+          const priority = [];
+          if (currency1 === "USD" || currency2 === "USD") {
+            if (currency1 === "USD") {
+              priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+            } else {
+              priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+            }
+          } else {
+            priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
+          }
 
-      box.appendChild(name);
-      box.appendChild(gauge);
-      box.appendChild(val);
-      box.appendChild(signal);
-      container.appendChild(box);
-    });
-  } catch (e) {
-    document.getElementById("signals").innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
-  }
+          box.innerHTML = `<div>${priority.join("")}</div>`;
+        })
+        .catch(err => {
+          const box = document.getElementById("newsBox");
+          if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
+          console.error("❌ Fetch gagal:", err);
+        });
+    }, 100);
+  }, 50);
 }
 
-loadSignals();
-setInterval(loadSignals, 60000);
+
+async function buatAnalisaSekarang() {
+  const pair = window.currentPair;
+  const analysisPopup = document.getElementById('analysisPopup');
+  const pairSymbol = (pair?.name || 'EURUSD') + '=X';
+  const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
+
+  const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
+  const support = srData?.support || '??';
+  const resistance = srData?.resistance || '??';
+
+  analysisPopup.innerHTML = `
+    <div style="text-align:center; padding-top:60px;">
+      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
+      <p style="color:#fff; font-family:'Courier New'; margin-top:15px; font-size:16px;">⏳ Memproses analisa AI...</p>
+    </div>
+  `;
+  analysisPopup.style.display = 'flex';
+  await new Promise(resolve => setTimeout(resolve, 1000));
+
+  analysisPopup.innerHTML = `
+    <div class="analysis-main">
+      <div class="corner-label">📊Analisa pair</div>
+      <pre id="typeWriter"></pre>
+      <div id="step1" style="display:none;"></div>
+      <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
+    </div>`;
+
+  await tampilkanInsightBerita(pair);
+
+  const buyer = pair.longPercentage;
+  const seller = pair.shortPercentage;
+  const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
+
+  const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
+  setTimeout(() => {
+    typeText("typeWriter", result);
+  }, 600);
+}
+
+function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
+  const pairName = pair.name || "EURUSD";
+  const today = new Date();
+  const dateStr = today.toLocaleDateString("id-ID", {
+    timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric'
+  });
+
+  const buyerPercent = parseFloat(buyer).toFixed(1);
+  const sellerPercent = parseFloat(seller).toFixed(1);
+  const kecenderungan = signal === "BUY" ? "buyer"
+                        : signal === "SELL" ? "seller"
+                        : "dua sisi secara seimbang";
+
+  const semuaBaris = document.getElementById("step1")?.textContent.split("\n") || [];
+  const insightList = semuaBaris.filter(line => line.includes("(") && line.includes(")"))
+    .map(baris => {
+      const match = baris.match(/•\s(.+?)\s\((\d{2}:\d{2})\)/);
+      if (!match) return null;
+      const [_, judul, jam] = match;
+      const efek1 = ambilDampakDariKeyword(judul, pair.name.slice(0,3).toLowerCase());
+      const efek2 = ambilDampakDariKeyword(judul, pair.name.slice(3,6).toLowerCase());
+      const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
+      return `• ${judul} (${jam})\n  👉 ${efek}`;
+    }).filter(Boolean);
+
+  const insight = insightList.length
+    ? `📍 *Catatan Fundamental Hari Ini:*\n\n${insightList.join("\n\n")}`
+    : `📍 *Catatan Fundamental:*\nTidak ada berita berdampak tinggi hari ini.`;
+
+  return `📌 *Analisa ${pairName} — ${dateStr}*\n\n📊 *Status Pasar Saat Ini:*\nMenurut data ritel, ${buyerPercent}% trader BUY dan ${sellerPercent}% SELL.\nPasar condong ke ${kecenderungan}, sinyal teknikal: **${signal}**.\n\n📈 *Tren Terbentuk:*\nTekanan datang dari sisi ${kecenderungan}, potensi entry menunggu konfirmasi.\n\n🟦 *Support:* ${support}\n🟥 *Resistance:* ${resistance}\n\n💡 *Strategi:*\nAmati reaksi harga di zona SR. Entry setelah validasi price action.\n\n${insight}\n\n📘 *Disclaimer:* Gunakan manajemen risiko.`;
+}
+
+
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
@@ -198,165 +306,65 @@ function tampilkanInsightBerita(pair) {
   });
 }
 
-function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
-  const pairName = pair.name || "EURUSD";
-  const today = new Date();
-  const dateStr = today.toLocaleDateString("id-ID", {
-    timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric'
-  });
 
-  const buyerPercent = parseFloat(buyer).toFixed(1);
-  const sellerPercent = parseFloat(seller).toFixed(1);
-  const kecenderungan = signal === "BUY" ? "buyer"
-                        : signal === "SELL" ? "seller"
-                        : "dua sisi secara seimbang";
 
-  const semuaBaris = document.getElementById("step1")?.textContent.split("\n") || [];
-  const insightList = semuaBaris.filter(line => line.includes("(") && line.includes(")"))
-    .map(baris => {
-      const match = baris.match(/•\s(.+?)\s\((\d{2}:\d{2})\)/);
-      if (!match) return null;
-      const [_, judul, jam] = match;
-      const efek1 = ambilDampakDariKeyword(judul, pair.name.slice(0,3).toLowerCase());
-      const efek2 = ambilDampakDariKeyword(judul, pair.name.slice(3,6).toLowerCase());
-      const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
-      return `• ${judul} (${jam})\n  👉 ${efek}`;
-    }).filter(Boolean);
 
-  const insight = insightList.length
-    ? `📍 *Catatan Fundamental Hari Ini:*\n\n${insightList.join("\n\n")}`
-    : `📍 *Catatan Fundamental:*\nTidak ada berita berdampak tinggi hari ini.`;
 
-  return `📌 *Analisa ${pairName} — ${dateStr}*\n\n📊 *Status Pasar Saat Ini:*\nMenurut data ritel, ${buyerPercent}% trader BUY dan ${sellerPercent}% SELL.\nPasar condong ke ${kecenderungan}, sinyal teknikal: **${signal}**.\n\n📈 *Tren Terbentuk:*\nTekanan datang dari sisi ${kecenderungan}, potensi entry menunggu konfirmasi.\n\n🟦 *Support:* ${support}\n🟥 *Resistance:* ${resistance}\n\n💡 *Strategi:*\nAmati reaksi harga di zona SR. Entry setelah validasi price action.\n\n${insight}\n\n📘 *Disclaimer:* Gunakan manajemen risiko.`;
-}
-function openPopup(pair) {
-  const long = parseFloat(pair.longPercentage);
-  const short = parseFloat(pair.shortPercentage);
-  const currency1 = pair.name.slice(0, 3).toUpperCase();
-  const currency2 = pair.name.slice(3, 6).toUpperCase();
-  const total = long + short;
-  const strength1 = (long / total) * 100;
-  const strength2 = (short / total) * 100;
+    
+const url = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec";
 
-  const now = new Date();
-  const today = now.toLocaleDateString('en-US', {
-    timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
-  }).replace(/\//g, '-');
+async function loadSignals() {
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    const symbols = data?.symbols;
 
-  const detailTop = `
-    <div style="background: linear-gradient(to right, #2c3e50, #4ca1af); color: white; padding: 12px; border-radius: 12px; text-align: center;">
-      ${getFlagEmoji(currency1)}${currency1}/${currency2}${getFlagEmoji(currency2)} 📊 ${today}
-    </div>
-    <p><b>📝 Berita Penting Hari Ini:</b></p>
-    <div id="newsBox">⏳ Mengambil berita...</div>
-    <hr>
-    <p><b>Kekuatan Mata Uang:</b></p>
-    <div class="strength-bar">
-      <div class="strength-gbp" style="width:${strength1}%"></div>
-      <div class="strength-usd" style="width:${strength2}%"></div>
-    </div>
-    <p>${currency1}: ${strength1.toFixed(1)}% 🔵 &nbsp; ${currency2}: ${strength2.toFixed(1)}% 🔴</p>
-    <hr>
-    <p><b>Analisa:</b></p>
-    <button onclick="buatAnalisaSekarang()" class="popup-button">📊 Mulai Proses Analisa ${pair.name}</button>
-    <div id="autoAnalysis"></div>
-  `;
+    const majorPairs = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD"];
+    const majors = [], others = [];
 
-  document.getElementById('popup').style.display = 'flex';
-  window.currentPair = pair;
+    symbols.forEach(pair => {
+      (majorPairs.includes(pair.name) ? majors : others).push(pair);
+    });
 
-  setTimeout(() => {
-    document.getElementById('popupDetails').innerHTML = detailTop;
+    const sorted = [...majors, ...others];
+    const container = document.getElementById("signals");
+    container.innerHTML = "";
 
-    setTimeout(() => {
-      const scriptURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+    sorted.forEach(pair => {
+      const buy = parseFloat(pair.longPercentage);
+      const sell = parseFloat(pair.shortPercentage);
+      const status = buy >= 70 ? 'BUY' : sell >= 70 ? 'SELL' : 'WAIT';
+      const cls = buy >= 70 ? 'buy' : sell >= 70 ? 'sell' : 'wait';
 
-      fetch(scriptURL)
-        .then(res => res.json())
-        .then(data => {
-          const box = document.getElementById("newsBox");
-          if (!box) return;
+      const box = document.createElement("div");
+      box.className = "box";
+      box.dataset.pair = pair.name.toLowerCase();
+      box.onclick = () => openPopup(pair);
 
-          const news = data?.[today] || {};
-          const b1 = news?.[currency1] || [];
-          const b2 = news?.[currency2] || [];
+      const name = document.createElement("div");
+      name.className = "pair";
+      name.textContent = pair.name;
 
-          function renderNews(currency, arr) {
-            const flag = getFlagEmoji(currency);
-            return `<div style="margin-bottom:10px;">
-              <div style="font-weight:bold;">${flag} ${currency}</div>
-              ${
-                arr.length
-                  ? `<ul>${arr.map(str => {
-                      const [judul, jam, impact] = str.split("|");
-                      const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-                      const jamWIB = convertGMTtoWIB(jam);
-                      return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
-                    }).join("")}</ul>`
-                 : `<p style="color:gray;">Tidak ada berita penting hari ini.</p>`
-              }
-            </div>`;
-          }
+      const gauge = renderGauge(buy, sell);
 
-          const priority = [];
-          if (currency1 === "USD" || currency2 === "USD") {
-            if (currency1 === "USD") {
-              priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-            } else {
-              priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-            }
-          } else {
-            priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-          }
+      const val = document.createElement("div");
+      val.className = "value";
+      val.textContent = `Buy: ${buy}% | Sell: ${sell}%`;
 
-          box.innerHTML = `<div>${priority.join("")}</div>`;
-        })
-        .catch(err => {
-          const box = document.getElementById("newsBox");
-          if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
-          console.error("❌ Fetch gagal:", err);
-        });
-    }, 100);
-  }, 50);
+      const signal = document.createElement("div");
+      signal.className = `signal ${cls}`;
+      signal.textContent = status;
+
+      box.appendChild(name);
+      box.appendChild(gauge);
+      box.appendChild(val);
+      box.appendChild(signal);
+      container.appendChild(box);
+    });
+  } catch (e) {
+    document.getElementById("signals").innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
+  }
 }
 
-
-async function buatAnalisaSekarang() {
-  const pair = window.currentPair;
-  const analysisPopup = document.getElementById('analysisPopup');
-  const pairSymbol = (pair?.name || 'EURUSD') + '=X';
-  const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
-
-  const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
-  const support = srData?.support || '??';
-  const resistance = srData?.resistance || '??';
-
-  analysisPopup.innerHTML = `
-    <div style="text-align:center; padding-top:60px;">
-      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
-      <p style="color:#fff; font-family:'Courier New'; margin-top:15px; font-size:16px;">⏳ Memproses analisa AI...</p>
-    </div>
-  `;
-  analysisPopup.style.display = 'flex';
-  await new Promise(resolve => setTimeout(resolve, 1000));
-
-  analysisPopup.innerHTML = `
-    <div class="analysis-main">
-      <div class="corner-label">📊Analisa pair</div>
-      <pre id="typeWriter"></pre>
-      <div id="step1" style="display:none;"></div>
-      <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
-    </div>`;
-
-  await tampilkanInsightBerita(pair);
-
-  const buyer = pair.longPercentage;
-  const seller = pair.shortPercentage;
-  const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
-
-  const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
-  setTimeout(() => {
-    typeText("typeWriter", result);
-  }, 600);
-}
-
+loadSignals();
+setInterval(loadSignals, 60000);
