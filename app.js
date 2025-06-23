@@ -236,16 +236,21 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
 
   const semuaBaris = document.getElementById("step1")?.textContent.split("\n") || [];
   const insightList = semuaBaris.filter(line => line.includes("(") && line.includes(")"))
-    .map(baris => {
-      const match = baris.match(/•\s(.+?)\s\((\d{2}:\d{2})\)/);
-      if (!match) return null;
-      const [_, judul, jam] = match;
-      const efek1 = ambilDampakDariKeyword(judul, pair.name.slice(0, 3).toLowerCase());
-      const efek2 = ambilDampakDariKeyword(judul, pair.name.slice(3, 6).toLowerCase());
-      const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
-      const flag = getFlagEmoji(judul.includes(pair.name.slice(0, 3)) ? pair.name.slice(0, 3) : pair.name.slice(3, 6));
-      return `• ${judul} (${jam})\n  ${flag} ${efek}`;
-    }).filter(Boolean);
+  .map(baris => {
+    const match = baris.match(/•\s(.+?)\s\((\d{2}:\d{2})\)/);
+    if (!match) return null;
+    const [_, judul, jam] = match;
+
+    const efek1 = ambilDampakDariKeyword(judul, currency1.toLowerCase());
+    const efek2 = ambilDampakDariKeyword(judul, currency2.toLowerCase());
+
+    const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
+    const mataUang = efek === efek1 ? currency1 : currency2;
+    const bendera = getFlagEmoji(mataUang);
+
+    return `• ${judul} (${jam})\n  ${bendera} ${efek} • ${mataUang}`;
+  }).filter(Boolean);
+
 
   const insight = insightList.length
     ? `📍 *Catatan Fundamental Hari Ini:*\n\n${insightList.join("\n\n")}`
