@@ -78,7 +78,7 @@ function openPopup(pair) {
           if (currency1 === "USD" || currency2 === "USD") {
             if (currency1 === "USD") {
               priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-            } else {
+            } el dftrse {
               priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
             }
           } else {
@@ -132,6 +132,8 @@ async function buatAnalisaSekarang() {
       </div>
     </div>
   `;
+
+
 
   // Ambil insight berita dan tampilkan di step1
   await tampilkanInsightBerita(pair);
@@ -220,8 +222,11 @@ function tampilkanBeritaSidebar() {
       const match = baris.match(/•\s(.+?)\s\((\d{2}:\d{2})\)/);
       if (!match) return null;
       const [_, judul, jam] = match;
-      const efek = cariEfekBerita(judul);
-      return `• ${judul} (${jam})\n  👉 ${efek}`;
+      const efek1 = ambilDampakDariKeyword(judul, currency1.toLowerCase());
+const efek2 = ambilDampakDariKeyword(judul, currency2.toLowerCase());
+const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
+
+      return `• ${judul} (${jam})\n  💻 ${efek}`;
     }).filter(Boolean);
 
   const insight = insightList.length
