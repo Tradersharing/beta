@@ -81,7 +81,7 @@ function openPopup(pair) {
             if (currency1 === "USD") {
           priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
             } else {
-              priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
+              priority.push(renderNews(currency2, b2), renderNews(currecy1, b1));
             }
           } else {
             priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
@@ -90,7 +90,7 @@ function openPopup(pair) {
           box.innerHTML = `<div>${priority.join("")}</div>`;
         })
         .catch(err => {
-          const box = document.getElementById("newsBox");
+          const box = document.getElementById("newsBox);
           if (box) box.innerHTML = "⚠️ Gagal memuat berita.";
           console.error("❌ Fetch gagal:", err);
         });
@@ -103,6 +103,9 @@ function openPopup(pair) {
 
 // app.js terbaru
 
+
+    
+// Final versi rapi: buatAnalisaSekarang & dependencies
 async function buatAnalisaSekarang() {
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
@@ -177,16 +180,13 @@ async function buatAnalisaSekarang() {
       priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
     }
 
-    // Gabungkan dan tampilkan semua berita di typewriter step1
     const htmlBeritaGabungan = priority.join("");
     const divDummy = document.createElement("div");
     divDummy.innerHTML = htmlBeritaGabungan;
     const liList = divDummy.querySelectorAll("li");
-
     const daftarBerita = Array.from(liList).map(li => li.textContent);
-    const beritaTayang = daftarBerita.map((str, idx) => `${idx + 1}. ${str}`).join("\n");
+    window.fullNewsList = daftarBerita;
 
-    // Step1 tetap ambil berita pertama (jika ada)
     const beritaPertama = liList[0]?.textContent || "";
     if (beritaPertama) {
       const timeMatch = beritaPertama.match(/\((\d{2}:\d{2})\)/);
@@ -195,9 +195,6 @@ async function buatAnalisaSekarang() {
       const step1 = document.getElementById("step1");
       if (step1) step1.textContent = `1. ${judul} (${jam})`;
     }
-
-    // simpan sebagai preview (opsional tampilkan di sidebar kalau mau)
-    window.fullNewsList = daftarBerita;
 
   } catch (err) {
     console.warn("❌ Gagal ambil berita:", err);
@@ -215,8 +212,7 @@ async function buatAnalisaSekarang() {
   }, 600);
 }
 
-
-function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??", impactKeywords = {}) {
+function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
   const pairName = pair.name || "EURUSD";
   const today = new Date();
   const dateStr = today.toLocaleDateString("id-ID", {
@@ -225,9 +221,7 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
 
   const buyerPercent = parseFloat(buyer).toFixed(1);
   const sellerPercent = parseFloat(seller).toFixed(1);
-  const kecenderungan = signal === "BUY" ? "buyer"
-                        : signal === "SELL" ? "seller"
-                        : "dua sisi secara seimbang";
+  const kecenderungan = signal === "BUY" ? "buyer" : signal === "SELL" ? "seller" : "dua sisi secara seimbang";
 
   const step1 = document.getElementById("step1")?.textContent || "";
   const match = step1.match(/\d+\.\s(.+?)\s\((\d{2}:\d{2})\)/);
@@ -235,9 +229,9 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
 
   if (match) {
     const [_, judul, jamStr] = match;
-    const efek = cariEfekBerita(judul, impactKeywords);
-
+    const efek = cariEfekBerita(judul);
     const [jam, menit] = jamStr.split(":").map(Number);
+
     const now = new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" });
     const nowDate = new Date(now);
     const newsTime = new Date(nowDate);
@@ -278,41 +272,19 @@ function typeText(elId, text, speed = 25) {
   ketik();
 }
 
-function convertStandardGMTtoWIB() {
-  const [h, m] = jamGMT.split(":").map(Number);
-  let wib = h + 7;
-  if (wib >= 24) wib -= 24;
-  return `${wib.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-}
-
-function cariEfekBerita(judul, keywordMap = {}) {
+function cariEfekBerita(judul) {
   const teks = judul.toLowerCase();
-  for (const [keyword, effect] of Object.entries(keywordMap)) {
-    if (teks.includes(keyword.toLowerCase())) return effect;
+  if (teks.includes("cpi") || teks.includes("inflation")) {
+    return "USD bisa menguat karena tekanan inflasi meningkat";
+  } else if (teks.includes("nfp") || teks.includes("non farm")) {
+    return "USD bisa menguat jika data tenaga kerja melebihi ekspektasi";
+  } else if (teks.includes("unemployment")) {
+    return "USD bisa melemah jika angka pengangguran naik";
+  } else if (teks.includes("rate") || teks.includes("suku bunga")) {
+    return "pasar akan bereaksi tajam tergantung keputusan suku bunga";
   }
   return "reaksi pasar bisa signifikan tergantung hasil rilisnya";
 }
-
-  
-if (match) {
-  const [_, judul, jamStr] = match;
-  const efek = cariEfekBerita(judul);
-
-  const now = new Date();
-  const jamParts = jamStr.split(':');
-  const beritaTime = new Date(now);
-  beritaTime.setHours(parseInt(jamParts[0]), parseInt(jamParts[1]), 0, 0);
-
-  if (now.getTime() < beritaTime.getTime()) {
-    // Belum terjadi
-    insight = `📍 *Catatan Fundamental:*\nWaspadai rilis **${judul}** sekitar pukul ${jamStr} WIB.\nJika hasilnya lebih kuat dari ekspektasi, maka ${efek} — ini bisa memicu pergerakan pasar hari ini.`;
-  } else {
-    // Sudah lewat, tapi mungkin masih berdampak
-    insight = `📍 *Ctatan Fundamental:*\n⚠️ Berita **${judul}** telah dirilis pada pukul ${jamStr} WIB.\nNamun, efeknya mungkin masih berlangsung di pasar hari ini. ${efek}.`;
-  }
-}
-
-
 
 function convertGMTtoWIB(gmtTime) {
   if (!gmtTime) return "Invalid";
@@ -333,7 +305,6 @@ function convertGMTtoWIB(gmtTime) {
   return `${h}:${m}`;
 }
 
-
 function getFlagEmoji(code) {
   const flags = {
     USD: "🇺🇸", EUR: "🇪🇺", GBP: "🇬🇧", JPY: "🇯🇵",
@@ -341,6 +312,7 @@ function getFlagEmoji(code) {
   };
   return flags[code] || "🏳️";
 }
+
 
 
 
