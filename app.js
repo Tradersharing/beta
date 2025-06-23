@@ -132,56 +132,56 @@ async function buatAnalisaSekarang() {
   `;
 
   // Ambil berita hari ini sesuai pair
-  const newsURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
-  const today = new Date().toLocaleDateString('en-US', {
-    timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
-  }).replace(/\//g, '-');
 
-  try {
-    const newsData = await fetch(newsURL).then(res => res.json());
-    const currency1 = pair.name.slice(0, 3);
-    const currency2 = pair.name.slice(3, 6);
-    const newsToday = newsData?.[today] || {};
-    const b1 = newsToday[currency1] || [];
-    const b2 = newsToday[currency2] || [];
-    const semuaBerita = [...b1, ...b2];
-    const step1 = document.getElementById("step1");
+// Ambil berita hari ini sesuai pair
+const newsURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+const today = new Date().toLocaleDateString('en-US', {
+  timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
+}).replace(/\//g, '-');
 
-if (step1) {
-  if (semuaBerita.length) {
-    const currency1 = pair.name.slice(0, 3).toLowerCase();
-    const currency2 = pair.name.slice(3, 6).toLowerCase();
+try {
+  const newsData = await fetch(newsURL).then(res => res.json());
+  const currency1 = pair.name.slice(0, 3);
+  const currency2 = pair.name.slice(3, 6);
+  const newsToday = newsData?.[today] || {};
+  const b1 = newsToday[currency1] || [];
+  const b2 = newsToday[currency2] || [];
+  const semuaBerita = [...b1, ...b2];
+  const step1 = document.getElementById("step1");
 
-    const daftar = semuaBerita.map(str => {
-      const [judul, jam] = str.split("|");
-      const jamWIB = convertGMTtoWIB(jam);
+  if (step1) {
+    if (semuaBerita.length) {
+      const daftar = semuaBerita.map(str => {
+        const [judul, jam] = str.split("|");
+        const jamWIB = convertGMTtoWIB(jam);
 
-      const efek1 = ambilDampakDariKeyword(judul, currency1);
-      const efek2 = ambilDampakDariKeyword(judul, currency2);
-      const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
+        const efek1 = ambilDampakDariKeyword(judul, currency1.toLowerCase());
+        const efek2 = ambilDampakDariKeyword(judul, currency2.toLowerCase());
+        const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
 
-      return `• ${judul} (${jamWIB})\n  👉 ${efek}`;
-    }).join('\n\n');
+        return `• ${judul} (${jamWIB})\n  👉 ${efek}`;
+      }).join('\n\n');
 
-    step1.textContent = `1. Berita Hari Ini:\n\n${daftar}`;
-  } else {
-    step1.textContent = '1. Tidak ada berita hari ini.';
+      step1.textContent = `1. Berita Hari Ini:\n\n${daftar}`;
+    } else {
+      step1.textContent = '1. Tidak ada berita hari ini.';
+    }
   }
-}
-  tampilkanBeritaSidebar();
-
-  const buyer = pair.longPercentage;
-  const seller = pair.shortPercentage;
-  const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
-
-  const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
-  setTimeout(() => {
-    typeText("typeWriter", result);
-  }, 600);
+} catch (err) {
+  console.warn("❌ Gagal ambil berita:", err);
 }
 
+// Tetap jalankan analisa meski berita gagal
+tampilkanBeritaSidebar();
 
+const buyer = pair.longPercentage;
+const seller = pair.shortPercentage;
+const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
 
+const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
+setTimeout(() => {
+  typeText("typeWriter", result);
+}, 600);
 
 
 
