@@ -71,7 +71,7 @@ function openPopup(pair) {
                       const jamWIB = convertGMTtoWIB(jam);
                       return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
                     }).join("")}</ul>`
-                  : `<p style="color:gray;">Tidak ada berita penting hari ini.</p>`
+                 : `<p style="color:gray;">Tidak ada berita penting hari ini.</p>`
               }
             </div>`;
           }
@@ -100,13 +100,12 @@ function openPopup(pair) {
 
 
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
-async function buatAnalisaSekarang() {
 
+async function buatAnalisaSekarang() {
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
   const pairSymbol = (pair?.name || 'EURUSD') + '=X';
   const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
-
 
   const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
   const support = srData?.support || '??';
@@ -124,13 +123,41 @@ async function buatAnalisaSekarang() {
 
   analysisPopup.innerHTML = `
 <div class="analysis-main">
-  <div class="corner-label">📊Analisa pair </div>
+  <div class="corner-label">📊Analisa pair</div>
   <pre id="typeWriter"></pre>
+  <div id="step1" style="display:none;"></div> <!-- penting untuk insight -->
   <div class="footer">
     <button onclick="closeAnalysis()">Tutup</button>
   </div>
 </div>
   `;
+
+  // Ambil berita hari ini sesuai pair
+  const newsURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
+  const today = new Date().toLocaleDateString('en-US', {
+    timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).replace(/\//g, '-');
+
+  try {
+    const newsData = await fetch(newsURL).then(res => res.json());
+    const currency1 = pair.name.slice(0, 3);
+    const currency2 = pair.name.slice(3, 6);
+    const newsToday = newsData?.[today] || {};
+    const b1 = newsToday[currency1] || [];
+    const b2 = newsToday[currency2] || [];
+
+    const beritaUtama = [...b1, ...b2].find(Boolean); // ambil 1 berita dari b1/b2
+
+    if (beritaUtama) {
+      const [judul, jam] = beritaUtama.split("|");
+      const jamWIB = convertGMTtoWIB(jam);
+      const step1 = document.getElementById("step1");
+      if (step1) step1.textContent = `1. ${judul} (${jamWIB})`;
+    }
+  } catch (err) {
+    console.warn("❌ Gagal ambil berita:", err);
+  }
+
   tampilkanBeritaSidebar();
 
   const buyer = pair.longPercentage;
@@ -143,40 +170,6 @@ async function buatAnalisaSekarang() {
   }, 600);
 }
 
-document.addEventListener("click", function (e) {
-  const button = e.target.closest(".popup-button");
-  if (!button) return;
-
-  const ripple = document.createElement("span");
-  ripple.className = "ripple";
-
-  const rect = button.getBoundingClientRect();
-  const size = Math.max(rect.width, rect.height);
-  const x = e.clientX - rect.left - size / 2;
-  const y = e.clientY - rect.top - size / 2;
-
-  ripple.style.position = "absolute";
-  ripple.style.width = ripple.style.height = `${size}px`;
-  ripple.style.left = `${x}px`;
-  ripple.style.top = `${y}px`;
-  ripple.style.borderRadius = "50%";
-  ripple.style.background = "rgba(255,255,255,0.4)";
-  ripple.style.transform = "scale(0)";
-  ripple.style.opacity = "1";
-  ripple.style.pointerEvents = "none";
-  ripple.style.transition = "transform 0.5s ease-out, opacity 0.8s ease-out";
-
-  button.appendChild(ripple);
-
-  requestAnimationFrame(() => {
-    ripple.style.transform = "scale(2.5)";
-    ripple.style.opacity = "0";
-  });
-
-  setTimeout(() => {
-    ripple.remove();
-  }, 800);
-});
 
 function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
   const pairName = pair.name || "EURUSD";
