@@ -319,9 +319,8 @@ async function tampilkanInsightBerita(pair) {
       } else {
         step1.textContent = "1. Tidak ada berita hari ini.";
       }
-    }
-  });
-}
+          }
+
 
 
 
