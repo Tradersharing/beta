@@ -74,7 +74,6 @@ function openPopup(pair) {
               }
             </div>`;
           }
-
           const priority = [];
           if (currency1 === "USD" || currency2 === "USD") {
             if (currency1 === "USD") {
@@ -100,6 +99,9 @@ function openPopup(pair) {
 
 // === POPUP KEDUA: Analisa AI / Termux-Style ===
 
+
+// === Fungsi Analisa AI Lengkap + Ketik + Sinkron dengan html2 ===
+
 async function buatAnalisaSekarang() {
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
@@ -124,69 +126,15 @@ async function buatAnalisaSekarang() {
     <div class="analysis-main">
       <div class="corner-label">📊Analisa pair</div>
       <pre id="typeWriter"></pre>
-      <div id="step1" style="display:block;"></div>
+      <div id="step1" style="display:none;"></div>
       <div class="footer">
         <button onclick="closeAnalysis()">Tutup</button>
       </div>
     </div>
   `;
 
-  // Ambil berita hari ini dan tampilkan dengan renderNews()
-  const newsURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
-  const today = new Date().toLocaleDateString('en-US', {
-    timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
-  }).replace(/\//g, '-');
-
-  try {
-    const newsData = await fetch(newsURL).then(res => res.json());
-    const currency1 = pair.name.slice(0, 3).toUpperCase();
-    const currency2 = pair.name.slice(3, 6).toUpperCase();
-    const newsToday = newsData?.[today] || {};
-    const b1 = newsToday?.[currency1] || [];
-    const b2 = newsToday?.[currency2] || [];
-
-    const semua = [...b1, ...b2];
-    window.currentNews = semua; // untuk AI gunakan ini
-
-    const step1 = document.getElementById("step1");
-
-    function renderNews(currency, arr) {
-      const flag = getFlagEmoji(currency);
-      return `<div style="margin-bottom:10px;">
-        <div style="font-weight:bold;">${flag} ${currency}</div>
-        ${
-          arr.length
-            ? `<ul>${arr.map(str => {
-                const [judul, jam, impact] = str.split("|");
-                const color = impact === "High" ? "#ff4d4d" : impact === "Medium" ? "#ffa500" : "#ccc";
-                const jamWIB = convertGMTtoWIB(jam);
-                return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
-              }).join("")}</ul>`
-           : `<p style="color:gray;">Tidak ada berita penting hari ini.</p>`
-        }
-      </div>`;
-    }
-
-    const priority = [];
-    if (currency1 === "USD" || currency2 === "USD") {
-      if (currency1 === "USD") {
-        priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-      } else {
-        priority.push(renderNews(currency2, b2), renderNews(currency1, b1));
-      }
-    } else {
-      priority.push(renderNews(currency1, b1), renderNews(currency2, b2));
-    }
-
-    if (step1) {
-      step1.innerHTML = `<div>${priority.join("")}</div>`;
-    }
-
-  } catch (err) {
-    console.warn("❌ Gagal ambil berita:", err);
-  }
-
-  tampilkanBeritaSidebar();
+  // Ambil insight berita dan tampilkan di step1
+  await tampilkanInsightBerita(pair);
 
   const buyer = pair.longPercentage;
   const seller = pair.shortPercentage;
@@ -198,6 +146,22 @@ async function buatAnalisaSekarang() {
   }, 600);
 }
 
+function typeText(elementId, text, speed = 25) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  el.textContent = "";
+  let i = 0;
+
+  function type() {
+    if (i < text.length) {
+      el.textContent += text.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    }
+  }
+
+  type();
+}
 
 
 
