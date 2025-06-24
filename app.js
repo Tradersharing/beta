@@ -113,7 +113,7 @@ async function buatAnalisaSekarang() {
   // Buat struktur popup analisa dan step1 container untuk berita
   analysisPopup.innerHTML = `
     <div class="analysis-main">
-      <div class="corner-label">📊Analisa pair ${pairName} — ${dateStr} </div>
+      <div class="corner-label">📊Analisa pair </div>
       <pre id="typeWriter"></pre>
       <div id="step1" style="display:none;"></div>
       <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
