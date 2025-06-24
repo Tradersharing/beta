@@ -354,28 +354,25 @@ async function tampilkanInsightBerita(pair) {
   }
 }
 
-const signalsUrl = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec";
 
-async function loadSignals() {
+
+
+
+  
+const signalsUrlPrimary = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec"; // MyFxBook-style real
+const signalsUrlBackup = "https://script.google.com/macros/s/AKfycbyv_7XI1NwCNj5keHuzqYt-7dKg3Vx-3_HiYxieeGQEZ1jfAmhAhbBuqp7DNRli-20sbA/exec"; // backup random
+
+async function loadSignals(url = signalsUrlPrimary) {
   try {
-    const res = await fetch(signalsUrl);
+    const res = await fetch(url);
     const data = await res.json();
-
-    if (data.error === true || !data.symbols) {
-      document.getElementById("signals").innerHTML = `
-        <div class="box wait">
-          ⚠️ Sinyal tidak tersedia (API limit MyFXBook)<br>
-          Halaman tetap aktif. Silakan pilih pair untuk analisa manual.
-        </div>`;
-      return;
-    }
-
-    const symbols = data.symbols;
+    const symbols = data?.symbols;
 
     const majorPairs = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD"];
     const majors = [], others = [];
 
     symbols.forEach(pair => {
+
       (majorPairs.includes(pair.name) ? majors : others).push(pair);
     });
 
