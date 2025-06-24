@@ -211,6 +211,35 @@ setTimeout(() => {
   }, 600);
 }
 
+function typeTextHTML(elId, html, speed = 20) {
+  const el = document.getElementById(elId);
+  el.innerHTML = ""; // kosongin dulu
+
+  let i = 0;
+  let tag = "";
+  let isTag = false;
+
+  function type() {
+    if (i < html.length) {
+      const char = html.charAt(i);
+      tag += char;
+
+      if (char === "<") isTag = true;
+      if (char === ">") isTag = false;
+
+      el.innerHTML = tag;
+
+      i++;
+      setTimeout(type, speed);
+    } else {
+      el.innerHTML = html;
+    }
+  }
+
+  type();
+}
+
+
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
   canvas.width = 150;
