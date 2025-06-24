@@ -252,9 +252,11 @@ header {
 }
 .analysis-main {
   display: block;
-  max-width: 600px;            /* Lebar maksimal ideal ~90 karakter */
-  margin: 0 auto;              /* Tengah secara horizontal */
-  padding-inline: 1rem;        /* Ruang minimal pinggir kiri & kanan */
+  max-width: 680px;              /* Naikkan sedikit dari 600px agar lebih lega */
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 16px 40px;          /* Spasi bawah ditambah agar tidak mentok */
+  box-sizing: border-box;
 }
 /* === MODERN HEADER - TULISAN ATAS === */
 .corner-label {
@@ -273,23 +275,18 @@ header {
 
 /* === TYPEWRITER TEKS - TANPA KANVAS, NEMPEL KE BACKGROUND === */
 #typeWriter {
-  
   font-family: 'Segoe UI', sans-serif;
-  max-width: 100%;
   font-size: 17px;
-  line-height: 1.55;
+  line-height: 1.65;             /* Naikkan sedikit agar enak dibaca per baris */
   color: #f1faff;
-  padding: 12px 18px;
-  margin: 0 auto;
+  padding: 0;
+  margin: 0;
   text-align: left;
   white-space: pre-wrap;
   word-break: break-word;
   word-wrap: break-word;
   animation: glowIn 0.3s ease-in-out;
 }
-
-
-
 
 
 @keyframes glowIn {
