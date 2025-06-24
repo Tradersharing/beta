@@ -165,7 +165,7 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
       const efek1 = ambilDampakDariKeyword(judul, pair.name.slice(0,3).toLowerCase());
       const efek2 = ambilDampakDariKeyword(judul, pair.name.slice(3,6).toLowerCase());
       const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
-      return `• ${judul} (${jam})\n  👉 ${efek}`;
+      return `• ${judul} (${jam})\n  • ${efek}`;
     }).filter(Boolean);
 
   const insight = insightList.length
