@@ -360,7 +360,17 @@ async function loadSignals() {
   try {
     const res = await fetch(signalsUrl);
     const data = await res.json();
-    const symbols = data?.symbols;
+
+    if (data.error === true || !data.symbols) {
+      document.getElementById("signals").innerHTML = `
+        <div class="box wait">
+          ⚠️ Sinyal tidak tersedia (API limit MyFXBook)<br>
+          Halaman tetap aktif. Silakan pilih pair untuk analisa manual.
+        </div>`;
+      return;
+    }
+
+    const symbols = data.symbols;
 
     const majorPairs = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD"];
     const majors = [], others = [];
