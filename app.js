@@ -141,7 +141,7 @@ async function buatAnalisaSekarang() {
   }, delay);
 
 }, 600);
-
+}
 
 function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
   const pairName = pair.name || "EURUSD";
