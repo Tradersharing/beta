@@ -180,7 +180,6 @@ function generateAutoAnalysis(pair, buyer, seller, support = "??", resistance = 
 
   return `📌 Analisa ${pairName} — ${dateStr}
 
-const teks = `
 <div class="subjudul">Analisa Teknikal:</div>
 Data ritel menunjukkan ${buyerPercent}% trader berada di posisi BUY, sementara ${sellerPercent}% berada di posisi SELL.
 Pasar cenderung didominasi oleh ${kecenderungan}. Oleh karena itu, sinyal teknikal saat ini bersifat <b>${signalFinal}</b>, dan konfirmasi arah masih diperlukan sebelum pengambilan keputusan entry.
