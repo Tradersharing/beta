@@ -258,19 +258,17 @@ header {
 }
 
 
+
+.popup-button {
+  transition: all 0.15s ease; /* smooth transition */
+}
+
 .popup-button:active {
-  border: 2px inset #bbb; /* efek ditekan */
-  box-shadow: inset -1px -1px #999, inset 1px 1px #fff;
+  transform: scale(0.96);
+  filter: brightness(1.1);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.3);
 }
 
-
-/* Keyframe animasi ripple */
-@keyframes ripple-animation {
-  to {
-    transform: scale(2.5);
-    opacity: 0;
-  }
-}
 /* === Popup Analisa AI ala Windows 95 / Fullscreen === */
 
  /* === FINAL STYLE UNTUK POPUP TERMINAL ANALISA AI === */
