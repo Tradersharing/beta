@@ -118,7 +118,9 @@ async function buatAnalisaSekarang() {
       <div id="step1" style="display:none;"></div>
       <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
     </div>`;
-
+const pairName = pair.name;
+document.querySelector('.corner-label').textContent =
+  `📊 Analisa pair ${pairName} — ${formatTanggalHariIni()}`;
   // ⏬ Ambil berita dan isi ke step1 (harus ditunggu sebelum generate analisa)
   await tampilkanInsightBerita(pair);
 
