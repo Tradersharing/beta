@@ -217,18 +217,16 @@ function typeTextPreserveHTML(elId, html, speed = 25) {
   const el = document.getElementById(elId);
   el.innerHTML = "";
 
-  const div = document.createElement("div");
-  div.innerHTML = html;
+  const container = document.createElement("div");
+  container.innerHTML = html;
 
-  const nodes = Array.from(div.childNodes);
+  const nodes = Array.from(container.childNodes);
   let index = 0;
 
   function typeNode() {
     if (index >= nodes.length) return;
 
-    const node = nodes[index];
-    index++;
-
+    const node = nodes[index++];
     if (node.nodeType === Node.TEXT_NODE) {
       const span = document.createElement("span");
       el.appendChild(span);
@@ -244,53 +242,88 @@ function typeTextPreserveHTML(elId, html, speed = 25) {
           typeNode();
         }
       }
+
       typeChar();
-    } else {
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
       const clone = node.cloneNode(false);
       el.appendChild(clone);
 
-      const childNodes = Array.from(node.childNodes);
-      if (childNodes.length > 0) {
-        const temp = document.createElement("div");
-        temp.appendChild(clone);
+      const children = Array.from(node.childNodes);
+      let cIndex = 0;
 
-        (function typeChild(cIndex) {
-          if (cIndex >= childNodes.length) {
-            typeNode();
-            return;
+      function typeChildren() {
+        if (cIndex >= children.length) {
+          typeNode();
+          return;
+        }
+
+        const child = children[cIndex++];
+        if (child.nodeType === Node.TEXT_NODE) {
+          const span = document.createElement("span");
+          clone.appendChild(span);
+          let i = 0;
+          const text = child.textContent;
+
+          function typeChar() {
+            if (i < text.length) {
+              span.textContent += text.charAt(i);
+              i++;
+              setTimeout(typeChar, speed);
+            } else {
+              typeChildren();
+            }
           }
 
-          const child = childNodes[cIndex];
+          typeChar();
+        } else if (child.nodeType === Node.ELEMENT_NODE) {
           const childClone = child.cloneNode(false);
           clone.appendChild(childClone);
+          // Recurse into this child element
+          const grandChildren = Array.from(child.childNodes);
+          let gcIndex = 0;
 
-          if (child.nodeType === Node.TEXT_NODE) {
-            let i = 0;
-            const text = child.textContent;
-
-            function typeChar() {
-              if (i < text.length) {
-                childClone.textContent += text.charAt(i);
-                i++;
-                setTimeout(typeChar, speed);
-              } else {
-                typeChild(cIndex + 1);
-              }
+          function typeGrandChildren() {
+            if (gcIndex >= grandChildren.length) {
+              typeChildren();
+              return;
             }
-            typeChar();
-          } else {
-            clone.appendChild(childClone);
-            typeChild(cIndex + 1);
+
+            const grandChild = grandChildren[gcIndex++];
+            if (grandChild.nodeType === Node.TEXT_NODE) {
+              const span = document.createElement("span");
+              childClone.appendChild(span);
+              let i = 0;
+              const text = grandChild.textContent;
+
+              function typeChar() {
+                if (i < text.length) {
+                  span.textContent += text.charAt(i);
+                  i++;
+                  setTimeout(typeChar, speed);
+                } else {
+                  typeGrandChildren();
+                }
+              }
+
+              typeChar();
+            } else {
+              // In this example, we skip deeper recursion for simplicity
+              childClone.appendChild(grandChild.cloneNode(true));
+              typeGrandChildren();
+            }
           }
-        })(0);
-      } else {
-        typeNode();
+
+          typeGrandChildren();
+        }
       }
+
+      typeChildren();
     }
   }
 
   typeNode();
 }
+
 
 
 
