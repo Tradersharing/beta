@@ -132,9 +132,16 @@ async function buatAnalisaSekarang() {
 
   // Ketik hasil analisa dengan animasi
   setTimeout(() => {
-    typeText("typeWriter", result);
-  }, 600);
-}
+  typeText("typeWriter", result);
+
+  const delay = result.length * 25 + 300;
+  setTimeout(() => {
+    const footer = document.querySelector(".footer");
+    if (footer) footer.classList.add("show");
+  }, delay);
+
+}, 600);
+
 
 function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
   const pairName = pair.name || "EURUSD";
