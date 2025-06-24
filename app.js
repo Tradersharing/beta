@@ -201,7 +201,7 @@ document.getElementById("typeWriter").innerHTML = teks;
 
 
 setTimeout(() => {
-    typeText("typeWriter", result);
+    typeTextHTML("typeWriter", result);
 
     const delay = result.length * 25 + 300;
     setTimeout(() => {
