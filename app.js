@@ -355,10 +355,6 @@ async function tampilkanInsightBerita(pair) {
 }
 
 
-
-
-
-  
 const signalsUrlPrimary = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec"; // MyFxBook-style real
 const signalsUrlBackup = "https://script.google.com/macros/s/AKfycbyv_7XI1NwCNj5keHuzqYt-7dKg3Vx-3_HiYxieeGQEZ1jfAmhAhbBuqp7DNRli-20sbA/exec"; // backup random
 
@@ -366,13 +362,12 @@ async function loadSignals(url = signalsUrlPrimary) {
   try {
     const res = await fetch(url);
     const data = await res.json();
-    const symbols = data?.symbols;
+    const symbols = Array.isArray(data) ? data : data?.symbols || [];
 
     const majorPairs = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD"];
     const majors = [], others = [];
 
     symbols.forEach(pair => {
-
       (majorPairs.includes(pair.name) ? majors : others).push(pair);
     });
 
@@ -412,9 +407,18 @@ async function loadSignals(url = signalsUrlPrimary) {
       container.appendChild(box);
     });
   } catch (e) {
-    document.getElementById("signals").innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
+    if (url !== signalsUrlBackup) {
+      console.warn("❌ Gagal ambil data utama, coba backup:", e.message);
+      loadSignals(signalsUrlBackup); // fallback ke backup
+    } else {
+      document.getElementById("signals").innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
+    }
   }
 }
 
+// ⏳ Jalankan awal + auto-refresh setiap 60 detik
 loadSignals();
 setInterval(loadSignals, 60000);
+
+
+
