@@ -182,14 +182,14 @@ function generateAutoAnalysis(pair, buyer, seller, support = "??", resistance = 
 Data ritel menunjukkan ${buyerPercent}% trader berada di posisi BUY, sementara ${sellerPercent}% berada di posisi SELL.
 Pasar cenderung didominasi oleh ${kecenderungan}. Oleh karena itu, sinyal teknikal saat ini bersifat <b>${signalFinal}</b>, dan konfirmasi arah masih diperlukan sebelum pengambilan keputusan entry.
 
-Tekanan dari kedua sisi tampak cukup seimbang. Potensi entry akan lebih ideal dilakukan setelah terbentuk konfirmasi yang valid dari pergerakan harga.
+<div class="subjudul">Analisa Fundamental:</div>
+${catatanFundamental}
 
 <div class="subjudul">Area penting yang perlu diperhatikan:</div>
 • Support: ${support}
 • Resistance: ${resistance}
 
-<div class="subjudul">Analisa Fundamental:</div>
-${catatanFundamental}
+
 
 <div class="subjudul">Strategi:</div>
 Amati reaksi harga di zona Support dan Resistance. Entry dilakukan setelah validasi price action yang kuat guna menghindari entry spekulatif tanpa konfirmasi teknikal.
