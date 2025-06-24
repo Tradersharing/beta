@@ -189,8 +189,6 @@ ${catatanFundamental}
 • Support: ${support}
 • Resistance: ${resistance}
 
-
-
 <div class="subjudul">Strategi:</div>
 Amati reaksi harga di zona Support dan Resistance. Entry dilakukan setelah validasi price action yang kuat guna menghindari entry spekulatif tanpa konfirmasi teknikal.
 
