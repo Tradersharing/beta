@@ -201,7 +201,7 @@ document.getElementById("typeWriter").innerHTML = teks;
 
 
 setTimeout(() => {
-    typeTextHTML("typeWriter", result);
+    typeTextPreserveHTML("typeWriter", result);
 
     const delay = result.length * 25 + 300;
     setTimeout(() => {
@@ -211,33 +211,85 @@ setTimeout(() => {
   }, 600);
 }
 
-function typeTextHTML(elId, html, speed = 20) {
+function typeTextPreserveHTML(elId, html, speed = 25) {
   const el = document.getElementById(elId);
-  el.innerHTML = ""; // kosongin dulu
+  el.innerHTML = "";
 
-  let i = 0;
-  let tag = "";
-  let isTag = false;
+  const div = document.createElement("div");
+  div.innerHTML = html;
 
-  function type() {
-    if (i < html.length) {
-      const char = html.charAt(i);
-      tag += char;
+  const nodes = Array.from(div.childNodes);
+  let index = 0;
 
-      if (char === "<") isTag = true;
-      if (char === ">") isTag = false;
+  function typeNode() {
+    if (index >= nodes.length) return;
 
-      el.innerHTML = tag;
+    const node = nodes[index];
+    index++;
 
-      i++;
-      setTimeout(type, speed);
+    if (node.nodeType === Node.TEXT_NODE) {
+      const span = document.createElement("span");
+      el.appendChild(span);
+      let i = 0;
+      const text = node.textContent;
+
+      function typeChar() {
+        if (i < text.length) {
+          span.textContent += text.charAt(i);
+          i++;
+          setTimeout(typeChar, speed);
+        } else {
+          typeNode();
+        }
+      }
+      typeChar();
     } else {
-      el.innerHTML = html;
+      const clone = node.cloneNode(false);
+      el.appendChild(clone);
+
+      const childNodes = Array.from(node.childNodes);
+      if (childNodes.length > 0) {
+        const temp = document.createElement("div");
+        temp.appendChild(clone);
+
+        (function typeChild(cIndex) {
+          if (cIndex >= childNodes.length) {
+            typeNode();
+            return;
+          }
+
+          const child = childNodes[cIndex];
+          const childClone = child.cloneNode(false);
+          clone.appendChild(childClone);
+
+          if (child.nodeType === Node.TEXT_NODE) {
+            let i = 0;
+            const text = child.textContent;
+
+            function typeChar() {
+              if (i < text.length) {
+                childClone.textContent += text.charAt(i);
+                i++;
+                setTimeout(typeChar, speed);
+              } else {
+                typeChild(cIndex + 1);
+              }
+            }
+            typeChar();
+          } else {
+            clone.appendChild(childClone);
+            typeChild(cIndex + 1);
+          }
+        })(0);
+      } else {
+        typeNode();
+      }
     }
   }
 
-  type();
+  typeNode();
 }
+
 
 
 function renderGauge(buy, sell) {
