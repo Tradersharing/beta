@@ -128,7 +128,7 @@ async function buatAnalisaSekarang() {
   const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
 
   // Buat isi analisa otomatis dari semua data
-  const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
+    const result = generateAutoAnalysis(pair, buyer, seller, signal , support, resistance);
 
   // Ketik hasil analisa dengan animasi
   setTimeout(() => {
@@ -142,6 +142,7 @@ async function buatAnalisaSekarang() {
 
 }, 600);
 }
+
 
 function generateAutoAnalysis(pair, buyer, seller, support = "??", resistance = "??") {
   const pairName = pair.name || "EURUSD";
