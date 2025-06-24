@@ -113,14 +113,12 @@ async function buatAnalisaSekarang() {
   // Buat struktur popup analisa dan step1 container untuk berita
   analysisPopup.innerHTML = `
     <div class="analysis-main">
-      <div class="corner-label">📊Analisa pair</div>
+      <div class="corner-label">📊Analisa pair ${pairName} — ${dateStr} </div>
       <pre id="typeWriter"></pre>
       <div id="step1" style="display:none;"></div>
       <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
     </div>`;
-const pairName = pair.name;
-document.querySelector('.corner-label').textContent =
-  `📊 Analisa pair ${pairName} — ${formatTanggalHariIni()}`;
+
   // ⏬ Ambil berita dan isi ke step1 (harus ditunggu sebelum generate analisa)
   await tampilkanInsightBerita(pair);
 
