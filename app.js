@@ -178,25 +178,27 @@ function generateAutoAnalysis(pair, buyer, seller, support = "??", resistance = 
 
   return `📌 Analisa ${pairName} — ${dateStr}
 
-📉 *Analisa Teknikal:*
+const teks = `
+<div class="subjudul">Analisa Teknikal:</div>
 Data ritel menunjukkan ${buyerPercent}% trader berada di posisi BUY, sementara ${sellerPercent}% berada di posisi SELL.
-Pasar cenderung didominasi oleh ${kecenderungan}. Oleh karena itu, sinyal teknikal saat ini bersifat **${signalFinal}**, dan konfirmasi arah masih diperlukan sebelum pengambilan keputusan entry.
+Pasar cenderung didominasi oleh ${kecenderungan}. Oleh karena itu, sinyal teknikal saat ini bersifat <b>${signalFinal}</b>, dan konfirmasi arah masih diperlukan sebelum pengambilan keputusan entry.
 
 Tekanan dari kedua sisi tampak cukup seimbang. Potensi entry akan lebih ideal dilakukan setelah terbentuk konfirmasi yang valid dari pergerakan harga.
 
-Area penting yang perlu diperhatikan:
+<div class="subjudul">Area penting yang perlu diperhatikan:</div>
 • Support: ${support}
 • Resistance: ${resistance}
 
-📊 *Analisa Fundamental:*
+<div class="subjudul">Analisa Fundamental:</div>
 ${catatanFundamental}
 
-🧠 *Strategi:*
+<div class="subjudul">Strategi:</div>
 Amati reaksi harga di zona Support dan Resistance. Entry dilakukan setelah validasi price action yang kuat guna menghindari entry spekulatif tanpa konfirmasi teknikal.
 
-📘 *Disclaimer:*
-Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.`;
-
+<div class="subjudul">Disclaimer:</div>
+Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
+`;
+document.getElementById("typeWriter").innerHTML = teks;
 
 
 setTimeout(() => {
