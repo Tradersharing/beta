@@ -325,18 +325,25 @@ header {
 }
 
 /* === FOOTER DENGAN TOMBOL CLOSE YANG MUNCUL DI AKHIR === */
+
 .footer {
   text-align: center;
   margin-top: 30px;
   display: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
 }
+  
 .footer.show {
   display: block;
+  opacity: 1;
+}
+
 }
 .footer button {
-  background: linear-gradient(to bottom, #3c8dd8, #1b65b9);
+  background: linear-gradient(to right, #0e60a3, #5fa3e6); 
   border: none;
-  color: white;
+  color: #fff;
   padding: 10px 24px;
   font-weight: bold;
   font-size: 14px;
@@ -349,3 +356,7 @@ header {
 .footer button:hover {
   background: linear-gradient(to bottom, #1b65b9, #124a91);
 }
+
+
+
+
