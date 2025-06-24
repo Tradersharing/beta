@@ -197,8 +197,18 @@ Strategi saat ini: amati reaksi harga di zona Support dan Resistance.
 Entry dilakukan setelah validasi price action yang kuat, guna menghindari entry spekulatif tanpa konfirmasi teknikal.
 
 Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.`;
-}
 
+
+setTimeout(() => {
+    typeText("typeWriter", result);
+
+    const delay = result.length * 25 + 300;
+    setTimeout(() => {
+      const footer = document.querySelector(".footer");
+      if (footer) footer.classList.add("show");
+    }, delay);
+  }, 600);
+}
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
