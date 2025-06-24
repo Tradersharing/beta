@@ -250,14 +250,18 @@ header {
   padding: 24px;
   font-family: 'Segoe UI', sans-serif;
 }
+
 .analysis-main {
-  display: block;
   width: 100%;
   max-width: none;
   margin: 0;
-  padding: 0 12px 40px;
+  padding: 0 8px 40px;
   box-sizing: border-box;
 }
+
+
+
+
 
 /* === MODERN HEADER - TULISAN ATAS === */
 .corner-label {
@@ -277,8 +281,8 @@ header {
 /* === TYPEWRITER TEKS - TANPA KANVAS, NEMPEL KE BACKGROUND === */
 #typeWriter {
   font-family: 'Segoe UI', sans-serif;
-  font-size: 17px;
-  line-height: 1.65;             /* Naikkan sedikit agar enak dibaca per baris */
+  font-size: 14px;              /* Dari 17px → jadi 14px (seperti chat) */
+  line-height: 1.45;            /* Dari 1.65 → jadi 1.45, biar lebih padat */
   color: #f1faff;
   padding: 0;
   margin: 0;
@@ -288,6 +292,7 @@ header {
   word-wrap: break-word;
   animation: glowIn 0.3s ease-in-out;
 }
+
 
 
 @keyframes glowIn {
