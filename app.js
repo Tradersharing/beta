@@ -143,7 +143,7 @@ async function buatAnalisaSekarang() {
 }, 600);
 }
 
-function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
+function generateAutoAnalysis(pair, buyer, seller, support = "??", resistance = "??") {
   const pairName = pair.name || "EURUSD";
   const today = new Date();
   const dateStr = today.toLocaleDateString("id-ID", {
@@ -152,8 +152,13 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
 
   const buyerPercent = parseFloat(buyer).toFixed(1);
   const sellerPercent = parseFloat(seller).toFixed(1);
-  const kecenderungan = signal === "BUY" ? "buyer"
-                        : signal === "SELL" ? "seller"
+
+  // Otomatis tentukan sinyal dari dominasi ritel
+  const signalFinal = buyerPercent >= 70 ? "BUY" :
+                      sellerPercent >= 70 ? "SELL" : "WAIT";
+
+  const kecenderungan = signalFinal === "BUY" ? "kubu buyer"
+                        : signalFinal === "SELL" ? "kubu seller"
                         : "dua sisi secara seimbang";
 
   const semuaBaris = document.getElementById("step1")?.textContent.split("\n") || [];
@@ -165,15 +170,35 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
       const efek1 = ambilDampakDariKeyword(judul, pair.name.slice(0,3).toLowerCase());
       const efek2 = ambilDampakDariKeyword(judul, pair.name.slice(3,6).toLowerCase());
       const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
-      return `• ${judul} (${jam})\n  • ${efek}`;
+      return `• ${judul} (${jam})\n  ${efek}`;
     }).filter(Boolean);
 
-  const insight = insightList.length
-    ? `📍 *Catatan Fundamental Hari Ini:*\n\n${insightList.join("\n\n")}`
-    : `📍 *Catatan Fundamental:*\nTidak ada berita berdampak tinggi hari ini.`;
+  const catatanFundamental = insightList.length
+    ? insightList.join("\n\n")
+    : `Tidak ada berita berdampak tinggi hari ini.`;
 
-  return `📌 *Analisa ${pairName} — ${dateStr}*\n\n📊 *Status Pasar Saat Ini:*\nMenurut data ritel, ${buyerPercent}% trader BUY dan ${sellerPercent}% SELL.\nPasar condong ke ${kecenderungan}, sinyal teknikal: **${signal}**.\n\n📈 *Tren Terbentuk:*\nTekanan datang dari sisi ${kecenderungan}, potensi entry menunggu konfirmasi.\n\n🟦 *Support:* ${support}\n🟥 *Resistance:* ${resistance}\n\n💡 *Strategi:*\nAmati reaksi harga di zona SR. Entry setelah validasi price action.\n\n${insight}\n\n📘 *Disclaimer:* Gunakan manajemen risiko.`;
+  return `Analisa ${pairName} — ${dateStr}
+
+Secara analisa teknikal, data ritel menunjukkan bahwa ${buyerPercent}% trader berada di posisi BUY, sedangkan ${sellerPercent}% berada di posisi SELL.
+Pasar cenderung bergerak ke ${kecenderungan}.
+Oleh karena itu, sinyal teknikal saat ini bersifat **${signalFinal}**, dan konfirmasi arah masih diperlukan sebelum pengambilan keputusan entry.
+
+Tekanan dari kedua sisi tampak cukup seimbang.
+Potensi entry akan lebih ideal dilakukan setelah terbentuk konfirmasi yang valid dari pergerakan harga.
+
+Area penting yang perlu diperhatikan adalah:
+Support di level ${support}.
+Resistance di sekitar ${resistance}.
+
+Menurut analisa fundamental, berikut catatan penting hari ini:
+${catatanFundamental}
+
+Strategi saat ini: amati reaksi harga di zona Support dan Resistance.
+Entry dilakukan setelah validasi price action yang kuat, guna menghindari entry spekulatif tanpa konfirmasi teknikal.
+
+Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.`;
 }
+
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
