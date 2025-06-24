@@ -252,12 +252,13 @@ header {
 }
 .analysis-main {
   display: block;
-  max-width: 680px;              /* Naikkan sedikit dari 600px agar lebih lega */
   width: 100%;
-  margin: 0 auto;
-  padding: 0 16px 40px;          /* Spasi bawah ditambah agar tidak mentok */
+  max-width: none;
+  margin: 0;
+  padding: 0 12px 40px;
   box-sizing: border-box;
 }
+
 /* === MODERN HEADER - TULISAN ATAS === */
 .corner-label {
   width: 100%;
