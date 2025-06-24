@@ -260,7 +260,18 @@ header {
 }
 
 
-
+.subjudul {
+  background: rgba(0, 70, 140, 0.9); /* Biru navy transparan */
+  color: #ffffff;
+  font-weight: bold;
+  padding: 10px 15px;
+  margin: 25px 0 10px 0;
+  border-left: 5px solid #00bfff; /* Garis aksen biru terang */
+  border-radius: 6px;
+  font-size: 16px;
+  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
 
 
 /* === MODERN HEADER - TULISAN ATAS === */
@@ -279,15 +290,7 @@ header {
   text-shadow: 0 0 1px #0e60a3;       /* Biru gelap tipis, biar tetap jelas */
 }
 
-.subjudul {
-  font-weight: bold;
-  font-size: 15.5px;
-  margin-top: 22px;
-  margin-bottom: 4px;
-  color: #5fa3e6;
-  font-family: 'Segoe UI', sans-serif;
-  text-transform: none;
-}
+
 
 /* === TYPEWRITER TEKS - TANPA KANVAS, NEMPEL KE BACKGROUND === */
 #typeWriter {
