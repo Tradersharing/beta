@@ -266,17 +266,19 @@ header {
 /* === MODERN HEADER - TULISAN ATAS === */
 .corner-label {
   width: 100%;
-  text-align: center;
-  font-size: 20px;
+  text-align: left;                    /* Dari center → kiri biar menyatu */
+  font-size: 16px;                    /* Sedikit dikecilin biar padu */
   font-weight: bold;
-  padding: 12px 16px;
-  color: #fff;
-  background: linear-gradient(to right, #0e60a3, #5fa3e6); /* menyatu dengan background */
-  border-radius: 8px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  padding: 4px 8px;                   /* Minim padding, biar gak kayak kotak */
+  color: #5fa3e6;                     /* Biru terang elegan, nyambung ke gradient */
+  background: none;                   /* Hilangkan kotak background */
+  border-radius: 0;                   /* Hilangkan lengkung sudut */
+  margin-bottom: 10px;
+  box-shadow: none;                   /* Hilangkan bayangan */
   font-family: 'Segoe UI', sans-serif;
+  text-shadow: 0 0 1px #0e60a3;       /* Biru gelap tipis, biar tetap jelas */
 }
+
 
 /* === TYPEWRITER TEKS - TANPA KANVAS, NEMPEL KE BACKGROUND === */
 #typeWriter {
