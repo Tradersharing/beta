@@ -1,5 +1,3 @@
-// ✅ Full app.js lengkap, fix bug: openPopup, berita lengkap, flag sesuai mata uang, typewriter jalan, loader awal aktif, dan sinkron ke impact-keyword (html2)
-
 function openPopup(pair) {
   const long = parseFloat(pair.longPercentage);
   const short = parseFloat(pair.shortPercentage);
@@ -91,7 +89,6 @@ function openPopup(pair) {
   }, 50);
 }
 
-
 async function buatAnalisaSekarang() {
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
@@ -171,8 +168,6 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
   return `📌 *Analisa ${pairName} — ${dateStr}*\n\n📊 *Status Pasar Saat Ini:*\nMenurut data ritel, ${buyerPercent}% trader BUY dan ${sellerPercent}% SELL.\nPasar condong ke ${kecenderungan}, sinyal teknikal: **${signal}**.\n\n📈 *Tren Terbentuk:*\nTekanan datang dari sisi ${kecenderungan}, potensi entry menunggu konfirmasi.\n\n🟦 *Support:* ${support}\n🟥 *Resistance:* ${resistance}\n\n💡 *Strategi:*\nAmati reaksi harga di zona SR. Entry setelah validasi price action.\n\n${insight}\n\n📘 *Disclaimer:* Gunakan manajemen risiko.`;
 }
 
-
-
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
   canvas.width = 150;
@@ -203,8 +198,6 @@ function renderGauge(buy, sell) {
 
   return canvas;
 }
-
-
 
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('active');
@@ -259,7 +252,6 @@ function ambilDampakDariKeyword(judul, mataUang = 'usd') {
   return "reaksi pasar bisa signifikan tergantung hasil rilisnya";
 }
 
-
 function typeText(elementId, text, speed = 25) {
   const el = document.getElementById(elementId);
   if (!el) return;
@@ -277,12 +269,15 @@ function typeText(elementId, text, speed = 25) {
 
 async function tampilkanInsightBerita(pair) {
   const step1 = document.getElementById("step1");
+  if (!step1) return;
   const today = new Date().toLocaleDateString('en-US', {
     timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit'
   }).replace(/\//g, '-');
 
-  const currency1 = pair.name.slice(0, 3);
-  const currency2 = pair.name.slice(3, 6);
+  const currency1 = pair.name.slice(0, 3).toUpperCase();
+  const currency2 = pair.name.slice(3, 6).toUpperCase();
+  const flag1 = getFlagEmoji(currency1);
+  const flag2 = getFlagEmoji(currency2);
 
   const newsURL = "https://script.google.com/macros/s/AKfycbxc2JQgw3GLARWCCSvMbHOgMsRa7Nx8-SWz61FM6tyjZ8idTl-fAtIbw1nRUqO4NG5v/exec";
 
@@ -293,45 +288,34 @@ async function tampilkanInsightBerita(pair) {
     const newsToday = newsData?.[today] || {};
     const b1 = newsToday[currency1] || [];
     const b2 = newsToday[currency2] || [];
-    const semuaBerita = [...b1, ...b2];
+    const bullets = [];
 
-    const daftar = semuaBerita.map(j => `- ${j}`).join("\n");
+    b1.forEach(str => {
+      const parts = str.split("|");
+      const judul = parts[0] || "";
+      const jam = parts[1] || "";
+      const jamWIB = convertGMTtoWIB(jam);
+      bullets.push(`• ${flag1} ${judul} (${jamWIB})`);
+    });
+    b2.forEach(str => {
+      const parts = str.split("|");
+      const judul = parts[0] || "";
+      const jam = parts[1] || "";
+      const jamWIB = convertGMTtoWIB(jam);
+      bullets.push(`• ${flag2} ${judul} (${jamWIB})`);
+    });
 
-    if (step1) step1.textContent = daftar || "Tidak ada berita hari ini.";
+    step1.textContent = bullets.join("\n\n");
   } catch (e) {
-    if (step1) step1.textContent = "⚠️ Gagal ambil berita.";
+    step1.textContent = "⚠️ Gagal ambil berita.";
   }
 }
 
-    if (step1) {
-      if (semuaBerita.length) {
-        const daftar = semuaBerita.map(str => {
-          const [judul, jam] = str.split("|");
-          const jamWIB = convertGMTtoWIB(jam);
-          const efek1 = ambilDampakDariKeyword(judul, currency1.toLowerCase());
-          const efek2 = ambilDampakDariKeyword(judul, currency2.toLowerCase());
-          const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
-          const flag = str.includes(currency1) ? flag1 : flag2;
-          return `• ${judul} (${jamWIB})\n  ${flag} ${efek}`;
-        }).join("\n\n");
-
-        step1.textContent = `1. Berita Hari Ini:\n\n${daftar}`;
-      } else {
-        step1.textContent = "1. Tidak ada berita hari ini.";
-      }
-          }
-
-
-
-
-
-
-    
-const url = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec";
+const signalsUrl = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec";
 
 async function loadSignals() {
   try {
-    const res = await fetch(url);
+    const res = await fetch(signalsUrl);
     const data = await res.json();
     const symbols = data?.symbols;
 
