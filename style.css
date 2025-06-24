@@ -279,6 +279,15 @@ header {
   text-shadow: 0 0 1px #0e60a3;       /* Biru gelap tipis, biar tetap jelas */
 }
 
+.subjudul {
+  font-weight: bold;
+  font-size: 15.5px;
+  margin-top: 22px;
+  margin-bottom: 4px;
+  color: #5fa3e6;
+  font-family: 'Segoe UI', sans-serif;
+  text-transform: none;
+}
 
 /* === TYPEWRITER TEKS - TANPA KANVAS, NEMPEL KE BACKGROUND === */
 #typeWriter {
