@@ -354,15 +354,14 @@ async function tampilkanInsightBerita(pair) {
   }
 }
 
-
-const signalsUrlPrimary = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec"; // MyFxBook-style real
-const signalsUrlBackup = "https://script.google.com/macros/s/AKfycbyv_7XI1NwCNj5keHuzqYt-7dKg3Vx-3_HiYxieeGQEZ1jfAmhAhbBuqp7DNRli-20sbA/exec"; // backup random
+const signalsUrlPrimary = "https://script.google.com/macros/s/AKfycbyv_7XI1NwCNj5keHuzqYt-7dKg3Vx-3_HiYxieeGQEZ1jfAmhAhbBuqp7DNRli-20sbA/exec"; // ✅ Google Script utama
+const signalsUrlBackup = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec"; // 🔁 MyFXBook-style backup
 
 async function loadSignals(url = signalsUrlPrimary) {
   try {
     const res = await fetch(url);
     const data = await res.json();
-    const symbols = Array.isArray(data) ? data : data?.symbols || [];
+    const symbols = data?.symbols;
 
     const majorPairs = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD"];
     const majors = [], others = [];
@@ -407,18 +406,11 @@ async function loadSignals(url = signalsUrlPrimary) {
       container.appendChild(box);
     });
   } catch (e) {
-    if (url !== signalsUrlBackup) {
-      console.warn("❌ Gagal ambil data utama, coba backup:", e.message);
-      loadSignals(signalsUrlBackup); // fallback ke backup
-    } else {
-      document.getElementById("signals").innerHTML = '<div class="box wait">Gagal ambil data: ' + e.message + '</div>';
-    }
+    document.getElementById("signals").innerHTML = '<div class="box wait">⚠️ Gagal ambil data: ' + e.message + '</div>';
   }
 }
 
-// ⏳ Jalankan awal + auto-refresh setiap 60 detik
-loadSignals();
-setInterval(loadSignals, 60000);
-
-
-
+// ✅ Langsung aktif saat halaman dimuat
+loadSignals(signalsUrlPrimary);
+// 🔁 Refresh otomatis tiap 60 detik
+setInterval(() => loadSignals(signalsUrlPrimary), 60000);
