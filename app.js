@@ -113,7 +113,7 @@ async function buatAnalisaSekarang() {
   // Buat struktur popup analisa dan step1 container untuk berita
   analysisPopup.innerHTML = `
     <div class="analysis-main">
-      <div class="corner-label">📊Analisa pair </div>
+      <div class="corner-label"></div>
       <pre id="typeWriter"></pre>
       <div id="step1" style="display:none;"></div>
       <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
@@ -182,19 +182,19 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
 
   return `📌 Analisa ${pairName} — ${dateStr}
 
-<div class="subjudul">Analisa Teknikal:</div>
+Analisa Teknikal:
+
 Data ritel menunjukkan ${buyerPercent}% trader berada di posisi BUY, sementara ${sellerPercent}% berada di posisi SELL.
 Pasar cenderung didominasi oleh ${kecenderungan}. Oleh karena itu, sinyal teknikal saat ini bersifat <b>${signalFinal}</b>, dan konfirmasi arah masih diperlukan sebelum pengambilan keputusan entry.
 
-<div class="subjudul">Analisa Fundamental:</div>
-${catatanFundamental}
-
-<div class="subjudul">Area penting yang perlu diperhatikan:</div>
+Area penting yang perlu diperhatikan:
 • Support: ${support}
 • Resistance: ${resistance}
+Amati reaksi harga di zona Support dan Resistance.
+Entry dilakukan setelah validasi Teknikal & fundamental.
 
-<div class="subjudul">Strategi:</div>
-Amati reaksi harga di zona Support dan Resistance. Entry dilakukan setelah validasi price action yang kuat guna menghindari entry spekulatif tanpa konfirmasi teknikal.
+<div class="subjudul">Analisa Fundamental:</div>
+${catatanFundamental}
 
 <div class="subjudul">Disclaimer:</div>
 Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
