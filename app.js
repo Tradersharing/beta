@@ -418,28 +418,3 @@ async function loadSignals(url = signalsUrlPrimary) {
 
 loadSignals();
 setInterval(loadSignals, 60000);
-function hitungSinyalDariHarga(pair, h1, h4) {
-  let signal, strength;
-
-  if (h4.close > h4.open && h1.close > h1.open) {
-    signal = "BUY";
-    strength = getRandom(70, 85);
-  } else if (h4.close < h4.open && h1.close < h1.open) {
-    signal = "SELL";
-    strength = getRandom(70, 85);
-  } else {
-    signal = "WAIT";
-    strength = getRandom(31, 69);
-  }
-
-  return {
-    pair: pair,
-    signal: signal,
-    strength: strength
-  };
-}
-
-function getRandom(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
