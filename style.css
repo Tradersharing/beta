@@ -255,7 +255,7 @@ header {
   width: 100%;
   max-width: none;
   margin: 0;
-  padding: 0 8px 40px;
+  padding: 0 px 40px;
   box-sizing: border-box;
 }
 
@@ -295,9 +295,9 @@ header {
 /* === TYPEWRITER TEKS - TANPA KANVAS, NEMPEL KE BACKGROUND === */
 #typeWriter {
   font-family: 'Segoe UI', sans-serif;
-  font-size: 12px;              /* Dari 17px → jadi 14px (seperti chat) */
+  font-size: 14px;              /* Dari 17px → jadi 14px (seperti chat) */
   line-height: 1.4;            /* Dari 1.65 → jadi 1.45, biar lebih padat */
-  color: #f1faff;
+  color: #ffffffcc; /* putih transparan 80% */
   padding:  0 px;
   margin: 0;
   text-align: left;
