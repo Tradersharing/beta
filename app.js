@@ -212,9 +212,9 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
     ? insightList.join("\n\n")
     : `Tidak ada berita berdampak tinggi hari ini.`;
 
-  const result = `     💻 Analisa ${pairName} — ${dateStr}
+  const result = `                💻 Analisa ${pairName} — ${dateStr}
 
-Analisa Teknikal:
+📊 Analisa Teknikal:
 
 Data ritel menunjukkan ${buyerPercent}% trader berada di posisi BUY.
 sementara ${sellerPercent}% berada di posisi SELL.
@@ -222,15 +222,15 @@ Pasar cenderung didominasi oleh ${kecenderungan}.
 Oleh karena itu, sinyal teknikal saat ini menunjukan ke arah ${signalFinal} .
 
 Area penting yang perlu diperhatikan:
-• Support: ${support}
-• Resistance: ${resistance}
+
+🟥• Support: ${support}
+🟦• Resistance: ${resistance}
 
 Amati reaksi harga di zona Support dan Resistance serta kombinasikan analisa teknikal & fundamental untuk mendapatkan sinyak yang akurat.
 
 Analisa Fundamental:
 
 Berikut news dan analisa untuk pasangan mata uang ${pairName} tanggal ${dateStr} ,kamu menggunakan waktu gmt7 / WIB.
-
 
 ${catatanFundamental}
 
@@ -244,7 +244,7 @@ document.getElementById("typeWriter").innerHTML = "";
 
 setTimeout(() => {
   typeText("typeWriter", result);
-  const delay = result.length * 8 + 300;
+  const delay = result.length * 3 + 300;
   setTimeout(() => {
     const footer = document.querySelector(".footer");
     if (footer) footer.classList.add("show");
