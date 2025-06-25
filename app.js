@@ -414,8 +414,21 @@ async function loadSignals(url = signalsUrlPrimary) {
     const data = await res.json();
     const symbols = data?.symbols;
 
-    const majorPairs = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD"];
-    const majors = [], others = [];
+const topPairs = [
+  "EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD",
+  "USDCHF", "NZDUSD", "EURJPY", "GBPJPY", "AUDJPY",
+  "EURGBP", "EURCHF", "EURCAD", "EURAUD", "EURNZD",
+  "GBPAUD", "GBPCAD", "GBPNZD", "CADJPY", "CHFJPY",
+  "AUDCAD", "AUDCHF", "AUDNZD", "NZDCAD", "NZDJPY",
+  "USDHKD", "USDZAR", "USDNOK", "USDSEK", "USDTRY"
+];
+
+const filtered = topPairs
+  .map(name => [...majors, ...others].find(pair => pair.name === name))
+  .filter(Boolean);
+
+const sorted = filtered;
+
 
     symbols.forEach(pair => {
       (majorPairs.includes(pair.name) ? majors : others).push(pair);
