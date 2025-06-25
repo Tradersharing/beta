@@ -215,6 +215,7 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
   const result = `                  💻 Analisa ${pairName} — ${dateStr}
 
 
+
 📊 Analisa Teknikal:
 
 Data ritel menunjukkan ${buyerPercent}% trader berada di posisi BUY.
@@ -244,8 +245,8 @@ Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
 document.getElementById("typeWriter").innerHTML = "";
 
 setTimeout(() => {
-  typeText("typeWriter", result);
-  const delay = result.length * 3 + 300;
+  typeText("typeWriter", result.length * 15 + 300; );
+  const delay = result.length * 15 + 300;
   setTimeout(() => {
     const footer = document.querySelector(".footer");
     if (footer) footer.classList.add("show");
