@@ -106,7 +106,7 @@ analysisPopup.innerHTML = `
   <div style="text-align:center; padding-top:60px;">
     <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
     <p style="color:#fff; font-family:'Segoe UI', sans-serif; margin-top:15px; font-size:15px;">
-     ⏳Mohon tunggu,Signal Sedang Diproses<span id="dots">.</span>
+     ⏳Menganalisis & Membuat sinyal<span id="dots">.</span>
     </p>
   </div>
 `;
@@ -122,7 +122,7 @@ const dotsInterval = setInterval(() => {
 }, 500);
 
 // Delay sebelum tampilkan hasil
-await new Promise(resolve => setTimeout(resolve, 3000));
+await new Promise(resolve => setTimeout(resolve, 6000));
 
 // Hentikan titik berjalan dan tampilkan konten analisa
 clearInterval(dotsInterval);
@@ -212,7 +212,8 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
     ? insightList.join("\n\n")
     : `Tidak ada berita berdampak tinggi hari ini.`;
 
-  const result = `                💻 Analisa ${pairName} — ${dateStr}
+  const result = `                  💻 Analisa ${pairName} — ${dateStr}
+
 
 📊 Analisa Teknikal:
 
@@ -228,7 +229,7 @@ Area penting yang perlu diperhatikan:
 
 Amati reaksi harga di zona Support dan Resistance serta kombinasikan analisa teknikal & fundamental untuk mendapatkan sinyak yang akurat.
 
-Analisa Fundamental:
+📝 Analisa Fundamental:
 
 Berikut news dan analisa untuk pasangan mata uang ${pairName} tanggal ${dateStr} ,kamu menggunakan waktu gmt7 / WIB.
 
