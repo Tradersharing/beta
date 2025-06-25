@@ -184,13 +184,16 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
 
 Analisa Teknikal:
 
-Data ritel menunjukkan ${buyerPercent}% trader berada di posisi BUY, sementara ${sellerPercent}% berada di posisi SELL.
-Pasar cenderung didominasi oleh ${kecenderungan}. Oleh karena itu, sinyal teknikal saat ini bersifat ${signalFinal} .
+Data ritel menunjukkan ${buyerPercent}% trader berada di posisi BUY.
+sementara ${sellerPercent}% berada di posisi SELL.
+Pasar cenderung didominasi oleh ${kecenderungan}. 
+Oleh karena itu, sinyal teknikal saat ini menunjukan ke arah ${signalFinal} .
 
 Area penting yang perlu diperhatikan:
 • Support: ${support}
 • Resistance: ${resistance}
-Amati reaksi harga di zona Support dan Resistance serta di aplikasikan dengan analisa fundamental untuk mendapatakan sinyal yang akurat
+
+Amati reaksi harga di zona Support dan Resistance serta kombinasikan analisa teknikal & fundamental untuk mendapatkan sinyak yang akurat.
 
 Analisa Fundamental:
 ${catatanFundamental}
