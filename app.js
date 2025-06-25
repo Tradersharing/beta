@@ -244,7 +244,7 @@ document.getElementById("typeWriter").innerHTML = "";
 
 setTimeout(() => {
   typeText("typeWriter", result);
-  const delay = result.length * 25 + 300;
+  const delay = result.length * 8 + 300;
   setTimeout(() => {
     const footer = document.querySelector(".footer");
     if (footer) footer.classList.add("show");
