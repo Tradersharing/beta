@@ -226,6 +226,7 @@ Oleh karena itu, sinyal teknikal saat ini menunjukan ke arah ${signalFinal} .
 Area penting yang perlu diperhatikan:
 
 🟥• Support: ${support}
+
 🟦• Resistance: ${resistance}
 
 Amati reaksi harga di zona Support dan Resistance serta kombinasikan analisa teknikal & fundamental untuk mendapatkan sinyak yang akurat.
@@ -255,7 +256,7 @@ setTimeout(() => {
 
 }
 
-function typeText(elementId, text, speed = 25) {
+function typeText(elementId, text, speed = 10) {
   const el = document.getElementById(elementId);
   if (!el) return;
   el.textContent = "";
