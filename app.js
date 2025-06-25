@@ -245,6 +245,7 @@ Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
 
   setTimeout(() => {
     typeTextPreserveHTML("typeWriter", result);
+
     const delay = result.length * 25 + 300;
     setTimeout(() => {
       const footer = document.querySelector(".footer");
@@ -252,6 +253,7 @@ Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
     }, delay);
   }, 600);
 }
+
 
 function typeTextPreserveHTML(elId, html, speed = 25) {
   const el = document.getElementById(elId);
