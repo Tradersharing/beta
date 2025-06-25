@@ -324,6 +324,7 @@ function convertGMTtoWIB(gmtTime) {
   if (!gmtTime) return "Invalid";
   const match = gmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
   if (!match) return "Invalid";
+
   let hour = parseInt(match[1], 10);
   const minute = parseInt(match[2], 10);
   const period = match[3].toLowerCase();
@@ -331,13 +332,15 @@ function convertGMTtoWIB(gmtTime) {
   if (period === "pm" && hour !== 12) hour += 12;
   if (period === "am" && hour === 12) hour = 0;
 
-  const date = new Date(Date.UTC(2000, 0, 1, hour, minute));
-  date.setUTCHours(date.getUTCHours() + 7);
+  // jam GMT ke WIB (GMT+7)
+  hour += 7;
+  if (hour >= 24) hour -= 24;
 
-  const h = String(date.getUTCHours()).padStart(2, "0");
-  const m = String(date.getUTCMinutes()).padStart(2, "0");
+  const h = String(hour).padStart(2, "0");
+  const m = String(minute).padStart(2, "0");
   return `${h}:${m}`;
 }
+
 
 function ambilDampakDariKeyword(judul, mataUang = 'usd') {
   const raw = document.getElementById("impactKeywordData");
