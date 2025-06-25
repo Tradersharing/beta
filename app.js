@@ -138,7 +138,6 @@ analysisPopup.innerHTML = `
 
   // ⏬ Ambil berita dan isi ke step1 (harus ditunggu sebelum generate analisa)
   await tampilkanInsightBerita(pair);
-
   // Logika sinyal: BUY / SELL / WAIT
   const buyer = pair.longPercentage;
   const seller = pair.shortPercentage;
@@ -162,8 +161,6 @@ analysisPopup.innerHTML = `
 }
 
 
-
-
 function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
   const pairName = pair.name || "EURUSD";
   const today = new Date();
@@ -182,31 +179,34 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
                         : "dua sisi secara seimbang";
 
   const semuaBaris = document.getElementById("step1")?.textContent.split("\n") || [];
-
   const insightList = semuaBaris.filter(line => line.includes("(") && line.includes(")"))
     .map(baris => {
       const match = baris.match(/•\s(.+?)\s\((\d{2}:\d{2})\)/);
       if (!match) return null;
       const [_, judul, jam] = match;
 
-      const bendera = judul.includes("🇺🇸") ? "usd"
-                   : judul.includes("🇬🇧") ? "gbp"
-                   : judul.includes("🇪🇺") ? "eur"
-                   : judul.includes("🇯🇵") ? "jpy"
-                   : judul.includes("🇦🇺") ? "aud"
-                   : judul.includes("🇳🇿") ? "nzd"
-                   : judul.includes("🇨🇦") ? "cad"
-                   : judul.includes("🇨🇭") ? "chf"
-                   : judul.includes("🇨🇳") ? "cny"
-                   : "";
+      const flagCurrency = judul.includes("🇺🇸") ? "usd"
+                        : judul.includes("🇬🇧") ? "gbp"
+                        : judul.includes("🇪🇺") ? "eur"
+                        : judul.includes("🇯🇵") ? "jpy"
+                        : judul.includes("🇦🇺") ? "aud"
+                        : judul.includes("🇳🇿") ? "nzd"
+                        : judul.includes("🇨🇦") ? "cad"
+                        : judul.includes("🇨🇭") ? "chf"
+                        : judul.includes("🇨🇳") ? "cny"
+                        : null;
 
-      const efek1 = ambilDampakDariKeyword(judul, bendera) || 
-                    ambilDampakDariKeyword(judul, pair.name.slice(0,3).toLowerCase());
+      const efek1 = flagCurrency
+        ? ambilDampakDariKeyword(judul, flagCurrency)
+        : ambilDampakDariKeyword(judul, pair.name.slice(0,3).toLowerCase());
+
       const efek2 = ambilDampakDariKeyword(judul, pair.name.slice(3,6).toLowerCase());
+
       const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
 
       return `• ${judul} (${jam})\n  ${efek}`;
-    }).filter(Boolean);
+    })
+    .filter(Boolean);
 
   const catatanFundamental = insightList.length
     ? insightList.join("\n\n")
@@ -222,7 +222,6 @@ Pasar cenderung didominasi oleh ${kecenderungan}.
 Oleh karena itu, sinyal teknikal saat ini menunjukan ke arah ${signalFinal} .
 
 Area penting yang perlu diperhatikan:
-
 • Support: ${support}
 • Resistance: ${resistance}
 
@@ -230,7 +229,7 @@ Amati reaksi harga di zona Support dan Resistance serta kombinasikan analisa tek
 
 Analisa Fundamental:
 
-Berikut news dan analisa untuk pasangan mata uang ${pairName} tanggal ${dateStr} dengan menggunakan waktu gmt7 / WIB.
+Berikut news dan analisa untuk pasangan mata uang ${pairName} tanggal ${dateStr} ,kamu menggunakan waktu gmt7 / WIB.
 
 
 ${catatanFundamental}
@@ -240,10 +239,10 @@ Disclaimer:
 Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
 `;
 
-  // ✅ Biar efek ketik bisa bekerja dengan benar — JANGAN pakai innerHTML duluan
+  document.getElementById("typeWriter").innerHTML = result;
+
   setTimeout(() => {
     typeText("typeWriter", result);
-
     const delay = result.length * 25 + 300;
     setTimeout(() => {
       const footer = document.querySelector(".footer");
@@ -253,6 +252,20 @@ Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
 }
 
 
+function typeText(elementId, text, speed = 25) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  el.textContent = "";
+  let i = 0;
+  function type() {
+    if (i < text.length) {
+      el.textContent += text.charAt(i);
+      i++;
+      setTimeout(type, speed);
+    }
+  }
+  type();
+}
 
 function renderGauge(buy, sell) {
   const canvas = document.createElement("canvas");
@@ -338,20 +351,7 @@ function ambilDampakDariKeyword(judul, mataUang = 'usd') {
   return "reaksi pasar bisa signifikan tergantung hasil rilisnya";
 }
 
-function typeText(elementId, text, speed = 25) {
-  const el = document.getElementById(elementId);
-  if (!el) return;
-  el.textContent = "";
-  let i = 0;
-  function type() {
-    if (i < text.length) {
-      el.textContent += text.charAt(i);
-      i++;
-      setTimeout(type, speed);
-    }
-  }
-  type();
-}
+
 
 async function tampilkanInsightBerita(pair) {
   const step1 = document.getElementById("step1");
