@@ -1,0 +1,368 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Tradersharing</title><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="icon" href="tradersharing_icon.png" type="image/png"><link rel="stylesheet" href="style.css"><style>.burger{position:fixed;top:15px;right:15px;font-size:28px;z-index:9999;cursor:pointer;color:white}#loadingScreen{position:fixed;inset:0;background:#000;z-index:99999;display:flex;flex-direction:column;align-items:center;justify-content:center}.candle{width:6px;height:40px;background:linear-gradient(to top,#00ff88,#00ffcc);box-shadow:0 0 8px #00ff88,0 0 15px #00ffcc;border-radius:3px;animation:candleBounce .9s ease-in-out infinite}.candle:nth-child(2){animation-delay:.1s}.candle:nth-child(3){animation-delay:.2s}.candle:nth-child(4){animation-delay:.3s}@keyframes candleBounce{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.3)}}.loading-text{font-family:'Courier New',monospace,sans-serif;font-size:16px;color:#00ffcc;text-shadow:0 0 5px #00ffcc;letter-spacing:1px}.dots::after{content:'';animation:dotTyping 1.5s infinite steps(4)}@keyframes dotTyping{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}100%{content:''}}</style></head><body><div id="loadingScreen"><div style="display:flex;gap:6px;margin-bottom:20px;"><div class="candle"></div><div class="candle"></div><div class="candle"></div><div class="candle"></div></div><p class="loading-text">Loading<span class="dots"></span></p></div><header><div><div class="title"><span class="blue">Trader</span><span class="red">Sharing</span></div><div class="subtitle">The Profesional Sinyal Forex</div></div><div class="burger" onclick="toggleSidebar()">☰</div></header><div class="sidebar" id="sidebar"><a href="#">📡 View Signal Now</a><a href="#">📊 Dashboard</a><a href="#">📈 Chart Signal</a><a href="#">📁 Data History</a><div id="pairSearchContainer" style="padding:10px 16px;background:#111;"><input type="text" id="pairSearch" placeholder="🔍 Cari pair..." style="width:100%;padding:8px 10px;border-radius:5px;border:none;font-size:14px;"><p style="font-size:13px;color:#aaa;margin-top:8px;">Klik pair untuk analisa mendalam</p></div></div><div id="lastUpdate"></div><div class="grid" id="signals"></div><div class="popup" id="popup"><div class="popup-content"><span class="close-btn" onclick="closePopup()">&times;</span><div id="popupDetails">Loading...</div></div></div><div id="analysisPopup" style="display:none;"></div><script id="impactKeywordData" type="application/json">{
+  "usd": [
+    {
+      "keyword": "powell|fed chair|fomc|testifies|barkin|barr|hammack",
+      "impact": "Pernyataan pejabat The Fed bisa memicu volatilitas tinggi"
+    },
+    {
+      "keyword": "fed funds rate|rate decision|fed statement",
+      "impact": "Keputusan suku bunga The Fed langsung memengaruhi USD"
+    },
+    {
+      "keyword": "cpi|consumer price index|core cpi|inflation",
+      "impact": "Inflasi tinggi memperkuat USD karena ekspektasi pengetatan"
+    },
+    {
+      "keyword": "ppi|producer price index",
+      "impact": "PPI yang naik tajam bisa memperkuat USD"
+    },
+    {
+      "keyword": "retail sales",
+      "impact": "Penjualan ritel kuat mendukung penguatan USD"
+    },
+    {
+      "keyword": "non-farm|nfp|employment|jobs",
+      "impact": "Data ketenagakerjaan yang kuat memperkuat USD"
+    },
+    {
+      "keyword": "unemployment rate|jobless claims|initial claims",
+      "impact": "Angka pengangguran rendah mendukung USD"
+    },
+    {
+      "keyword": "ism manufacturing pmi|ism services pmi",
+      "impact": "PMI tinggi menunjukkan ekspansi ekonomi yang positif untuk USD"
+    },
+    {
+      "keyword": "durable goods|durable goods orders",
+      "impact": "Data ini mencerminkan belanja perusahaan dan berdampak pada USD"
+    },
+    {
+      "keyword": "gdp|final gdp price index",
+      "impact": "Pertumbuhan ekonomi tinggi memperkuat USD"
+    },
+    {
+      "keyword": "new home sales|pending home sales",
+      "impact": "Data properti berdampak terhadap sentimen pasar USD"
+    },
+    {
+      "keyword": "goods trade balance|wholesale inventories",
+      "impact": "Neraca dagang dan persediaan memberi sinyal ekonomi"
+    },
+    {
+      "keyword": "natural gas storage|crude oil inventories",
+      "impact": "Stok energi bisa menggerakkan pasar dan memengaruhi USD"
+    }
+  ],
+  "gbp": [
+    {
+      "keyword": "bank rate|rate decision|monetary policy summary|votes",
+      "impact": "Keputusan dan hasil voting suku bunga memengaruhi GBP"
+    },
+    {
+      "keyword": "boe governor speaks|bailey|mpc member speaks|ramsden|pill|breeden",
+      "impact": "Komentar pejabat BOE memicu pergerakan GBP"
+    },
+    {
+      "keyword": "cpi|inflation|core cpi",
+      "impact": "Inflasi Inggris berpengaruh besar pada kebijakan BOE"
+    },
+    {
+      "keyword": "gdp m/m|gdp q/q|gdp",
+      "impact": "Data GDP yang positif menguatkan GBP"
+    },
+    {
+      "keyword": "retail sales",
+      "impact": "Data ritel mencerminkan kekuatan konsumsi dan berdampak ke GBP"
+    },
+    {
+      "keyword": "manufacturing pmi|services pmi",
+      "impact": "PMI memberi sinyal kekuatan sektor bisnis"
+    },
+    {
+      "keyword": "claimant count|unemployment",
+      "impact": "Tingkat pengangguran rendah mendukung GBP"
+    },
+    {
+      "keyword": "gfk consumer confidence",
+      "impact": "Kepercayaan konsumen berdampak pada nilai tukar"
+    },
+    {
+      "keyword": "cbi realized sales",
+      "impact": "Data CBI menunjukkan kondisi sektor perdagangan"
+    },
+    {
+      "keyword": "public sector net borrowing",
+      "impact": "Data pembiayaan sektor publik berdampak pada persepsi fiskal GBP"
+    },
+    {
+      "keyword": "average earnings",
+      "impact": "Kenaikan upah memberi tekanan inflasi dan mendukung GBP"
+    }
+  ],
+  "eur": [
+    {
+      "keyword": "ecb rate decision|refinancing rate",
+      "impact": "Keputusan ECB langsung mempengaruhi EUR"
+    },
+    {
+      "keyword": "ecb monetary policy statement|press conference|meeting accounts",
+      "impact": "Komentar ECB memengaruhi ekspektasi pasar"
+    },
+    {
+      "keyword": "ecb president speaks|lagarde speaks",
+      "impact": "Komentar Presiden ECB memicu reaksi pasar"
+    },
+    {
+      "keyword": "eurozone cpi|core cpi|flash eurozone cpi",
+      "impact": "Inflasi tinggi mendukung ekspektasi kenaikan suku bunga"
+    },
+    {
+      "keyword": "eurozone gdp q/q|gdp",
+      "impact": "Data GDP Eurozone positif memperkuat EUR"
+    },
+    {
+      "keyword": "eurozone retail sales",
+      "impact": "Data penjualan memberi sinyal konsumsi domestik"
+    },
+    {
+      "keyword": "eurozone unemployment rate",
+      "impact": "Angka pengangguran memengaruhi kebijakan moneter"
+    },
+    {
+      "keyword": "german ifo|ifo business climate",
+      "impact": "Iklim bisnis Jerman memberi petunjuk arah ekonomi"
+    },
+    {
+      "keyword": "german zew|zew economic sentiment",
+      "impact": "Sentimen investasi berdampak pada EUR"
+    },
+    {
+      "keyword": "german cpi|german inflation",
+      "impact": "Inflasi Jerman berperan dalam arah EUR"
+    },
+    {
+      "keyword": "german retail sales",
+      "impact": "Data ritel Jerman menunjukkan kekuatan konsumen"
+    },
+    {
+      "keyword": "german factory orders",
+      "impact": "Pesanan pabrik Jerman mencerminkan prospek industri"
+    },
+    {
+      "keyword": "eurozone industrial production",
+      "impact": "Produksi industri Eurozone mendukung pertumbuhan EUR"
+    }
+  ],
+  "jpy": [
+    {
+      "keyword": "boj rate decision|bank of japan",
+      "impact": "Keputusan BOJ sangat mempengaruhi JPY"
+    },
+    {
+      "keyword": "boj governor speaks|kuroda|ueda",
+      "impact": "Komentar pejabat BOJ bisa memicu fluktuasi JPY"
+    },
+    {
+      "keyword": "cpi|core cpi|inflation",
+      "impact": "Inflasi tinggi memberi tekanan kebijakan BOJ"
+    },
+    {
+      "keyword": "gdp q/q|gdp",
+      "impact": "Pertumbuhan ekonomi Jepang memperkuat JPY"
+    },
+    {
+      "keyword": "tankan|tankan survey",
+      "impact": "Indikator Tankan menunjukkan sentimen bisnis"
+    },
+    {
+      "keyword": "retail sales",
+      "impact": "Konsumsi domestik Jepang berdampak ke JPY"
+    },
+    {
+      "keyword": "unemployment rate",
+      "impact": "Pengangguran rendah memperkuat JPY"
+    },
+    {
+      "keyword": "trade balance",
+      "impact": "Neraca perdagangan memengaruhi permintaan JPY"
+    },
+    {
+      "keyword": "industrial production",
+      "impact": "Produksi industri Jepang memberi arah ekonomi"
+    },
+    {
+      "keyword": "manufacturing pmi",
+      "impact": "PMI menunjukkan kekuatan sektor manufaktur"
+    }
+  ],
+  "aud": [
+    {
+      "keyword": "rba rate decision|reserve bank",
+      "impact": "Keputusan suku bunga RBA mempengaruhi AUD"
+    },
+    {
+      "keyword": "rba governor speaks",
+      "impact": "Pernyataan Gubernur RBA berdampak besar"
+    },
+    {
+      "keyword": "employment|unemployment rate",
+      "impact": "Data tenaga kerja yang kuat memperkuat AUD"
+    },
+    {
+      "keyword": "cpi|inflation",
+      "impact": "Inflasi tinggi mendukung ekspektasi pengetatan"
+    },
+    {
+      "keyword": "gdp q/q|gdp",
+      "impact": "Pertumbuhan ekonomi mendukung AUD"
+    },
+    {
+      "keyword": "retail sales",
+      "impact": "Permintaan domestik tercermin dari penjualan"
+    },
+    {
+      "keyword": "trade balance",
+      "impact": "Surplus perdagangan memperkuat AUD"
+    },
+    {
+      "keyword": "business confidence",
+      "impact": "Kepercayaan bisnis mencerminkan prospek ekonomi"
+    },
+    {
+      "keyword": "manufacturing pmi",
+      "impact": "PMI membantu menilai kekuatan industri"
+    }
+  ],
+  "nzd": [
+    {
+      "keyword": "rbnz rate decision|rbnz statement",
+      "impact": "Kebijakan suku bunga langsung memengaruhi NZD"
+    },
+    {
+      "keyword": "rbnz governor speaks",
+      "impact": "Komentar Gubernur RBNZ berdampak tinggi"
+    },
+    {
+      "keyword": "employment|unemployment rate",
+      "impact": "Data ketenagakerjaan memperkuat outlook NZD"
+    },
+    {
+      "keyword": "cpi|inflation",
+      "impact": "Tekanan harga tinggi mendukung kenaikan suku bunga"
+    },
+    {
+      "keyword": "gdp q/q|gdp",
+      "impact": "Pertumbuhan ekonomi positif mendukung NZD"
+    },
+    {
+      "keyword": "retail sales",
+      "impact": "Konsumsi domestik memengaruhi NZD"
+    },
+    {
+      "keyword": "trade balance",
+      "impact": "Data perdagangan memengaruhi permintaan NZD"
+    },
+    {
+      "keyword": "business confidence",
+      "impact": "Indeks kepercayaan bisnis berdampak langsung"
+    }
+  ],
+  "cad": [
+    {
+      "keyword": "boc rate decision|bank of canada",
+      "impact": "Keputusan BOC langsung berdampak pada CAD"
+    },
+    {
+      "keyword": "boc governor speaks",
+      "impact": "Pernyataan pejabat BOC dapat mendorong CAD"
+    },
+    {
+      "keyword": "cpi|inflation",
+      "impact": "Inflasi menjadi acuan arah suku bunga BOC"
+    },
+    {
+      "keyword": "gdp q/q|gdp",
+      "impact": "GDP yang kuat mengangkat CAD"
+    },
+    {
+      "keyword": "employment|unemployment rate",
+      "impact": "Data ketenagakerjaan yang solid memperkuat CAD"
+    },
+    {
+      "keyword": "retail sales",
+      "impact": "Belanja domestik memengaruhi nilai tukar"
+    },
+    {
+      "keyword": "trade balance",
+      "impact": "Surplus dagang mendukung CAD"
+    },
+    {
+      "keyword": "housing starts",
+      "impact": "Sektor properti memberi petunjuk arah ekonomi"
+    }
+  ],
+  "chf": [
+    {
+      "keyword": "snb rate decision|snb policy",
+      "impact": "Keputusan SNB memicu pergerakan CHF"
+    },
+    {
+      "keyword": "snb governor speaks",
+      "impact": "Pernyataan pejabat SNB sangat berpengaruh"
+    },
+    {
+      "keyword": "cpi|inflation",
+      "impact": "Inflasi memengaruhi ekspektasi kebijakan SNB"
+    },
+    {
+      "keyword": "gdp q/q|gdp",
+      "impact": "Ekonomi Swiss yang tumbuh menguatkan CHF"
+    },
+    {
+      "keyword": "unemployment rate",
+      "impact": "Angka pengangguran rendah mendukung CHF"
+    },
+    {
+      "keyword": "retail sales",
+      "impact": "Konsumsi domestik Swiss memberi sinyal nilai CHF"
+    },
+    {
+      "keyword": "trade balance",
+      "impact": "Surplus dagang memperkuat CHF"
+    },
+    {
+      "keyword": "kof index|kof leading indicator",
+      "impact": "Indeks KOF memberi sinyal awal tren ekonomi"
+    }
+  ],
+  "cny": [
+    {
+      "keyword": "pboe|pboc policy",
+      "impact": "Kebijakan PBOC memicu pergerakan besar pada CNY"
+    },
+    {
+      "keyword": "cpi|inflation",
+      "impact": "Tekanan harga memengaruhi kebijakan moneter"
+    },
+    {
+      "keyword": "gdp q/q|gdp",
+      "impact": "Pertumbuhan ekonomi mendorong penguatan CNY"
+    },
+    {
+      "keyword": "retail sales",
+      "impact": "Konsumsi domestik berperan penting"
+    },
+    {
+      "keyword": "industrial production",
+      "impact": "Produksi industri mencerminkan kekuatan ekonomi"
+    },
+    {
+      "keyword": "trade balance",
+      "impact": "Surplus dagang mendukung nilai tukar"
+    },
+    {
+      "keyword": "manufacturing pmi|pmi manufacturing",
+      "impact": "PMI jadi indikator utama ekspansi ekonomi"
+    }
+  ]
+}</script><script>window.addEventListener('DOMContentLoaded',()=>{const e=document.getElementById('loadingScreen');e&&(e.style.display='flex'),typeof loadSignals=='function'?loadSignals().finally(()=>{e&&(e.style.display='none')}):setTimeout(()=>e&&(e.style.display='none'),2e3)});</script><script src="app.js"></script></body></html>
