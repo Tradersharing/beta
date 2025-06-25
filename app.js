@@ -417,7 +417,7 @@ async function loadSignals(url = signalsUrlPrimary) {
     const majorPairs = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD"];
     const majors = [], others = [];
 
-    // Pertama, pisahkan symbols ke majors dan others
+    // Pisahkan ke majors & others
     symbols.forEach(pair => {
       (majorPairs.includes(pair.name) ? majors : others).push(pair);
     });
@@ -431,25 +431,15 @@ async function loadSignals(url = signalsUrlPrimary) {
       "USDHKD", "USDZAR", "USDNOK", "USDSEK", "USDTRY"
     ];
 
-    // Lalu filter dari gabungan majors + others, sesuai topPairs
+    // Filter hanya topPairs yang ada di data
     const filtered = topPairs
       .map(name => [...majors, ...others].find(pair => pair.name === name))
       .filter(Boolean);
 
-    const sorted = filtered;
-
     const container = document.getElementById("signals");
     container.innerHTML = "";
 
-    sorted.forEach(pair => {
-      // kode render box ...
-    });
-
-    const sorted = [...majors, ...others];
-    const container = document.getElementById("signals");
-    container.innerHTML = "";
-
-    sorted.forEach(pair => {
+    filtered.forEach(pair => {
       const buy = parseFloat(pair.longPercentage);
       const sell = parseFloat(pair.shortPercentage);
       const status = buy >= 70 ? 'BUY' : sell >= 70 ? 'SELL' : 'WAIT';
@@ -480,12 +470,12 @@ async function loadSignals(url = signalsUrlPrimary) {
       box.appendChild(signal);
       container.appendChild(box);
     });
+
   } catch (e) {
     document.getElementById("signals").innerHTML = '<div class="box wait">⚠️ Gagal ambil data: ' + e.message + '</div>';
   }
 }
 
-// ✅ Langsung aktif saat halaman dimuat
+// Jalankan & auto refresh
 loadSignals(signalsUrlPrimary);
-// 🔁 Refresh otomatis tiap 60 detik
 setInterval(() => loadSignals(signalsUrlPrimary), 60000);
