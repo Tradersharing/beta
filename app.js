@@ -223,6 +223,7 @@ Pasar cenderung didominasi oleh ${kecenderungan}.
 Oleh karena itu, sinyal teknikal saat ini menunjukan ke arah ${signalFinal} .
 
 Area penting yang perlu diperhatikan:
+
 • Support: ${support}
 • Resistance: ${resistance}
 
@@ -230,7 +231,7 @@ Amati reaksi harga di zona Support dan Resistance serta kombinasikan analisa tek
 
 Analisa Fundamental:
 
-Berikut news dan analisa untuk pasangan mata uang ${pairName} tanggal ${dateStr} ,kamu menggunakan waktu gmt7 / WIB.
+Berikut news dan analisa untuk pasangan mata uang ${pairName} tanggal ${dateStr} dengan menggunakan waktu gmt7 / WIB.
 
 
 ${catatanFundamental}
@@ -509,8 +510,10 @@ async function tampilkanInsightBerita(pair) {
   }
 }
 
-const signalsUrlPrimary = "https://script.google.com/macros/s/AKfycbz0nOF6LQWbQd4Zy9WagBiq433l0G0nn2la4j9QC73Vfgt3_Fz_hRuhH3fr0NiPt46rOA/exec"; // ✅ Google Script utama
-const signalsUrlBackup = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec"; // 🔁 MyFXBook-style backup
+
+      
+const signalsUrlPrimary = "https://script.google.com/macros/s/AKfycby4rTfuD0tr1XuJU4R-MUacv85WRu3_ucD7QOiC11ogkupkEhXRjSF7ll0GrTgoJQqP/exec"; // ✅ Google Script utama
+const signalsUrlBackup = "https://script.google.com/macros/s/AKfycbz0nOF6LQWbQd4Zy9WagBiq433l0G0nn2la4j9QC73Vfgt3_Fz_hRuhH3fr0NiPt46rOA/exec"; // 🔁 MyFXBook-style backup
 
 async function loadSignals(url = signalsUrlPrimary) {
   try {
