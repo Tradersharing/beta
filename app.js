@@ -240,9 +240,6 @@ Disclaimer:
 
 Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
 `;
-
-  document.getElementById("typeWriter").innerHTML = result;
-
   setTimeout(() => {
     typeTextPreserveHTML("typeWriter", result);
 
