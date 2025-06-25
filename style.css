@@ -279,6 +279,7 @@ header {
   line-height: 1.25;
   color: #fff; /* putih solid */
   padding: 0;
+  padding-left: 4px;
   margin: 0;
   width: 100%;
   text-align: left;
@@ -287,6 +288,8 @@ header {
   word-wrap: break-word;
   animation: glowIn 0.3s ease-in-out;
 }
+
+
 
 /* Subjudul seperti "Analisa Teknikal" */
 .subjudul {
