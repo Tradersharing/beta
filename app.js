@@ -239,17 +239,18 @@ Disclaimer:
 Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
 `;
 
-  document.getElementById("typeWriter").innerHTML = result;
+  // Kosongkan isi sebelum mulai ketik
+document.getElementById("typeWriter").innerHTML = "";
 
+setTimeout(() => {
+  typeText("typeWriter", result);
+  const delay = result.length * 25 + 300;
   setTimeout(() => {
-    typeText("typeWriter", result);
-    const delay = result.length * 25 + 300;
-    setTimeout(() => {
-      const footer = document.querySelector(".footer");
-      if (footer) footer.classList.add("show");
-    }, delay);
-  }, 600);
-}
+    const footer = document.querySelector(".footer");
+    if (footer) footer.classList.add("show");
+  }, delay);
+}, 600);
+
 
 
 function typeText(elementId, text, speed = 25) {
