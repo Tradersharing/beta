@@ -214,6 +214,9 @@ Amati reaksi harga di zona Support dan Resistance serta kombinasikan analisa tek
 
 Analisa Fundamental:
 
+Berikut news dan analisa untuk pasangan mata uang ${pairName} tanggal ${dateStr} ,kamu menggunakan waktu gmt7 / WIB.
+
+
 ${catatanFundamental}
 
 Disclaimer:
