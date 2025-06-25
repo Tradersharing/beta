@@ -414,24 +414,35 @@ async function loadSignals(url = signalsUrlPrimary) {
     const data = await res.json();
     const symbols = data?.symbols;
 
-const topPairs = [
-  "EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD",
-  "USDCHF", "NZDUSD", "EURJPY", "GBPJPY", "AUDJPY",
-  "EURGBP", "EURCHF", "EURCAD", "EURAUD", "EURNZD",
-  "GBPAUD", "GBPCAD", "GBPNZD", "CADJPY", "CHFJPY",
-  "AUDCAD", "AUDCHF", "AUDNZD", "NZDCAD", "NZDJPY",
-  "USDHKD", "USDZAR", "USDNOK", "USDSEK", "USDTRY"
-];
+    const majorPairs = ["EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD", "USDCHF", "NZDUSD"];
+    const majors = [], others = [];
 
-const filtered = topPairs
-  .map(name => [...majors, ...others].find(pair => pair.name === name))
-  .filter(Boolean);
-
-const sorted = filtered;
-
-
+    // Pertama, pisahkan symbols ke majors dan others
     symbols.forEach(pair => {
       (majorPairs.includes(pair.name) ? majors : others).push(pair);
+    });
+
+    const topPairs = [
+      "EURUSD", "GBPUSD", "USDJPY", "AUDUSD", "USDCAD",
+      "USDCHF", "NZDUSD", "EURJPY", "GBPJPY", "AUDJPY",
+      "EURGBP", "EURCHF", "EURCAD", "EURAUD", "EURNZD",
+      "GBPAUD", "GBPCAD", "GBPNZD", "CADJPY", "CHFJPY",
+      "AUDCAD", "AUDCHF", "AUDNZD", "NZDCAD", "NZDJPY",
+      "USDHKD", "USDZAR", "USDNOK", "USDSEK", "USDTRY"
+    ];
+
+    // Lalu filter dari gabungan majors + others, sesuai topPairs
+    const filtered = topPairs
+      .map(name => [...majors, ...others].find(pair => pair.name === name))
+      .filter(Boolean);
+
+    const sorted = filtered;
+
+    const container = document.getElementById("signals");
+    container.innerHTML = "";
+
+    sorted.forEach(pair => {
+      // kode render box ...
     });
 
     const sorted = [...majors, ...others];
