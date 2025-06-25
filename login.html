@@ -1,75 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Tradersharing</title>
+  <meta charset="UTF-8">
+  <title>Login Tradersharing</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #0f172a;
-      color: #f1f5f9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    .login-box {
-      background: #1e293b;
-      padding: 30px;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 360px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-    }
-    .login-box h2 {
-      margin-bottom: 10px;
-      font-size: 22px;
+      font-family: sans-serif;
+      background: #f0f4f8;
       text-align: center;
+      padding: 2em;
     }
-    .tagline {
-      font-size: 13px;
-      text-align: center;
-      margin-bottom: 30px;
-      color: #94a3b8;
+    input {
+      padding: 0.6em;
+      margin: 0.4em;
+      width: 80%;
+      max-width: 320px;
     }
-    .login-box input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 6px;
-      background: #334155;
-      color: #e2e8f0;
-    }
-    .login-box button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 20px;
-      border: none;
-      border-radius: 6px;
-      background: #3b82f6;
-      color: white;
+    button {
+      padding: 0.6em 1.5em;
+      margin: 0.4em;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s;
-    }
-    .login-box button:hover {
-      background: #2563eb;
     }
   </style>
 </head>
 <body>
-  <div class="login-box">
-    <h2>Tradersharing</h2>
-    <div class="tagline">The Analytic Trader</div>
-    <form onsubmit="event.preventDefault(); alert('Login belum dihubungkan');">
-      <input type="email" placeholder="Email" required />
-      <input type="password" placeholder="Password" required />
-      <button type="submit">Login</button>
-    </form>
-  </div>
+  <h2>Login Tradersharing</h2>
+
+  <input type="email" id="email" placeholder="Email"><br>
+  <input type="password" id="password" placeholder="Password"><br>
+
+  <button onclick="login()">Login</button>
+  <button onclick="register()">Daftar</button><br>
+  <button onclick="resetPassword()">Lupa Password?</button>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      sendPasswordResetEmail,
+      sendEmailVerification
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDdM9T5B3koSUjDL05NE3SEMv0UTPx18lE",
+      authDomain: "webtsc-a12a7.firebaseapp.com",
+      projectId: "webtsc-a12a7",
+      storageBucket: "webtsc-a12a7.firebasestorage.app",
+      messagingSenderId: "1027118656086",
+      appId: "1:1027118656086:web:c2eaa65783e049029029f7",
+      measurementId: "G-20C14YPCRY"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = function () {
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
+
+      signInWithEmailAndPassword(auth, email, pass)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          if (!user.emailVerified) {
+            alert("Email kamu belum diverifikasi. Silakan cek inbox.");
+            return;
+          }
+          alert("Login berhasil!");
+          window.location.href = "/dashboard.html";
+        })
+        .catch((error) => {
+          alert("Login gagal: " + error.message);
+        });
+    };
+
+    window.register = function () {
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
+
+      createUserWithEmailAndPassword(auth, email, pass)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          sendEmailVerification(user).then(() => {
+            alert("Akun berhasil dibuat. Cek email kamu untuk verifikasi.");
+          });
+        })
+        .catch((error) => {
+          alert("Gagal daftar: " + error.message);
+        });
+    };
+
+    window.resetPassword = function () {
+      const email = document.getElementById("email").value;
+      if (!email) return alert("Masukkan email terlebih dahulu.");
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          alert("Link reset password telah dikirim ke email.");
+        })
+        .catch((error) => {
+          alert("Gagal kirim email reset: " + error.message);
+        });
+    };
+  </script>
 </body>
 </html>
