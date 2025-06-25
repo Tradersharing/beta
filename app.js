@@ -106,7 +106,7 @@ analysisPopup.innerHTML = `
   <div style="text-align:center; padding-top:60px;">
     <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
     <p style="color:#fff; font-family:'Segoe UI', sans-serif; margin-top:15px; font-size:15px;">
-      Tradersharing Signal<span id="dots">.</span>
+     ⏳Mohon tunggu,Signal Sedang Diproses<span id="dots">.</span>
     </p>
   </div>
 `;
@@ -122,7 +122,7 @@ const dotsInterval = setInterval(() => {
 }, 500);
 
 // Delay sebelum tampilkan hasil
-await new Promise(resolve => setTimeout(resolve, 2500));
+await new Promise(resolve => setTimeout(resolve, 3000));
 
 // Hentikan titik berjalan dan tampilkan konten analisa
 clearInterval(dotsInterval);
