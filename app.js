@@ -213,9 +213,11 @@ Area penting yang perlu diperhatikan:
 Amati reaksi harga di zona Support dan Resistance serta kombinasikan analisa teknikal & fundamental untuk mendapatkan sinyak yang akurat.
 
 Analisa Fundamental:
+
 ${catatanFundamental}
 
 Disclaimer:
+
 Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
 `;
 document.getElementById("typeWriter").innerHTML = teks;
