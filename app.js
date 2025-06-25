@@ -101,23 +101,40 @@ async function buatAnalisaSekarang() {
   const resistance = srData?.resistance || '??';
 
   // Tampilkan loading animasi dulu
-  analysisPopup.innerHTML = `
-    <div style="text-align:center; padding-top:60px;">
-      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
-      <p style="color:#fff; font-family:'Courier New'; margin-top:15px; font-size:16px;">⏳ Memproses analisa AI...</p>
-    </div>
-  `;
-  analysisPopup.style.display = 'flex';
-  await new Promise(resolve => setTimeout(resolve, 1000)); // delay 1 detik
+  // Tampilkan loading elegan dengan titik berjalan
+analysisPopup.innerHTML = `
+  <div style="text-align:center; padding-top:60px;">
+    <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
+    <p style="color:#fff; font-family:'Segoe UI', sans-serif; margin-top:15px; font-size:15px;">
+      Tradersharing Signal<span id="dots">.</span>
+    </p>
+  </div>
+`;
 
-  // Buat struktur popup analisa dan step1 container untuk berita
-  analysisPopup.innerHTML = `
-    <div class="analysis-main">
-      <div class="corner-label"></div>
-      <pre id="typeWriter"></pre>
-      <div id="step1" style="display:none;"></div>
-      <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
-    </div>`;
+analysisPopup.style.display = 'flex';
+
+// Mulai animasi titik berjalan
+let dotCount = 1;
+const dotsEl = document.getElementById('dots');
+const dotsInterval = setInterval(() => {
+  dotCount = (dotCount % 3) + 1;
+  dotsEl.textContent = '.'.repeat(dotCount);
+}, 500);
+
+// Delay sebelum tampilkan hasil
+await new Promise(resolve => setTimeout(resolve, 2500));
+
+// Hentikan titik berjalan dan tampilkan konten analisa
+clearInterval(dotsInterval);
+
+analysisPopup.innerHTML = `
+  <div class="analysis-main">
+    <div class="corner-label"></div>
+    <div id="typeWriter"></div>
+    <div id="step1" style="display:none;"></div>
+    <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
+  </div>`;
+
 
   // ⏬ Ambil berita dan isi ke step1 (harus ditunggu sebelum generate analisa)
   await tampilkanInsightBerita(pair);
