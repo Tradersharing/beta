@@ -189,7 +189,6 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
       if (!match) return null;
       const [_, judul, jam] = match;
 
-      // Deteksi bendera dari judul berita
       const bendera = judul.includes("🇺🇸") ? "usd"
                    : judul.includes("🇬🇧") ? "gbp"
                    : judul.includes("🇪🇺") ? "eur"
@@ -240,8 +239,10 @@ Disclaimer:
 
 Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
 `;
+
+  // ✅ Biar efek ketik bisa bekerja dengan benar — JANGAN pakai innerHTML duluan
   setTimeout(() => {
-    typeTextPreserveHTML("typeWriter", result);
+    typeText("typeWriter", result);
 
     const delay = result.length * 25 + 300;
     setTimeout(() => {
@@ -250,119 +251,6 @@ Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
     }, delay);
   }, 600);
 }
-
-
-function typeTextPreserveHTML(elId, html, speed = 25) {
-  const el = document.getElementById(elId);
-  el.innerHTML = "";
-
-  const container = document.createElement("div");
-  container.innerHTML = html;
-
-  const nodes = Array.from(container.childNodes);
-  let index = 0;
-
-  function typeNode() {
-    if (index >= nodes.length) return;
-
-    const node = nodes[index++];
-    if (node.nodeType === Node.TEXT_NODE) {
-      const span = document.createElement("span");
-      el.appendChild(span);
-      let i = 0;
-      const text = node.textContent;
-
-      function typeChar() {
-        if (i < text.length) {
-          span.textContent += text.charAt(i);
-          i++;
-          setTimeout(typeChar, speed);
-        } else {
-          typeNode();
-        }
-      }
-
-      typeChar();
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      const clone = node.cloneNode(false);
-      el.appendChild(clone);
-
-      const children = Array.from(node.childNodes);
-      let cIndex = 0;
-
-      function typeChildren() {
-        if (cIndex >= children.length) {
-          typeNode();
-          return;
-        }
-
-        const child = children[cIndex++];
-        if (child.nodeType === Node.TEXT_NODE) {
-          const span = document.createElement("span");
-          clone.appendChild(span);
-          let i = 0;
-          const text = child.textContent;
-
-          function typeChar() {
-            if (i < text.length) {
-              span.textContent += text.charAt(i);
-              i++;
-              setTimeout(typeChar, speed);
-            } else {
-              typeChildren();
-            }
-          }
-
-          typeChar();
-        } else if (child.nodeType === Node.ELEMENT_NODE) {
-          const childClone = child.cloneNode(false);
-          clone.appendChild(childClone);
-          // Recurse into this child element
-          const grandChildren = Array.from(child.childNodes);
-          let gcIndex = 0;
-
-          function typeGrandChildren() {
-            if (gcIndex >= grandChildren.length) {
-              typeChildren();
-              return;
-            }
-
-            const grandChild = grandChildren[gcIndex++];
-            if (grandChild.nodeType === Node.TEXT_NODE) {
-              const span = document.createElement("span");
-              childClone.appendChild(span);
-              let i = 0;
-              const text = grandChild.textContent;
-
-              function typeChar() {
-                if (i < text.length) {
-                  span.textContent += text.charAt(i);
-                  i++;
-                  setTimeout(typeChar, speed);
-                } else {
-                  typeGrandChildren();
-                }
-              }
-
-              typeChar();
-            } else {
-              // In this example, we skip deeper recursion for simplicity
-              childClone.appendChild(grandChild.cloneNode(true));
-              typeGrandChildren();
-            }
-          }
-
-          typeGrandChildren();
-        }
-      }
-
-      typeChildren();
-    }
-  }
-
-  typeNode();
-}
-
 
 
 
