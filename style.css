@@ -238,66 +238,47 @@ header {
 
 #analysisPopup {
   position: fixed;
-  top: 0; left: 0;
+  top: 0;
+  left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(to bottom right, #0e60a3, #5fa3e6); /* modern glossy blue */
+  background: #000; /* Ganti ke hitam full */
   display: none;
   justify-content: center;
   align-items: flex-start;
   z-index: 9999;
   overflow-y: auto;
-  padding: 24px;
-  font-family: 'Segoe UI', sans-serif;
+  padding: 0; /* Bersihin padding */
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
 }
 
 .analysis-main {
   width: 100%;
-  max-width: none;
   margin: 0;
-  padding: 0 px 40px;
+  padding: 0;
   box-sizing: border-box;
 }
 
-.subjudul {
-  background: rgba(0, 70, 140, 0.9); /* Biru navy transparan */
-  color: #ffffff;
-  font-weight: bold;
-  padding: 10px 15px;
-  margin: 25px 0 10px 0;
-  border-left: 5px solid #00bfff; /* Garis aksen biru terang */
-  border-radius: 6px;
-  font-size: 16px;
-  font-family: 'Segoe UI', sans-serif;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
-}
-
-
-/* === MODERN HEADER - TULISAN ATAS === */
 .corner-label {
   width: 100%;
-  text-align: left;                    /* Dari center → kiri biar menyatu */
-  font-size: 16px;                    /* Sedikit dikecilin biar padu */
+  text-align: left;
+  font-size: 15px;
   font-weight: bold;
-  padding: 4px 8px;                   /* Minim padding, biar gak kayak kotak */
-  color: #5fa3e6;                     /* Biru terang elegan, nyambung ke gradient */
-  background: none;                   /* Hilangkan kotak background */
-  border-radius: 0;                   /* Hilangkan lengkung sudut */
+  padding: 4px 8px;
+  color: #ffcc00; /* warna emas biar tegas di atas hitam */
+  background: none;
   margin-bottom: 10px;
-  box-shadow: none;                   /* Hilangkan bayangan */
+  box-shadow: none;
   font-family: 'Segoe UI', sans-serif;
-  text-shadow: 0 0 1px #0e60a3;       /* Biru gelap tipis, biar tetap jelas */
 }
 
-
-
-/* === TYPEWRITER TEKS - TANPA KANVAS, NEMPEL KE BACKGROUND === */
+/* Tulisan utama hasil ketikan */
 #typeWriter {
-  font-family: 'Segoe UI', sans-serif;
-  font-size: 14px;              /* Dari 17px → jadi 14px (seperti chat) */
-  line-height: 1;            /* Dari 1.65 → jadi 1.45, biar lebih padat */
-  color: #ffffffcc; /* putih transparan 80% */
-  padding:  0 px;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 15px;
+  line-height: 1.25;
+  color: #fff; /* putih solid */
+  padding: 0;
   margin: 0;
   width: 100%;
   text-align: left;
@@ -307,16 +288,20 @@ header {
   animation: glowIn 0.3s ease-in-out;
 }
 
-
-
-
-
-
+/* Subjudul seperti "Analisa Teknikal" */
+.subjudul {
+  font-size: 15px;
+  font-weight: bold;
+  color: #ffa500; /* oranye soft */
+  margin: 14px 0 4px;
+  display: block;
+}
 
 @keyframes glowIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
 
 /* === FOOTER DENGAN TOMBOL CLOSE YANG MUNCUL DI AKHIR === */
 .footer {
