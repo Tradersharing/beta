@@ -429,7 +429,7 @@ async function loadSignals(url = signalsUrlPrimary) {
       "EURGBP", "EURCHF", "EURCAD", "EURAUD", "EURNZD",
       "GBPAUD", "GBPCAD", "GBPNZD", "CADJPY", "CHFJPY",
       "AUDCAD", "AUDCHF", "AUDNZD", "NZDCAD", "NZDJPY",
-      "USDHKD", "USDZAR", "USDNOK", "USDSEK", "USDTRY"
+      
     ];
 
     // Filter hanya topPairs yang ada di data
