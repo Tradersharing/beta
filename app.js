@@ -182,14 +182,30 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
                         : "dua sisi secara seimbang";
 
   const semuaBaris = document.getElementById("step1")?.textContent.split("\n") || [];
+
   const insightList = semuaBaris.filter(line => line.includes("(") && line.includes(")"))
     .map(baris => {
       const match = baris.match(/•\s(.+?)\s\((\d{2}:\d{2})\)/);
       if (!match) return null;
       const [_, judul, jam] = match;
-      const efek1 = ambilDampakDariKeyword(judul, pair.name.slice(0,3).toLowerCase());
+
+      // Deteksi bendera dari judul berita
+      const bendera = judul.includes("🇺🇸") ? "usd"
+                   : judul.includes("🇬🇧") ? "gbp"
+                   : judul.includes("🇪🇺") ? "eur"
+                   : judul.includes("🇯🇵") ? "jpy"
+                   : judul.includes("🇦🇺") ? "aud"
+                   : judul.includes("🇳🇿") ? "nzd"
+                   : judul.includes("🇨🇦") ? "cad"
+                   : judul.includes("🇨🇭") ? "chf"
+                   : judul.includes("🇨🇳") ? "cny"
+                   : "";
+
+      const efek1 = ambilDampakDariKeyword(judul, bendera) || 
+                    ambilDampakDariKeyword(judul, pair.name.slice(0,3).toLowerCase());
       const efek2 = ambilDampakDariKeyword(judul, pair.name.slice(3,6).toLowerCase());
       const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
+
       return `• ${judul} (${jam})\n  ${efek}`;
     }).filter(Boolean);
 
@@ -197,7 +213,7 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
     ? insightList.join("\n\n")
     : `Tidak ada berita berdampak tinggi hari ini.`;
 
-  return `     💻 Analisa ${pairName} — ${dateStr}
+  const result = `     💻 Analisa ${pairName} — ${dateStr}
 
 Analisa Teknikal:
 
@@ -223,12 +239,11 @@ Disclaimer:
 
 Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
 `;
-document.getElementById("typeWriter").innerHTML = teks;
 
+  document.getElementById("typeWriter").innerHTML = result;
 
-setTimeout(() => {
+  setTimeout(() => {
     typeTextPreserveHTML("typeWriter", result);
-
     const delay = result.length * 25 + 300;
     setTimeout(() => {
       const footer = document.querySelector(".footer");
