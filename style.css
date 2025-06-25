@@ -259,7 +259,6 @@ header {
   box-sizing: border-box;
 }
 
-
 .subjudul {
   background: rgba(0, 70, 140, 0.9); /* Biru navy transparan */
   color: #ffffff;
@@ -296,16 +295,20 @@ header {
 #typeWriter {
   font-family: 'Segoe UI', sans-serif;
   font-size: 14px;              /* Dari 17px → jadi 14px (seperti chat) */
-  line-height: 1.4;            /* Dari 1.65 → jadi 1.45, biar lebih padat */
+  line-height: 1;            /* Dari 1.65 → jadi 1.45, biar lebih padat */
   color: #ffffffcc; /* putih transparan 80% */
   padding:  0 px;
   margin: 0;
+  width: 100%;
   text-align: left;
   white-space: pre-wrap;
   word-break: break-word;
   word-wrap: break-word;
   animation: glowIn 0.3s ease-in-out;
 }
+
+
+
 
 
 
