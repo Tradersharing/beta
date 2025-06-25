@@ -180,23 +180,22 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
     ? insightList.join("\n\n")
     : `Tidak ada berita berdampak tinggi hari ini.`;
 
-  return `📌 Analisa ${pairName} — ${dateStr}
+  return `     💻 Analisa ${pairName} — ${dateStr}
 
 Analisa Teknikal:
 
 Data ritel menunjukkan ${buyerPercent}% trader berada di posisi BUY, sementara ${sellerPercent}% berada di posisi SELL.
-Pasar cenderung didominasi oleh ${kecenderungan}. Oleh karena itu, sinyal teknikal saat ini bersifat <b>${signalFinal}</b>, dan konfirmasi arah masih diperlukan sebelum pengambilan keputusan entry.
+Pasar cenderung didominasi oleh ${kecenderungan}. Oleh karena itu, sinyal teknikal saat ini bersifat ${signalFinal} .
 
 Area penting yang perlu diperhatikan:
 • Support: ${support}
 • Resistance: ${resistance}
-Amati reaksi harga di zona Support dan Resistance.
-Entry dilakukan setelah validasi Teknikal & fundamental.
+Amati reaksi harga di zona Support dan Resistance serta di aplikasikan dengan analisa fundamental untuk mendapatakan sinyal yang akurat
 
-<div class="subjudul">Analisa Fundamental:</div>
+Analisa Fundamental:
 ${catatanFundamental}
 
-<div class="subjudul">Disclaimer:</div>
+Disclaimer:
 Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
 `;
 document.getElementById("typeWriter").innerHTML = teks;
