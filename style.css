@@ -275,7 +275,7 @@ header {
 /* Tulisan utama hasil ketikan */
 #typeWriter {
   font-family: 'Segoe UI', 'Roboto', sans-serif;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1;
   color: #fff; /* putih solid */
   padding: 0;
@@ -285,9 +285,11 @@ header {
   text-align: left;
   white-space: pre-wrap;
   word-break: break-word;
+  overflow: visible;
   word-wrap: break-word;
   animation: glowIn 0.3s ease-in-out;
 }
+
 
 
 
