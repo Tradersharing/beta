@@ -251,7 +251,7 @@ setTimeout(() => {
   }, delay);
 }, 600);
 
-
+}
 
 function typeText(elementId, text, speed = 25) {
   const el = document.getElementById(elementId);
