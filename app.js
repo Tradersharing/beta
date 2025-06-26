@@ -64,8 +64,7 @@ function openPopup(pair) {
                     }).join("")}</ul>`
                  : `<p style="color:gray;">Tidak ada berita penting hari ini.</p>`
               }
-            </div>`;
-          }
+            </div>`;          }
 
           const priority = [];
           if (currency1 === "USD" || currency2 === "USD") {
@@ -93,73 +92,78 @@ async function buatAnalisaSekarang() {
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
   const pairSymbol = (pair?.name || 'EURUSD') + '=X';
-  const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
 
-  // Ambil support/resistance dari Google Apps Script
-  const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
-  const support = srData?.support || '??';
-  const resistance = srData?.resistance || '??';
+  // ✅ 1. Langsung tampilkan popup loading (biar user dapat respon instan)
+  analysisPopup.innerHTML = `
+    <div style="text-align:center; padding-top:60px;">
+      <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
+      <p style="color:#fff; font-family:'Segoe UI', sans-serif; margin-top:15px; font-size:15px;">
+        ⏳Menganalisis & Membuat sinyal<span id="dots">.</span>
+      </p>
+    </div>
+  `;
+  analysisPopup.style.display = 'flex';
 
-   
-  // Tampilkan loading animasi dulu
-  // Tampilkan loading elegan dengan titik berjalan
-analysisPopup.innerHTML = `
-  <div style="text-align:center; padding-top:60px;">
-    <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
-    <p style="color:#fff; font-family:'Segoe UI', sans-serif; margin-top:15px; font-size:15px;">
-     ⏳Menganalisis & Membuat sinyal<span id="dots">.</span>
-    </p>
-  </div>
-`;
+  // 🔁 2. Mulai animasi titik berjalan
+  let dotCount = 1;
+  const dotsEl = document.getElementById('dots');
+  const dotsInterval = setInterval(() => {
+    dotCount = (dotCount % 3) + 1;
+    if (dotsEl) dotsEl.textContent = '.'.repeat(dotCount);
+  }, 500);
 
-analysisPopup.style.display = 'flex';
+  try {
+    // ✅ 3. Ambil support/resistance
+    const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
+    const srData = await fetch(srURL).then(res => res.json());
+    const support = srData?.support || '??';
+    const resistance = srData?.resistance || '??';
 
-// Mulai animasi titik berjalan
-let dotCount = 1;
-const dotsEl = document.getElementById('dots');
-const dotsInterval = setInterval(() => {
-  dotCount = (dotCount % 3) + 1;
-  dotsEl.textContent = '.'.repeat(dotCount);
-}, 500);
+    // ✅ 4. Ambil berita insight
+    await tampilkanInsightBerita(pair);
 
-// Delay sebelum tampilkan hasil
-await new Promise(resolve => setTimeout(resolve, 9000));
+    // ✅ 5. Logika sinyal (BUY / SELL / WAIT)
+    const buyer = pair.longPercentage;
+    const seller = pair.shortPercentage;
+    const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
 
-// Hentikan titik berjalan dan tampilkan konten analisa
-clearInterval(dotsInterval);
+    // ✅ 6. Hasil analisa otomatis
+    const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
 
-analysisPopup.innerHTML = `
-  <div class="analysis-main">
-    <div class="corner-label"></div>
-    <div id="typeWriter"></div>
-    <div id="step1" style="display:none;"></div>
-    <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
-  </div>`;
+    // ⏹️ 7. Stop animasi loading
+    clearInterval(dotsInterval);
 
+    // ✅ 8. Ganti isi popup dengan hasil analisa
+    analysisPopup.innerHTML = `
+      <div class="analysis-main">
+        <div class="corner-label"></div>
+        <div id="typeWriter"></div>
+        <div id="step1" style="display:none;"></div>
+        <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
+      </div>`;
 
-  // ⏬ Ambil berita dan isi ke step1 (harus ditunggu sebelum generate analisa)
-  await tampilkanInsightBerita(pair);
-  // Logika sinyal: BUY / SELL / WAIT
-  const buyer = pair.longPercentage;
-  const seller = pair.shortPercentage;
-  const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
+    // ✍️ 9. Animasi ketik teks hasil
+    setTimeout(() => {
+      typeText("typeWriter", result);
 
-  // Buat isi analisa otomatis dari semua data
-    
-  const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
+      const delay = result.length * 25 + 300;
+      setTimeout(() => {
+        const footer = document.querySelector(".footer");
+        if (footer) footer.classList.add("show");
+      }, delay);
+    }, 600);
 
-  // Ketik hasil analisa dengan animasi
-  setTimeout(() => {
-  typeText("typeWriter", result);
-
-  const delay = result.length * 25 + 300;
-  setTimeout(() => {
-    const footer = document.querySelector(".footer");
-    if (footer) footer.classList.add("show");
-  }, delay);
-
-}, 600);
+  } catch (error) {
+    // ❌ 10. Jika gagal, stop animasi & tampilkan error
+    clearInterval(dotsInterval);
+    analysisPopup.innerHTML = `
+      <div style="color:#fff; padding:20px; text-align:center;">
+        ❌ Terjadi kesalahan saat mengambil data.<br />
+        Silakan coba lagi nanti.
+      </div>`;
+  }
 }
+
 
 
 function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
