@@ -63,7 +63,7 @@ function openPopup(pair) {
                       return `<li style="color:${color};">${judul} (${jamWIB})</li>`;
                     }).join("")}</ul>`
                  : `<p style="color:gray;">Tidak ada berita penting hari ini.</p>`
-              }
+            
             </div>`;          }
 
           const priority = [];
@@ -91,10 +91,8 @@ function openPopup(pair) {
 async function buatAnalisaSekarang() {
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
-  const pairSymbol = (pair?.name || 'EURUSD') + '=X';
-  const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
 
-  // ✅ 1. Langsung tampilkan popup loading (biar user dapat respon instan)
+  // ✅ Langsung tampilkan popup (biar tombol terasa aktif)
   analysisPopup.innerHTML = `
     <div style="text-align:center; padding-top:60px;">
       <img src="https://media.tenor.com/xbrfuvCqep4AAAAC/loading-chart.gif" width="100" alt="Loading..." />
@@ -105,65 +103,59 @@ async function buatAnalisaSekarang() {
   `;
   analysisPopup.style.display = 'flex';
 
-  // 🔁 2. Mulai animasi titik berjalan
+  // 🔁 Mulai animasi titik berjalan
   let dotCount = 1;
   const dotsEl = document.getElementById('dots');
   const dotsInterval = setInterval(() => {
     dotCount = (dotCount % 3) + 1;
-    if (dotsEl) dotsEl.textContent = '.'.repeat(dotCount);
+    dotsEl.textContent = '.'.repeat(dotCount);
   }, 500);
 
-  try {
-    // ✅ 3. Ambil support/resistance
-    const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
-    const srData = await fetch(srURL).then(res => res.json());
-    const support = srData?.support || '??';
-    const resistance = srData?.resistance || '??';
+  // ✅ Ambil data support/resistance kamu yang sudah fix
+  const pairSymbol = (pair?.name || 'EURUSD') + '=X';
+  const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
+  const srData = await fetch(srURL).then(res => res.json()).catch(() => null);
+  const support = srData?.support || '??';
+  const resistance = srData?.resistance || '??';
 
-    // ✅ 4. Ambil berita insight
-    await tampilkanInsightBerita(pair);
+  // ⏱️ Delay visual (biar animasi loading terlihat elegan)
+  await new Promise(resolve => setTimeout(resolve, 9000));
 
-    // ✅ 5. Logika sinyal (BUY / SELL / WAIT)
-    const buyer = pair.longPercentage;
-    const seller = pair.shortPercentage;
-    const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
+  // 🛑 Stop titik-titik loading
+  clearInterval(dotsInterval);
 
-    // ✅ 6. Hasil analisa otomatis
-    const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
+  // ✅ Ganti isi popup dengan konten analisa
+  analysisPopup.innerHTML = `
+    <div class="analysis-main">
+      <div class="corner-label"></div>
+      <div id="typeWriter"></div>
+      <div id="step1" style="display:none;"></div>
+      <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
+    </div>`;
 
-    // ⏹️ 7. Stop animasi loading
-    clearInterval(dotsInterval);
+  // ⏬ Ambil insight berita
+  await tampilkanInsightBerita(pair);
 
-    // ✅ 8. Ganti isi popup dengan hasil analisa
-    analysisPopup.innerHTML = `
-      <div class="analysis-main">
-        <div class="corner-label"></div>
-        <div id="typeWriter"></div>
-        <div id="step1" style="display:none;"></div>
-        <div class="footer"><button onclick="closeAnalysis()">Tutup</button></div>
-      </div>`;
+  // 🔍 Logika sinyal: BUY / SELL / WAIT
+  const buyer = pair.longPercentage;
+  const seller = pair.shortPercentage;
+  const signal = buyer >= 70 ? 'BUY' : seller >= 70 ? 'SELL' : 'WAIT';
 
-    // ✍️ 9. Animasi ketik teks hasil
+  // ✍️ Buat isi analisa otomatis
+  const result = generateAutoAnalysis(pair, buyer, seller, signal, support, resistance);
+
+  // ⌨️ Ketik hasil analisa dengan animasi
+  setTimeout(() => {
+    typeText("typeWriter", result);
+
+    const delay = result.length * 25 + 300;
     setTimeout(() => {
-      typeText("typeWriter", result);
-
-      const delay = result.length * 25 + 300;
-      setTimeout(() => {
-        const footer = document.querySelector(".footer");
-        if (footer) footer.classList.add("show");
-      }, delay);
-    }, 600);
-
-  } catch (error) {
-    // ❌ 10. Jika gagal, stop animasi & tampilkan error
-    clearInterval(dotsInterval);
-    analysisPopup.innerHTML = `
-      <div style="color:#fff; padding:20px; text-align:center;">
-        ❌ Terjadi kesalahan saat mengambil data.<br />
-        Silakan coba lagi nanti.
-      </div>`;
-  }
+      const footer = document.querySelector(".footer");
+      if (footer) footer.classList.add("show");
+    }, delay);
+  }, 600);
 }
+
 
 
 
