@@ -100,6 +100,7 @@ async function buatAnalisaSekarang() {
   const support = srData?.support || '??';
   const resistance = srData?.resistance || '??';
 
+   
   // Tampilkan loading animasi dulu
   // Tampilkan loading elegan dengan titik berjalan
 analysisPopup.innerHTML = `
@@ -122,7 +123,7 @@ const dotsInterval = setInterval(() => {
 }, 500);
 
 // Delay sebelum tampilkan hasil
-await new Promise(resolve => setTimeout(resolve, 6000));
+await new Promise(resolve => setTimeout(resolve, 9000));
 
 // Hentikan titik berjalan dan tampilkan konten analisa
 clearInterval(dotsInterval);
