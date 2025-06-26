@@ -496,3 +496,34 @@ async function loadSignals(url = signalsUrlPrimary) {
 // Jalankan & auto refresh
 loadSignals(signalsUrlPrimary);
 setInterval(() => loadSignals(signalsUrlPrimary), 60000);
+
+// ===== Tambahkan Footer Halaman Secara Otomatis =====
+const footer = document.createElement("footer");
+footer.className = "page-footer";
+footer.innerHTML = `
+  <div class="footer-inner">
+    © <span id="year"></span> <strong>TraderSharing</strong>. All rights reserved.
+  </div>
+`;
+document.body.appendChild(footer);
+
+// Atur tahun otomatis
+document.getElementById("year").textContent = new Date().getFullYear();
+
+// Tambahkan styling jika belum ada
+const style = document.createElement("style");
+style.textContent = `
+.page-footer {
+  background-color: #000022;
+  padding: 20px;
+  text-align: center;
+  color: #ccc;
+  font-size: 14px;
+  margin-top: 30px;
+  border-top: 1px solid #333;
+}
+.page-footer .footer-inner strong {
+  color: #FFD700;
+}
+`;
+document.head.appendChild(style);
