@@ -69,14 +69,14 @@ header {
 .detail-link {
   margin-top: 8px;
   font-size: 12px;
-  color:  #FFD700;
+  color:  #D3D3D3;
   font-weight: 500;
   text-decoration: none;
   display: inline-block;
   transition: color 0.3s ease;
 }
 .detail-link:hover {
-  color: #FFD700;
+  color: #D3D3D3;
 }
 
 
