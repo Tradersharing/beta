@@ -457,36 +457,43 @@ async function loadSignals(url = signalsUrlPrimary) {
     container.innerHTML = "";
 
     filtered.forEach(pair => {
-      const buy = parseFloat(pair.longPercentage);
-      const sell = parseFloat(pair.shortPercentage);
-      const status = buy >= 70 ? 'BUY' : sell >= 70 ? 'SELL' : 'WAIT';
-      const cls = buy >= 70 ? 'buy' : sell >= 70 ? 'sell' : 'wait';
+  const buy = parseFloat(pair.longPercentage);
+  const sell = parseFloat(pair.shortPercentage);
+  const status = buy >= 70 ? 'BUY' : sell >= 70 ? 'SELL' : 'WAIT';
+  const cls = buy >= 70 ? 'buy' : sell >= 70 ? 'sell' : 'wait';
 
-      const box = document.createElement("div");
-      box.className = "box";
-      box.dataset.pair = pair.name.toLowerCase();
-      box.onclick = () => openPopup(pair);
+  const box = document.createElement("div");
+  box.className = "box";
+  box.dataset.pair = pair.name.toLowerCase();
+  box.onclick = () => openPopup(pair);
 
-      const name = document.createElement("div");
-      name.className = "pair";
-      name.textContent = pair.name;
+  const name = document.createElement("div");
+  name.className = "pair";
+  name.textContent = pair.name;
 
-      const gauge = renderGauge(buy, sell);
+  const gauge = renderGauge(buy, sell);
 
-      const val = document.createElement("div");
-      val.className = "value";
-      val.textContent = `Buy: ${buy}% | Sell: ${sell}%`;
+  const val = document.createElement("div");
+  val.className = "value";
+  val.textContent = `Buy: ${buy}% | Sell: ${sell}%`;
 
-      const signal = document.createElement("div");
-      signal.className = `signal ${cls}`;
-      signal.textContent = status;
+  const signal = document.createElement("div");
+  signal.className = `signal ${cls}`;
+  signal.textContent = status;
 
-      box.appendChild(name);
-      box.appendChild(gauge);
-      box.appendChild(val);
-      box.appendChild(signal);
-      container.appendChild(box);
-    });
+  // ✅ Tambahkan link kecil profesional di bawah sinyal
+  const detail = document.createElement("div");
+  detail.className = "detail-link";
+  detail.textContent = "Lihat detail sinyal →";
+
+  box.appendChild(name);
+  box.appendChild(gauge);
+  box.appendChild(val);
+  box.appendChild(signal);
+  box.appendChild(detail);
+  container.appendChild(box);
+});
+
 
   } catch (e) {
     document.getElementById("signals").innerHTML = '<div class="box wait">⚠️ Gagal ambil data: ' + e.message + '</div>';
