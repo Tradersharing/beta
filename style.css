@@ -58,7 +58,12 @@ header {
     max-width: 1024px;
     margin: 0 auto;
   }
+
+  .box {
+    height: 200px; /* atau 260px, tergantung selera */
+  }
 }
+
 
 
 .detail-link {
