@@ -92,6 +92,7 @@ async function buatAnalisaSekarang() {
   const pair = window.currentPair;
   const analysisPopup = document.getElementById('analysisPopup');
   const pairSymbol = (pair?.name || 'EURUSD') + '=X';
+  const srURL = `https://script.google.com/macros/s/AKfycbzjlvMVo_JvB7hPI5DFyVx-CXcPSaHPug8utYk5BZTsvwmcAMHrOTvZJB7CVNkGgZrU/exec?pair=${pairSymbol}`;
 
   // ✅ 1. Langsung tampilkan popup loading (biar user dapat respon instan)
   analysisPopup.innerHTML = `
