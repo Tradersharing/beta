@@ -445,7 +445,7 @@ async function loadSignals(url = signalsUrlPrimary) {
       "EURGBP", "EURCHF", "EURCAD", "EURAUD", "EURNZD",
       "GBPAUD", "GBPCAD", "GBPNZD", "CADJPY", "CHFJPY",
       "AUDCAD", "AUDCHF", "AUDNZD", "NZDCAD", "NZDJPY",
-      
+      "XAUUSD", "BTCUSD",
     ];
 
     // Filter hanya topPairs yang ada di data
@@ -484,7 +484,7 @@ async function loadSignals(url = signalsUrlPrimary) {
   // ✅ Tambahkan link kecil profesional di bawah sinyal
   const detail = document.createElement("div");
   detail.className = "detail-link";
-  detail.textContent = "lihat sinyal ➡️>";
+  detail.textContent = "lihat selengkapnya >>>";
 
   box.appendChild(name);
   box.appendChild(gauge);
