@@ -293,15 +293,6 @@ header {
 
 
 
-/* Subjudul seperti "Analisa Teknikal" */
-.subjudul {
-  font-size: 15px;
-  font-weight: bold;
-  color: #ffa500; /* oranye soft */
-  margin: 14px 0 4px;
-  display: block;
-}
-
 @keyframes glowIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
