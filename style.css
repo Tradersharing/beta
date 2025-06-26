@@ -43,11 +43,17 @@ header {
 }
 
 /* ✅ RESPONSIVE GRID LAYOUT */
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-  gap: 12px; /* ✅ tambah jarak antar kotak */
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
   padding: 15px;
+  max-width: 420px;   /* Batasi lebar maksimal */
+  margin: 0 auto;
+}
+
+
 }
 .box {
   background: linear-gradient(145deg, #1c1c1c, #000);
