@@ -73,7 +73,7 @@ function openPopup(pair) {
               .join("")
           }</ul>`
         : `<p style="color:gray;">Tidak ada berita penting hari ini.</p>`
-    }  <!-- ini yang kamu tambahkan -->
+    }
   </div>`;
 }
 
