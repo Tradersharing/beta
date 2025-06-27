@@ -50,7 +50,8 @@ function openPopup(pair) {
           const b1 = news?.[currency1] || [];
           const b2 = news?.[currency2] || [];
 
-          function renderNews(currency, arr) {
+          
+function renderNews(currency, arr) {
   const flag = getFlagEmoji(currency);
 
   return `<div style="margin-bottom:10px;">
@@ -76,6 +77,11 @@ function openPopup(pair) {
     }
   </div>`;
 }
+
+
+
+
+          
 
 
           const priority = [];
@@ -339,26 +345,8 @@ function getFlagEmoji(code) {
   return flags[code] || "🏳️";
 }
 
-function convertGMTtoWIB(gmtTime) {
-  if (!gmtTime) return "Invalid";
-  const match = gmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
-  if (!match) return "Invalid";
 
-  let hour = parseInt(match[1], 10);
-  const minute = parseInt(match[2], 10);
-  const period = match[3].toLowerCase();
 
-  if (period === "pm" && hour !== 12) hour += 12;
-  if (period === "am" && hour === 12) hour = 0;
-
-  // jam GMT ke WIB (GMT+7)
-  hour += 7;
-  if (hour >= 24) hour -= 24;
-
-  const h = String(hour).padStart(2, "0");
-  const m = String(minute).padStart(2, "0");
-  return `${h}:${m}`;
-}
 
 
 function ambilDampakDariKeyword(judul, mataUang = 'usd') {
