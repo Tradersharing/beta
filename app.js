@@ -500,7 +500,7 @@ async function loadSignals(url = signalsUrlPrimary) {
   // ✅ Tambahkan link kecil profesional di bawah sinyal
   const detail = document.createElement("div");
   detail.className = "detail-link";
-  detail.textContent = "Buka sinyal";
+  detail.textContent = "Buka";
 
   box.appendChild(name);
   box.appendChild(gauge);
