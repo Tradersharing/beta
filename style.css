@@ -66,22 +66,23 @@ header {
 
 .detail-link {
   display: block;
-  width: 88%; /* lebih ramping */
-  max-width: 240px; /* perkecil ukuran */
-  margin: 6px auto 12px; /* lebih rapat dari atas, tetap ada jarak bawah */
-  padding: 8px 10px; /* lebih kecil supaya tombol compact */
+  width: 100%; /* Ini yang bikin lebar full ngikut box */
+  max-width: unset; /* Hilangkan batas maksimal */
+  margin: 6px 0 12px; /* Jarak vertikal saja */
+  padding: 8px 10px;
   font-size: 13px;
   font-weight: 600;
-  color: #f0f0f0; /* warna teks bisa kamu ganti */
+  color: #f0f0f0;
   background: linear-gradient(to right, #1a1a1a, #333);
   border: none;
   border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
   cursor: pointer;
   font-family: 'Segoe UI', sans-serif;
   text-align: center;
   transition: all 0.15s ease;
 }
+
 
 .detail-link:active {
   transform: scale(0.97);
