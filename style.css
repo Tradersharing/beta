@@ -48,7 +48,7 @@ header {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
   gap: 12px;
-  min-height: 260px;
+  min-height: 350px;
   padding: 15px;
 }
 
@@ -61,7 +61,7 @@ header {
   }
 
   .box {
-    height: 350px; /* atau 260px, tergantung selera */
+    height: 0px; /* atau 260px, tergantung selera */
   }
 }
 
@@ -97,7 +97,7 @@ header {
   background: linear-gradient(145deg, #1c1c1c, #000);
   border-radius: 15px;
   padding: 12px 8px;
-  height: 200px;  /* ✅ Lebih panjang ke bawah */
+  height: 270px;  /* ✅ Lebih panjang ke bawah */
   box-shadow: 4px 4px 10px #111, -4px -4px 10px #222;
   text-align: center;
   cursor: pointer;
