@@ -345,6 +345,34 @@ function getFlagEmoji(code) {
   return flags[code] || "🏳️";
 }
 
+function convertGMTtoWIB(gmtTime) {
+  if (!gmtTime) return "Invalid";
+
+  const match = gmtTime.match(/^(\d{1,2}):(\d{2})(am|pm)$/i);
+  if (!match) return "Invalid";
+
+  let hour = parseInt(match[1], 10);
+  const minute = parseInt(match[2], 10);
+  const period = match[3].toLowerCase();
+
+  // Konversi 12 jam ke 24 jam
+  if (period === "pm" && hour !== 12) hour += 12;
+  if (period === "am" && hour === 12) hour = 0;
+
+  // Tambahkan 7 jam ke WIB
+  hour += 7;
+  let isTomorrow = false;
+  if (hour >= 24) {
+    hour -= 24;
+    isTomorrow = true;
+  }
+
+  // Format 2 digit
+  const h = String(hour).padStart(2, "0");
+  const m = String(minute).padStart(2, "0");
+
+  return `${h}:${m}${isTomorrow ? " (besok)" : ""}`;
+}
 
 
 
