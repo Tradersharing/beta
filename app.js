@@ -121,7 +121,7 @@ function openPopup(pair) {
   });
 }
 
-}
+
 
 // === Analisa Otomatis ===
 
