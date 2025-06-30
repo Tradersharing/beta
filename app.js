@@ -135,7 +135,7 @@ async function buatAnalisaSekarang() {
   const support = srData?.support || '??';
   const resistance = srData?.resistance || '??';
 
-  await new Promise(r => setTimeout(r, 5000));
+  await new Promise(r => setTimeout(r, 3000));
   clearInterval(dotsInterval);
 
   analysisPopup.innerHTML = `<div class="analysis-main">
@@ -152,33 +152,96 @@ async function buatAnalisaSekarang() {
 }
 
 // === Generate Auto Analysis
-function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??", s1 = 0, s2 = 0) {
-  const dateStr = new Date().toLocaleDateString("id-ID", {
+function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
+  const pairName = pair.name || "EURUSD";
+  const today = new Date();
+  const dateStr = today.toLocaleDateString("id-ID", {
     timeZone: 'Asia/Jakarta', day: '2-digit', month: 'long', year: 'numeric'
   });
-  const currency1 = pair.name.slice(0, 3);
-  const currency2 = pair.name.slice(3, 6);
+
   const buyerPercent = parseFloat(buyer).toFixed(1);
   const sellerPercent = parseFloat(seller).toFixed(1);
-  const kecenderungan = signal === "BUY" ? "kubu buyer" : signal === "SELL" ? "kubu seller" : "dua sisi seimbang";
 
-  return `💻 Analisa ${pair.name} — ${dateStr}
+  const signalFinal = buyerPercent >= 70 ? "BUY" :
+                      sellerPercent >= 70 ? "SELL" : "WAIT";
+
+  const kecenderungan = signalFinal === "BUY" ? "kubu buyer"
+                        : signalFinal === "SELL" ? "kubu seller"
+                        : "dua sisi secara seimbang";
+
+  const semuaBaris = document.getElementById("step1")?.textContent.split("\n") || [];
+  const insightList = semuaBaris.filter(line => line.includes("(") && line.includes(")"))
+    .map(baris => {
+      const match = baris.match(/•\s(.+?)\s\((\d{2}:\d{2})\)/);
+      if (!match) return null;
+      const [_, judul, jam] = match;
+
+      const flagCurrency = judul.includes("🇺🇸") ? "usd"
+                        : judul.includes("🇬🇧") ? "gbp"
+                        : judul.includes("🇪🇺") ? "eur"
+                        : judul.includes("🇯🇵") ? "jpy"
+                        : judul.includes("🇦🇺") ? "aud"
+                        : judul.includes("🇳🇿") ? "nzd"
+                        : judul.includes("🇨🇦") ? "cad"
+                        : judul.includes("🇨🇭") ? "chf"
+                        : judul.includes("🇨🇳") ? "cny"
+                        : null;
+
+      const efek1 = flagCurrency
+        ? ambilDampakDariKeyword(judul, flagCurrency)
+        : ambilDampakDariKeyword(judul, pair.name.slice(0,3).toLowerCase());
+
+      const efek2 = ambilDampakDariKeyword(judul, pair.name.slice(3,6).toLowerCase());
+
+      const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
+
+      return `• ${judul} (${jam})\n  ${efek}`;
+    })
+    .filter(Boolean);
+
+  const catatanFundamental = insightList.length
+    ? insightList.join("\n\n")
+    : `Tidak ada berita berdampak tinggi hari ini.`;
+
+  const result = `                  💻 Analisa ${pairName} — ${dateStr}
+
 
 📊 Analisa Teknikal:
-- ${buyerPercent}% trader berada di posisi BUY
-- ${sellerPercent}% berada di posisi SELL
-- Kekuatan: ${currency1} ${s1.toFixed(1)}% vs ${currency2} ${s2.toFixed(1)}%
-Pasar didominasi oleh ${kecenderungan}
-Sinyal teknikal: ${signal}
 
-📌 Area Penting:
-🟥 Support: ${support}
-🟦 Resistance: ${resistance}
+Data ritel menunjukkan ${buyerPercent}% trader berada di posisi BUY.
+sementara ${sellerPercent}% berada di posisi SELL.
+Pasar cenderung didominasi oleh ${kecenderungan}. 
+Oleh karena itu, sinyal teknikal saat ini menunjukan ke arah ${signalFinal} .
 
-Gunakan kombinasi teknikal & fundamental untuk hasil maksimal.
-Disclaimer: Risiko tanggung sendiri.
-`;
-}
+Area penting yang perlu diperhatikan:
+
+🟥• Support: ${support}
+
+🟦• Resistance: ${resistance}
+
+Amati reaksi harga di zona Support dan Resistance serta kombinasikan analisa teknikal & fundamental untuk mendapatkan sinyak yang akurat.
+
+📝 Analisa Fundamental:
+
+Berikut news dan analisa untuk pasangan mata uang ${pairName} tanggal ${dateStr} ,kamu menggunakan waktu gmt7 / WIB.
+
+${catatanFundamental}
+
+Disclaimer:
+
+Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.`;
+
+  document.getElementById("typeWriter").innerHTML = "";
+
+  setTimeout(() => {
+    typeText("typeWriter", result);
+    const delay = result.length * 15 + 300;
+    setTimeout(() => {
+      const footer = document.querySelector(".footer");
+      if (footer) footer.classList.add("show");
+    }, delay);
+  }, 600);
+} 
 
 // === Utilitas
 function typeText(id, text, speed = 15) {
