@@ -83,7 +83,6 @@ function openPopup(pair) {
   document.getElementById('popupDetails').innerHTML = detailTop;
   document.getElementById('popup').style.display = 'flex';
 
-  // Simpan global
   window.currentPair = pair;
   window.currentStrength = { strength1, strength2 };
 
@@ -105,9 +104,23 @@ function openPopup(pair) {
       }</div>`;
     }
 
-    const priority = [currency1, currency2].sort(c => (c === "USD" ? -1 : 1));
-    box.innerHTML = `<div>${renderNews(priority[0], data[today]?.[priority[0]] || [])}${renderNews(priority[1], data[today]?.[priority[1]] || [])}</div>`;
+    const htmlContent = 
+      renderNews(currency1, b1) +
+      renderNews(currency2, b2);
+
+    box.innerHTML = `<div>${htmlContent}</div>`;
+
+    // Simpan isi plain-text ke #step1 (untuk generate analisa)
+    const step1 = document.getElementById("step1");
+    if (step1) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlContent, 'text/html');
+      const plainText = doc.body.innerText;
+      step1.textContent = plainText;
+    }
   });
+}
+
 }
 
 // === Analisa Otomatis ===
@@ -207,6 +220,7 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
     ? insightList.join("\n\n")
     : `Tidak ada berita berdampak tinggi hari ini.`;
 
+ 
   const result = `                  💻 Analisa ${pairName} — ${dateStr}
 
 
@@ -227,7 +241,7 @@ Amati reaksi harga di zona Support dan Resistance serta kombinasikan analisa tek
 
 📝 Analisa Fundamental:
 
-Berikut news dan analisa untuk pasangan mata uang ${pairName} tanggal ${dateStr} ,kamu menggunakan waktu gmt7 / WIB.
+Berikut news dan analisa untuk pasangan mata uang ${pairName} tanggal ${dateStr} , menggunakan waktu gmt7 / WIB.
 
 ${catatanFundamental}
 
