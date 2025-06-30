@@ -111,6 +111,7 @@ function openPopup(pair) {
 }
 
 // === Analisa Otomatis ===
+
 async function buatAnalisaSekarang() {
   const pair = window.currentPair;
   const { strength1, strength2 } = window.currentStrength || { strength1: 0, strength2: 0 };
@@ -152,6 +153,7 @@ async function buatAnalisaSekarang() {
 }
 
 // === Generate Auto Analysis
+
 function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resistance = "??") {
   const pairName = pair.name || "EURUSD";
   const today = new Date();
@@ -169,35 +171,37 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
                         : signalFinal === "SELL" ? "kubu seller"
                         : "dua sisi secara seimbang";
 
-  const semuaBaris = document.getElementById("step1")?.textContent.split("\n") || [];
-  const insightList = semuaBaris.filter(line => line.includes("(") && line.includes(")"))
-    .map(baris => {
-      const match = baris.match(/•\s(.+?)\s\((\d{2}:\d{2})\)/);
-      if (!match) return null;
-      const [_, judul, jam] = match;
+  // ✅ Ambil isi berita dari #step1 yang sudah dirender di openPopup
+  const rawInsight = document.getElementById("step1")?.textContent || "";
+  const semuaBaris = rawInsight.split(/\n+/).map(s => s.trim()).filter(s => s.startsWith("•"));
 
-      const flagCurrency = judul.includes("🇺🇸") ? "usd"
-                        : judul.includes("🇬🇧") ? "gbp"
-                        : judul.includes("🇪🇺") ? "eur"
-                        : judul.includes("🇯🇵") ? "jpy"
-                        : judul.includes("🇦🇺") ? "aud"
-                        : judul.includes("🇳🇿") ? "nzd"
-                        : judul.includes("🇨🇦") ? "cad"
-                        : judul.includes("🇨🇭") ? "chf"
-                        : judul.includes("🇨🇳") ? "cny"
-                        : null;
+  const insightList = semuaBaris.map(baris => {
+    const match = baris.match(/•\s(.+?)\s\((\d{2}:\d{2})\)/);
+    if (!match) return null;
+    const [_, judul, jam] = match;
 
-      const efek1 = flagCurrency
-        ? ambilDampakDariKeyword(judul, flagCurrency)
-        : ambilDampakDariKeyword(judul, pair.name.slice(0,3).toLowerCase());
+    const flagCurrency = judul.includes("🇺🇸") ? "usd"
+                      : judul.includes("🇬🇧") ? "gbp"
+                      : judul.includes("🇪🇺") ? "eur"
+                      : judul.includes("🇯🇵") ? "jpy"
+                      : judul.includes("🇦🇺") ? "aud"
+                      : judul.includes("🇳🇿") ? "nzd"
+                      : judul.includes("🇨🇦") ? "cad"
+                      : judul.includes("🇨🇭") ? "chf"
+                      : judul.includes("🇨🇳") ? "cny"
+                      : null;
 
-      const efek2 = ambilDampakDariKeyword(judul, pair.name.slice(3,6).toLowerCase());
+    const efek1 = flagCurrency
+      ? ambilDampakDariKeyword(judul, flagCurrency)
+      : ambilDampakDariKeyword(judul, pair.name.slice(0, 3).toLowerCase());
 
-      const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya" ? efek1 : efek2;
+    const efek2 = ambilDampakDariKeyword(judul, pair.name.slice(3, 6).toLowerCase());
 
-      return `• ${judul} (${jam})\n  ${efek}`;
-    })
-    .filter(Boolean);
+    const efek = efek1 !== "reaksi pasar bisa signifikan tergantung hasil rilisnya"
+                ? efek1 : efek2;
+
+    return `• ${judul} (${jam})\n  ${efek}`;
+  }).filter(Boolean);
 
   const catatanFundamental = insightList.length
     ? insightList.join("\n\n")
@@ -206,18 +210,18 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
   const result = `                  💻 Analisa ${pairName} — ${dateStr}
 
 
+
 📊 Analisa Teknikal:
 
 Data ritel menunjukkan ${buyerPercent}% trader berada di posisi BUY.
 sementara ${sellerPercent}% berada di posisi SELL.
-Pasar cenderung didominasi oleh ${kecenderungan}. 
+Kekuatan: ${pairName.slice(0,3)} ${buyerPercent}% vs ${pairName.slice(3,6)} ${sellerPercent}%
+Pasar cenderung didominasi oleh ${kecenderungan}.
 Oleh karena itu, sinyal teknikal saat ini menunjukan ke arah ${signalFinal} .
 
-Area penting yang perlu diperhatikan:
-
-🟥• Support: ${support}
-
-🟦• Resistance: ${resistance}
+📌 Area Penting:
+🟥 Support: ${support}
+🟦 Resistance: ${resistance}
 
 Amati reaksi harga di zona Support dan Resistance serta kombinasikan analisa teknikal & fundamental untuk mendapatkan sinyak yang akurat.
 
@@ -229,8 +233,10 @@ ${catatanFundamental}
 
 Disclaimer:
 
-Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.`;
+Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.
+`;
 
+  // Kosongkan sebelum mulai ketik
   document.getElementById("typeWriter").innerHTML = "";
 
   setTimeout(() => {
@@ -241,7 +247,8 @@ Gunakan manajemen risiko dan disiplin dalam setiap pengambilan keputusan.`;
       if (footer) footer.classList.add("show");
     }, delay);
   }, 600);
-} 
+}
+
 
 // === Utilitas
 function typeText(id, text, speed = 15) {
