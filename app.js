@@ -1,5 +1,5 @@
 // === Load Signals ===
-const signalsUrlPrimary = "https://script.google.com/macros/s/AKfycbz0nOF6LQWbQd4Zy9WagBiq433l0G0nn2la4j9QC73Vfgt3_Fz_hRuhH3fr0NiPt46rOA/exec";
+const signalsUrlPrimary = "https://script.google.com/macros/s/AKfycbyVkUDWcnqS35xmwwPtMLJRCEur5J4y578UD89mijqBUcn0N3ivrifdwWGhhSBx56M/exec";
 async function loadSignals(url = signalsUrlPrimary) {
   try {
     const res = await fetch(url);
@@ -180,8 +180,8 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
   const signalFinal = buyerPercent >= 70 ? "BUY" :
                       sellerPercent >= 70 ? "SELL" : "WAIT";
 
-  const kecenderungan = signalFinal === "BUY" ? "kubu buyer"
-                        : signalFinal === "SELL" ? "kubu seller"
+  const kecenderungan = signalFinal === "BUY" ? "Ritel buyer"
+                        : signalFinal === "SELL" ? "Ritel seller"
                         : "dua sisi secara seimbang";
 
   // ✅ Ambil isi berita dari #step1 yang sudah dirender di openPopup
@@ -221,7 +221,8 @@ function generateAutoAnalysis(pair, buyer, seller, signal, support = "??", resis
     : `Tidak ada berita berdampak tinggi hari ini.`;
 
  
-  const result = `                  💻 Analisa ${pairName} — ${dateStr}
+  const result = ` 
+                          💻 Analisa ${pairName} — ${dateStr}
 
 
 
@@ -235,6 +236,7 @@ Oleh karena itu, sinyal teknikal saat ini menunjukan ke arah ${signalFinal} .
 
 📌 Area Penting:
 🟥 Support: ${support}
+
 🟦 Resistance: ${resistance}
 
 Amati reaksi harga di zona Support dan Resistance serta kombinasikan analisa teknikal & fundamental untuk mendapatkan sinyak yang akurat.
